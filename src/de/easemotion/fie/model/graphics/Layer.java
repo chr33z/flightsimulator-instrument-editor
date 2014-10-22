@@ -25,6 +25,9 @@ public class Layer {
 	
 	private int top;
 	
+	/** wheter this layer is active in graphicpanel */
+	boolean active;
+	
 	/** image file name with file ending */
 	private String image;
 	
@@ -84,5 +87,13 @@ public class Layer {
 	public Layer setImage(String image) {
 		this.image = image;
 		return this;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }

@@ -1,0 +1,62 @@
+<BoxPane orientation="vertical"
+    xmlns:bxml="http://pivot.apache.org/bxml"
+    xmlns:content="org.apache.pivot.wtk.content"
+    xmlns="org.apache.pivot.wtk">
+    <bxml:define>
+        <ButtonGroup bxml:id="icons"/>
+    </bxml:define>
+
+	<BoxPane orientation="vertical" styles="{padding:6, spacing:8, fill:true}">
+	
+    <Form styles="{showFlagIcons:false, showFlagHighlight:false, padding:0}">
+        <Form.Section>
+        
+			<BoxPane orientation="horizontal" Form.label="Ebenentyp" styles="{fill:true}">
+		    	<bxml:define>
+		            <ButtonGroup bxml:id="layer_type"/>
+		        </bxml:define>
+		        
+		        <RadioButton bxml:id="layer_type_image" buttonData="Bild" buttonGroup="$layer_type" selected="true"/>
+		        <RadioButton bxml:id="layer_type_text" buttonData="Text" buttonGroup="$layer_type"/>
+		    </BoxPane>
+        
+        	<TextInput bxml:id="layer_id" Form.label="Ebenenname" prompt="Name" textSize="12"
+            	Form.flag="{messageType:'info', message:'Eindeutiger Name der Ebene'}">
+            </TextInput>
+            
+            <BoxPane orientation="horizontal" Form.label="Bilddatei" styles="{fill:true}">
+    			<TextInput bxml:id="layer_file" prompt="Keine Datei ausgewählt" textSize="12"
+            		Form.flag="{messageType:'info', message:'Eindeutiger Name der Ebene'}">
+            	</TextInput>
+            
+    			<PushButton bxml:id="select_file" buttonData="Auswählen"/>
+    		</BoxPane>
+        
+            <TextInput bxml:id="layer_width" Form.label="Breite" text="240" textSize="12" maximumLength="3" 
+            	Form.flag="{messageType:'info', message:'Breite der Grafik in Pixel'}">
+            </TextInput>
+            
+            <TextInput bxml:id="layer_height" Form.label="Höhe" text="240" textSize="12" maximumLength="3" 
+            	Form.flag="{messageType:'info', message:'Höhe der Grafik in Pixel'}">
+            </TextInput>
+            
+            <TextInput bxml:id="layer_top" Form.label="Abstand oben"
+                Form.flag="{messageType:'info', message:'Abstand der Grafik vom oberen Rand in Pixel'}"
+                text="0" textSize="12" maximumLength="3" >
+            </TextInput>
+                
+            <TextInput bxml:id="layer_left" Form.label="Abstand links"
+                Form.flag="{messageType:'info', message:'Abstand der Grafik vom linken Rand in Pixel'}"
+                text="0" textSize="12" maximumLength="3" >
+           </TextInput>
+           
+        </Form.Section>
+    </Form>
+    
+    <BoxPane orientation="horizontal" styles="{padding:6, spacing:16, fill:true}">
+    	<PushButton bxml:id="submit" buttonData="Ebene erstellen"/>
+    	<PushButton bxml:id="cancel" buttonData="Abbrechen"/>
+    </BoxPane>
+    
+    </BoxPane>
+</BoxPane>

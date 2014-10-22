@@ -1,7 +1,9 @@
 package de.easemotion.fie.model.graphics;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Observable;
 
 import de.easemotion.fie.utils.Constants;
 
@@ -17,7 +19,7 @@ import de.easemotion.fie.utils.Constants;
  * @project Flightsimulator-Instrument-Editor
  *
  */
-public class GraphicSurface {
+public class GraphicSurface extends Observable {
 
 	private static final String TAG = GraphicSurface.class.getSimpleName();
 	
@@ -57,6 +59,7 @@ public class GraphicSurface {
 	 */
 	public void setScale(float scale) {
 		this.scale = scale;
+		updateObservers();
 	}
 
 	/**
@@ -85,13 +88,30 @@ public class GraphicSurface {
 	 */
 	public void addLayer(Layer layer) {
 		this.layers.add(layer);
+		updateObservers();
+	}
+	
+	public void addLayer(int index, Layer layer) {
+		this.layers.add(index, layer);
+		updateObservers();
 	}
 	
 	/*
 	 * Delete a layer
 	 */
 	public void deleteLayer(Layer layer){
-		// FIXME implement
+		if(layer == null){
+			return;
+		}
+		
+		Iterator<Layer> iterator = layers.iterator();
+		while (iterator.hasNext()) {
+			if(layer.getId().equals(iterator.next().getId())){
+				iterator.remove();
+				break;
+			}
+		}
+		updateObservers();
 	}
 	
 	/**
@@ -104,6 +124,7 @@ public class GraphicSurface {
 	
 	public void setWidth(int width){
 		this.width = width;
+		updateObservers();
 	}
 
 	/**
@@ -115,6 +136,7 @@ public class GraphicSurface {
 	
 	public void setHeight(int height){
 		this.height = height;
+		updateObservers();
 	}
 
 	/**
@@ -122,5 +144,41 @@ public class GraphicSurface {
 	 */
 	public int getHeight() {
 		return height;
+	}
+	
+	public void setLayerActive(Layer layer){
+		if(layer == null) {
+			return;
+		}
+		
+		for (Layer l : layers) {
+			if(l.getId().equals(layer.getId())){
+				l.setActive(true);
+			} else {
+				l.setActive(false);
+			}
+		}
+		updateObservers();
+	}
+	
+	public void setLayersInactive(){
+		for (Layer layer : layers) {
+			layer.setActive(false);
+		}
+		updateObservers();
+	}
+	
+	public Layer getActiveLayer(){
+		for (Layer layer : layers) {
+			if(layer.isActive()){
+				return layer;
+			}
+		}
+		return null;
+	}
+	
+	public void updateObservers(){
+		setChanged();
+		notifyObservers();
 	}
 }

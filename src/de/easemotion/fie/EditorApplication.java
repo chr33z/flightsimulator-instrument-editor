@@ -1,5 +1,7 @@
 package de.easemotion.fie;
 
+import java.util.Observer;
+
 import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.wtk.Action;
@@ -17,12 +19,13 @@ import org.apache.pivot.wtk.Mouse.Button;
 
 import de.easemotion.fie.model.graphics.GraphicSurface;
 import de.easemotion.fie.view.GraphicPanel;
+import de.easemotion.fie.view.PropertyPanel;
 
 public class EditorApplication implements Application {
 	
 	private static final String TAG = EditorApplication.class.getSimpleName();
 	
-	private Window window = null;
+	public Window window = null;
 	
 	public GraphicSurface graphicSurface;
 	
@@ -41,11 +44,15 @@ public class EditorApplication implements Application {
 		BXMLSerializer bxmlSerializer = new BXMLSerializer();
         window = (Window) bxmlSerializer.readObject(EditorApplication.class, "window.bxml");
         bxmlSerializer.bind(this, EditorApplication.class);
+        FillPane layout = (FillPane) bxmlSerializer.getNamespace().get("editor_graphic_container");
         
-        FillPane graphics = (FillPane) bxmlSerializer.getNamespace().get("editor_graphic_container");
+        PropertyPanel propertyPanel = new PropertyPanel(this, graphicSurface);
+        graphicSurface.addObserver(propertyPanel);
+        layout.add(propertyPanel);
         
-        GraphicPanel graphicPanel = new GraphicPanel(graphicSurface);
-        graphics.add(graphicPanel);
+        GraphicPanel graphicPanel = new GraphicPanel(this, graphicSurface);
+        graphicSurface.addObserver(graphicPanel);
+        layout.add(graphicPanel);
         
         window.open(display);
 		
@@ -69,13 +76,6 @@ public class EditorApplication implements Application {
 	@Override
 	public void suspend() throws Exception {
 		// TODO Auto-generated method stub
-		
-	}
-	
-	/**
-	 * Call when a right click on the graphic panel is performed
-	 */
-	private void onGraphicPanelContextMenu(){
 		
 	}
 }
