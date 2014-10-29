@@ -15,21 +15,28 @@ public class Layer {
 	private static final String TAG = Layer.class.getSimpleName();
 	
 	/** human readable id for this layer (like "hour-dial") */
-	private String id;
+	private String id = "";
 	
-	private int width;
+	private int width = 0;
+	private int height = 0;
+	private int left = 0;
+	private int top = 0;
 	
-	private int height;
-	
-	private int left;
-	
-	private int top;
+	/**
+	 * The part of the luascript, responsible for this layer
+	 */
+	private String luaScript = "";
 	
 	/** wheter this layer is active in graphicpanel */
-	boolean active;
+	boolean active = false;
 	
-	/** image file name with file ending */
-	private String image;
+	/** image file name for day images with file ending */
+	private String imageDay = "";
+	
+	/** image file name for night images with file ending */
+	private String imageNight = "";
+	
+	private boolean visible = true;
 	
 	public Layer(){
 		// FIXME implement
@@ -80,13 +87,21 @@ public class Layer {
 		return this;
 	}
 
-	public String getImage() {
-		return image;
+	public String getImageDay() {
+		return imageDay;
 	}
 
-	public Layer setImage(String image) {
-		this.image = image;
+	public Layer setImageDay(String imageDay) {
+		this.imageDay = imageDay;
 		return this;
+	}
+
+	public String getImageNight() {
+		return imageNight;
+	}
+
+	public void setImageNight(String imageNight) {
+		this.imageNight = imageNight;
 	}
 
 	public boolean isActive() {
@@ -95,5 +110,21 @@ public class Layer {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public String getLuaScript() {
+		return luaScript;
+	}
+
+	public void setLuaScript(String luaScript) {
+		this.luaScript = luaScript;
+	}
+
+	public boolean isVisible() {
+		return visible;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 }

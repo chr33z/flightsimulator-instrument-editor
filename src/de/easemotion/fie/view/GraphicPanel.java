@@ -38,6 +38,7 @@ import org.apache.pivot.wtk.Keyboard.KeyLocation;
 import org.apache.pivot.wtk.Mouse.Button;
 
 import de.easemotion.fie.EditorApplication;
+import de.easemotion.fie.lua.LuaParser;
 import de.easemotion.fie.model.graphics.GraphicSurface;
 import de.easemotion.fie.model.graphics.Layer;
 import de.easemotion.fie.utils.Constants;
@@ -71,6 +72,9 @@ public class GraphicPanel extends Panel implements Observer {
 		this.surface = surface;
 		this.editor = editor;
 		
+		this.setSize(Constants.integer.INSTRUMENT_WIDTH, Constants.integer.INSTRUMENT_HEIGHT);
+		this.setPreferredSize(Constants.integer.INSTRUMENT_WIDTH, Constants.integer.INSTRUMENT_HEIGHT);
+
 		this.getComponentMouseButtonListeners().add(mouseMoveButtonListener);
 		this.getComponentMouseListeners().add(mouseMovementListener);
 		this.getComponentKeyListeners().add(keyListener);
@@ -85,11 +89,13 @@ public class GraphicPanel extends Panel implements Observer {
 		for (Layer layer : surface.getLayers()) {
 			BufferedImage image;
 			try {
-				File file = new File(layer.getImage());
-				System.out.println();
-				image = ImageIO.read(file);
-				g.drawImage(image, layer.getLeft(), layer.getTop(), layer.getWidth(), layer.getHeight(), null);
-
+				File file = new File(layer.getImageDay());
+				if(file.exists()){
+					System.out.println();
+					image = ImageIO.read(file);
+					g.drawImage(image, layer.getLeft(), layer.getTop(), layer.getWidth(), layer.getHeight(), null);
+				}
+				
 				if(layer.isActive()){
 					Paint paint = g.getPaint();
 					g.setPaint(Constants.paint.LAYER_ACTIVE_BORDER);
@@ -389,6 +395,16 @@ public class GraphicPanel extends Panel implements Observer {
 			System.err.println(exception);
 		}
 	}
+	
+	private void moveForward(Layer layer){
+		surface.moveLayerForward(layer);
+		repaint();
+	}
+	
+	private void moveBackward(Layer layer){
+		surface.moveLayerBackwards(layer);
+		repaint();
+	}
 
 	private void createLayer(String id, String imagePath, int width, int height, int left, int top){
 		Layer layer = new Layer()
@@ -400,53 +416,13 @@ public class GraphicPanel extends Panel implements Observer {
 
 		File file = new File(imagePath);
 		if(file.exists()){
-			layer.setImage(imagePath);
+			layer.setImageDay(imagePath);
 		}
 		surface.addLayer(layer);
 
+		System.out.println(LuaParser.instrumentToLua(surface));
+
 		repaint();
-	}
-
-	private void moveForward(Layer layer){
-		if(layer != null){
-			int index = 0;
-			Iterator<Layer> iterator = surface.getLayers().iterator();
-			while (iterator.hasNext()) {
-				// find layer
-				if(layer.getId().equals(iterator.next().getId())){
-					iterator.remove();
-					break;
-				}
-				index++;
-			}
-			try {
-				surface.addLayer(index + 1, layer);
-			} catch (IndexOutOfBoundsException e){
-				surface.addLayer(layer);
-			}
-			repaint();
-		}
-	}
-
-	private void moveBackward(Layer layer){
-		if(layer != null){
-			int index = 0;
-			Iterator<Layer> iterator = surface.getLayers().iterator();
-			while (iterator.hasNext()) {
-				// find layer
-				if(layer.getId().equals(iterator.next().getId())){
-					iterator.remove();
-					break;
-				}
-				index++;
-			}
-			try {
-				surface.addLayer(index - 1, layer);
-			} catch (IndexOutOfBoundsException e){
-				surface.addLayer(0, layer);
-			}
-			repaint();
-		}
 	}
 
 	private void deleteLayer(Layer layer){

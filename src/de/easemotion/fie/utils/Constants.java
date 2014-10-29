@@ -14,6 +14,9 @@ public class Constants {
 		public static final int INSTRUMENT_HEIGHT = 240;
 
 		public static final int GRID_SIZE = 10;
+		
+		
+		public static final int MAX_LAYER_COUNT = 10;
 	}
 
 	public static class paint {

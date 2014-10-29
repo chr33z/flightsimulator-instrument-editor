@@ -1,7 +1,24 @@
 <Window title="Test" maximized="true"
     xmlns:bxml="http://pivot.apache.org/bxml"
     xmlns="org.apache.pivot.wtk">
-	<FillPane bxml:id="editor_graphic_container">
-    	
-	</FillPane>
+	
+	<TablePane bxml:id="tablePane" styles="{verticalSpacing:1, showHorizontalGridLines:true,
+        horizontalSpacing:1, showVerticalGridLines:true}">
+        <columns>
+            <TablePane.Column width="1*"/>
+            <TablePane.Column width="1*"/>
+        </columns>
+
+        <TablePane.Row height="1*">
+            <BoxPane bxml:id="editor_left_column" orientation="vertical" 
+            	styles="{padding:6, spacing:8, fill:true}">
+            	<!-- contents of left column -->
+            </BoxPane>
+            
+            <BoxPane bxml:id="editor_right_column" orientation="vertical"
+            	styles="{padding:6, spacing:8, fill:true}">
+            	<!-- contents of right column -->
+            </BoxPane>
+        </TablePane.Row>
+    </TablePane>
 </Window>

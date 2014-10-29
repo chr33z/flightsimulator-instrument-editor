@@ -114,12 +114,80 @@ public class GraphicSurface extends Observable {
 		updateObservers();
 	}
 	
+	public void setVisibility(Layer layer, boolean visible){
+		if(layer == null){
+			return;
+		}
+		
+		Iterator<Layer> iterator = layers.iterator();
+		while (iterator.hasNext()) {
+			if(layer.getId().equals(iterator.next().getId())){
+				layer.setVisible(visible);
+				break;
+			}
+		}
+		updateObservers();
+	}
+	
+	public void toggleVisibility(Layer layer){
+		if(layer == null){
+			return;
+		}
+		
+		Iterator<Layer> iterator = layers.iterator();
+		while (iterator.hasNext()) {
+			if(layer.getId().equals(iterator.next().getId())){
+				layer.setVisible(!layer.isVisible());
+				break;
+			}
+		}
+		updateObservers();
+	}
+	
 	/**
-	 * Move layer one position in the specified direction
-	 * @param up true when the layer should move up, false when down
+	 * Move a layer forward in the drawing position
+	 * @param layer
 	 */
-	public void moveLayer(boolean up){
-		// FIXME implement
+	public void moveLayerForward(Layer layer){
+		if(layer != null){
+			int index = 0;
+			Iterator<Layer> iterator = getLayers().iterator();
+			while (iterator.hasNext()) {
+				// find layer
+				if(layer.getId().equals(iterator.next().getId())){
+					iterator.remove();
+					break;
+				}
+				index++;
+			}
+			try {
+				addLayer(index + 1, layer);
+			} catch (IndexOutOfBoundsException e){
+				addLayer(layer);
+			}
+		}
+		updateObservers();
+	}
+	
+	public void moveLayerBackwards(Layer layer){
+		if(layer != null){
+			int index = 0;
+			Iterator<Layer> iterator = getLayers().iterator();
+			while (iterator.hasNext()) {
+				// find layer
+				if(layer.getId().equals(iterator.next().getId())){
+					iterator.remove();
+					break;
+				}
+				index++;
+			}
+			try {
+				addLayer(index - 1, layer);
+			} catch (IndexOutOfBoundsException e){
+				addLayer(0, layer);
+			}
+		}
+		updateObservers();
 	}
 	
 	public void setWidth(int width){

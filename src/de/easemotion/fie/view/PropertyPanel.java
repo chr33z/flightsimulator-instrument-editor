@@ -68,7 +68,7 @@ public class PropertyPanel extends BoxPane implements Observer {
 		Layer active = surface.getActiveLayer();
 		if(active != null){
 			propName.setText(active.getId()+"");
-			propImage.setText(active.getImage()+"");
+			propImage.setText(active.getImageDay()+"");
 			propWidth.setText(active.getWidth()+"");
 			propHeight.setText(active.getHeight()+"");
 			propLeft.setText(active.getLeft()+"");
@@ -95,7 +95,7 @@ public class PropertyPanel extends BoxPane implements Observer {
 				
 				File file = new File(propImage.getText());
 				if(file.exists()){
-					layer.setImage(file.getAbsolutePath());
+					layer.setImageDay(file.getAbsolutePath());
 				}
 			} catch (NumberFormatException e){
 				
