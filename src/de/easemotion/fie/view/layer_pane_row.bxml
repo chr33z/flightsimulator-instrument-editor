@@ -1,0 +1,22 @@
+<Border xmlns:bxml="http://pivot.apache.org/bxml"
+    xmlns:content="org.apache.pivot.wtk.content"
+    xmlns="org.apache.pivot.wtk">
+    
+    <BoxPane orientation="horizontal">
+    	<!-- layer name -->
+	    <Label bxml:id="layer_label" />
+    
+    	<!-- layer buttons -->
+	    <FillPane>
+	    	<PushButton bxml:id="layer_button_day" 			enabled="false" buttonData="day"/>
+	    	<PushButton bxml:id="layer_button_night" 		enabled="false" buttonData="night"/>
+	    	<PushButton bxml:id="layer_button_up" 			enabled="false" buttonData="up"/>
+	    	<PushButton bxml:id="layer_button_down" 		enabled="false" buttonData="down"/>
+	    	<PushButton bxml:id="layer_button_edit" 		enabled="false" buttonData="edit"/>
+	    	<PushButton bxml:id="layer_button_hand" 		enabled="false" buttonData="hand"/>
+	    	<PushButton bxml:id="layer_button_visibility" 	enabled="false" buttonData="visibility"/>
+	    	<PushButton bxml:id="layer_button_delete" 		enabled="false" buttonData="delete"/>
+	    </FillPane>
+    </BoxPane> 
+	
+</Border>

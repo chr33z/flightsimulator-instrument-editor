@@ -1,0 +1,12 @@
+<FillPane xmlns:bxml="http://pivot.apache.org/bxml"
+    xmlns:content="org.apache.pivot.wtk.content"
+    xmlns="org.apache.pivot.wtk"
+    styles="{padding:6, spacing:8}">
+    
+    <Border>
+	    <ScrollPane horizontalScrollBarPolicy="fill" verticalScrollBarPolicy="fill_to_capacity" preferredHeight="240">
+	    	<TextArea bxml:id="lua_text_area"/>
+	    </ScrollPane>
+    </Border>
+	
+</FillPane>

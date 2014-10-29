@@ -1,0 +1,6 @@
+<Border xmlns:bxml="http://pivot.apache.org/bxml"
+    xmlns:content="org.apache.pivot.wtk.content"
+    xmlns="org.apache.pivot.wtk">
+    
+    <FillPane bxml:id="graphic_panel" width="240" height="240"/>
+</Border>

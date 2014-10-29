@@ -1,7 +1,0 @@
-<Window title="Test" maximized="true"
-    xmlns:bxml="http://pivot.apache.org/bxml"
-    xmlns="org.apache.pivot.wtk">
-	<FillPane bxml:id="editor_graphic_container">
-    	
-	</FillPane>
-</Window>
