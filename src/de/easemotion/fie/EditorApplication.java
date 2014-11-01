@@ -1,5 +1,7 @@
 package de.easemotion.fie;
 
+import java.io.File;
+
 import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.wtk.Application;
@@ -26,6 +28,8 @@ public class EditorApplication implements Application {
 	public Window window = null;
 	
 	public GraphicSurface graphicSurface;
+	
+	public static File lastFileBrowserPath = null;
 	
 	public static void main(String[] args) {
 	    DesktopApplicationContext.main(EditorApplication.class, args);

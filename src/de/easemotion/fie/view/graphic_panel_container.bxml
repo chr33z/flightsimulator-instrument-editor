@@ -2,5 +2,12 @@
     xmlns:content="org.apache.pivot.wtk.content"
     xmlns="org.apache.pivot.wtk">
     
-    <FillPane bxml:id="graphic_panel" width="240" height="240"/>
+    <BoxPane orientation="vertical">
+    	<FillPane bxml:id="graphic_panel" width="240" height="240"/>
+    	
+    	<BoxPane orientation="horizontal">
+    		<PushButton bxml:id="button_mode_day" buttonData="Tag Modus"/>
+    		<PushButton bxml:id="button_mode_night" buttonData="Nacht Modus"/>
+    	</BoxPane>
+    </BoxPane>
 </Border>

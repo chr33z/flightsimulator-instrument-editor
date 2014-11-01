@@ -14,10 +14,13 @@ import org.apache.pivot.wtk.Keyboard.KeyCode;
 import org.apache.pivot.wtk.TextInput;
 import org.apache.pivot.wtk.Keyboard.KeyLocation;
 
+import sun.font.TextLabel;
 import sun.org.mozilla.javascript.ast.CatchClause;
 import de.easemotion.fie.EditorApplication;
 import de.easemotion.fie.model.graphics.GraphicSurface;
+import de.easemotion.fie.model.graphics.ImageLayer;
 import de.easemotion.fie.model.graphics.Layer;
+import de.easemotion.fie.model.graphics.TextLayer;
 
 public class PropertyPanel extends BoxPane implements Observer {
 
@@ -33,6 +36,7 @@ public class PropertyPanel extends BoxPane implements Observer {
 	private TextInput propHeight;
 	private TextInput propLeft;
 	private TextInput propTop;
+	private TextInput propRotation;
 
 	public PropertyPanel(EditorApplication editor, GraphicSurface surface){
 		this.editor = editor;
@@ -47,14 +51,12 @@ public class PropertyPanel extends BoxPane implements Observer {
 			propName.getComponentKeyListeners().add(keyListener);
 			propImage = (TextInput) s.getNamespace().get("prop_file");
 			propImage.getComponentKeyListeners().add(keyListener);
-			propWidth = (TextInput) s.getNamespace().get("prop_width");
-			propWidth.getComponentKeyListeners().add(keyListener);
-			propHeight = (TextInput) s.getNamespace().get("prop_height");
-			propHeight.getComponentKeyListeners().add(keyListener);
 			propLeft = (TextInput) s.getNamespace().get("prop_left");
 			propLeft.getComponentKeyListeners().add(keyListener);
 			propTop = (TextInput) s.getNamespace().get("prop_top");
 			propTop.getComponentKeyListeners().add(keyListener);
+			propRotation = (TextInput) s.getNamespace().get("prop_direction");
+			propRotation.getComponentKeyListeners().add(keyListener);
 
 		} catch (IOException | SerializationException e) {
 			e.printStackTrace();
@@ -68,18 +70,22 @@ public class PropertyPanel extends BoxPane implements Observer {
 		Layer active = surface.getActiveLayer();
 		if(active != null){
 			propName.setText(active.getId()+"");
-			propImage.setText(active.getImageDay()+"");
-			propWidth.setText(active.getWidth()+"");
-			propHeight.setText(active.getHeight()+"");
 			propLeft.setText(active.getLeft()+"");
 			propTop.setText(active.getTop()+"");
+
+			if(active instanceof ImageLayer){
+				ImageLayer imageLayer = (ImageLayer) active;
+				propImage.setText(imageLayer.getImageDay()+"");
+				propRotation.setText(imageLayer.getRotation()+"");
+			} else if(active instanceof TextLayer){
+				// TODO implement
+			}
 		} else {
 			propName.setText("");
 			propImage.setText("");
-			propWidth.setText("");
-			propHeight.setText("");
 			propLeft.setText("");
 			propTop.setText("");
+			propRotation.setText("");
 		}
 	}
 
@@ -88,19 +94,22 @@ public class PropertyPanel extends BoxPane implements Observer {
 		if(layer != null){
 			try {
 				layer.setId(propName.getText());
-				layer.setWidth(Integer.parseInt(propWidth.getText()));
-				layer.setHeight(Integer.parseInt(propHeight.getText()));
 				layer.setLeft(Integer.parseInt(propLeft.getText()));
 				layer.setTop(Integer.parseInt(propTop.getText()));
-				
-				File file = new File(propImage.getText());
-				if(file.exists()){
-					layer.setImageDay(file.getAbsolutePath());
+
+				if(layer instanceof ImageLayer){
+					ImageLayer imageLayer = (ImageLayer) layer;
+					imageLayer.setRotation(Integer.parseInt(propRotation.getText()));
+					
+					File file = new File(propImage.getText());
+					if(file.exists()){
+						imageLayer.setImageDay(file.getAbsolutePath());
+					}
 				}
+
 			} catch (NumberFormatException e){
-				
+
 			}
-			
 			surface.updateObservers();
 		}
 	}
@@ -129,7 +138,7 @@ public class PropertyPanel extends BoxPane implements Observer {
 				case KeyCode.ENTER:
 					updateLayer();
 					break;
-				case KeyCode.LEFT:
+				case KeyCode.RIGHT:
 				case KeyCode.UP:
 					TextInput input1 = (TextInput) component;
 					try {
@@ -140,7 +149,7 @@ public class PropertyPanel extends BoxPane implements Observer {
 					}
 					updateLayer();
 					break;
-				case KeyCode.RIGHT:
+				case KeyCode.LEFT:
 				case KeyCode.DOWN:
 					TextInput input2 = (TextInput) component;
 					try {
@@ -154,8 +163,8 @@ public class PropertyPanel extends BoxPane implements Observer {
 				default:
 					break;
 				}
-				
-				
+
+
 			}
 
 			return false;

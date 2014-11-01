@@ -5,12 +5,14 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
@@ -18,6 +20,7 @@ import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.collections.ArrayList;
 import org.apache.pivot.collections.Sequence;
 import org.apache.pivot.wtk.Action;
+import org.apache.pivot.wtk.ButtonGroup;
 import org.apache.pivot.wtk.ButtonPressListener;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.ComponentKeyListener;
@@ -37,10 +40,15 @@ import org.apache.pivot.wtk.TextInput;
 import org.apache.pivot.wtk.Keyboard.KeyLocation;
 import org.apache.pivot.wtk.Mouse.Button;
 
+import com.sun.org.apache.bcel.internal.generic.Type;
+
 import de.easemotion.fie.EditorApplication;
 import de.easemotion.fie.lua.LuaParser;
 import de.easemotion.fie.model.graphics.GraphicSurface;
+import de.easemotion.fie.model.graphics.ImageLayer;
 import de.easemotion.fie.model.graphics.Layer;
+import de.easemotion.fie.model.graphics.TextLayer;
+import de.easemotion.fie.model.graphics.GraphicSurface.ImageMode;
 import de.easemotion.fie.utils.Constants;
 
 /**
@@ -71,7 +79,7 @@ public class GraphicPanel extends Panel implements Observer {
 	public GraphicPanel(EditorApplication editor, GraphicSurface surface){
 		this.surface = surface;
 		this.editor = editor;
-		
+
 		this.setSize(Constants.integer.INSTRUMENT_WIDTH, Constants.integer.INSTRUMENT_HEIGHT);
 		this.setPreferredSize(Constants.integer.INSTRUMENT_WIDTH, Constants.integer.INSTRUMENT_HEIGHT);
 
@@ -84,30 +92,73 @@ public class GraphicPanel extends Panel implements Observer {
 	@Override
 	public void paint(Graphics2D g) {
 		g.setClip(new Rectangle(0, 0, surface.getWidth(), surface.getHeight()));
-		paintGrid(g);
+		
+		// print a background grid
+		paintBackgroundGrid(g);
 
 		for (Layer layer : surface.getLayers()) {
-			BufferedImage image;
-			try {
-				File file = new File(layer.getImageDay());
-				if(file.exists()){
-					System.out.println();
-					image = ImageIO.read(file);
-					g.drawImage(image, layer.getLeft(), layer.getTop(), layer.getWidth(), layer.getHeight(), null);
+			if(!layer.isVisible()){
+				continue;
+			}
+			if(layer instanceof ImageLayer){
+				AffineTransform transform = g.getTransform();
+				
+				try {
+					BufferedImage image;
+					ImageLayer imageLayer = (ImageLayer) layer;
+					
+
+					String path = surface.getMode() == 
+							ImageMode.DAY ? imageLayer.getImageDay():imageLayer.getImageNight();
+					File file = new File(path);
+					
+					if(file.exists()){
+						System.out.println();
+						image = ImageIO.read(file);
+
+						int pivotX = imageLayer.getLeft() + imageLayer.getPivotX();
+						int pivotY = imageLayer.getTop() + imageLayer.getPivotY();
+						g.rotate(Math.toRadians(((ImageLayer) layer).getRotation()), pivotX, pivotY);
+						g.drawImage(image, imageLayer.getLeft(), imageLayer.getTop(), 
+								imageLayer.getWidth(), imageLayer.getHeight(), null);
+					}
+
+					if(imageLayer.isActive()){
+						Paint paint = g.getPaint();
+						g.setPaint(Constants.paint.LAYER_ACTIVE_BORDER);
+						g.setStroke(new BasicStroke(2));
+						g.drawRect(imageLayer.getLeft(), imageLayer.getTop(), imageLayer.getWidth(), imageLayer.getHeight());
+						g.setPaint(paint);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 				
-				if(layer.isActive()){
-					Paint paint = g.getPaint();
-					g.setPaint(Constants.paint.LAYER_ACTIVE_BORDER);
-					g.setStroke(new BasicStroke(2));
-					g.drawRect(layer.getLeft(), layer.getTop(), layer.getWidth(), layer.getHeight());
-					g.setPaint(paint);
-				}
+				g.setTransform(transform);
+			}
+			else if(layer instanceof TextLayer){
+				TextLayer textLayer = (TextLayer) layer;
 
-			} catch (IOException e) {
-				e.printStackTrace();
+				// TODO implement
+				Paint paint = g.getPaint();
+				g.drawString("test", textLayer.getLeft(), textLayer.getTop());
+				g.setPaint(paint);
 			}
 		}
+		
+		Layer activeLayer = surface.getActiveLayer();
+		if(activeLayer != null && activeLayer instanceof ImageLayer){
+			ImageLayer layer = (ImageLayer) activeLayer;
+			
+			Paint paint = g.getPaint();
+			g.setPaint(Constants.paint.LAYER_PIVOT);
+			g.fillOval(
+					layer.getLeft() + layer.getPivotX() - 1,
+					layer.getTop() + layer.getPivotY() - 1, 
+					2, 2);
+			g.setPaint(paint);
+		}
+		
 		super.paint(g);
 	}
 
@@ -115,7 +166,7 @@ public class GraphicPanel extends Panel implements Observer {
 	 * Paint a background grid
 	 * @param g
 	 */
-	private void paintGrid(Graphics2D g){
+	private void paintBackgroundGrid(Graphics2D g){
 		Paint paint = g.getPaint();
 
 		int size = Constants.integer.GRID_SIZE;
@@ -310,9 +361,11 @@ public class GraphicPanel extends Panel implements Observer {
 		Layer result = null;
 
 		for (Layer layer : surface.getLayers()) {
-			if( (x > layer.getLeft() && x < layer.getLeft() + layer.getWidth()) && 
-					(y > layer.getTop() && y < layer.getTop() + layer.getHeight())){
-				result = layer;
+			if(layer instanceof ImageLayer){
+				if( (x > layer.getLeft() && x < layer.getLeft() + ((ImageLayer)layer).getWidth()) && 
+						(y > layer.getTop() && y < layer.getTop() + ((ImageLayer)layer).getHeight())){
+					result = layer;
+				}
 			}
 		}
 
@@ -337,10 +390,9 @@ public class GraphicPanel extends Panel implements Observer {
 
 			final TextInput layerId = (TextInput) serializer.getNamespace().get("layer_id");
 			final TextInput layerImagePath = (TextInput) serializer.getNamespace().get("layer_file");
-			final TextInput layerWidth = (TextInput) serializer.getNamespace().get("layer_width");
-			final TextInput layerHeight = (TextInput) serializer.getNamespace().get("layer_height");
 			final TextInput layerLeft = (TextInput) serializer.getNamespace().get("layer_left");
 			final TextInput layerTop = (TextInput) serializer.getNamespace().get("layer_top");
+			final ButtonGroup typeGroup = (ButtonGroup) serializer.getNamespace().get("layer_type");
 
 			PushButton selectFile = (PushButton) serializer.getNamespace().get("select_file");
 			selectFile.getButtonPressListeners().add(new ButtonPressListener() {
@@ -369,18 +421,24 @@ public class GraphicPanel extends Panel implements Observer {
 
 				@Override
 				public void buttonPressed(org.apache.pivot.wtk.Button button) {
-					try {
-						int width = Integer.parseInt(layerWidth.getText());
-						int height = Integer.parseInt(layerHeight.getText());
-						int left = Integer.parseInt(layerLeft.getText());
-						int top = Integer.parseInt(layerTop.getText());
+					String type = (String) typeGroup.getSelection().getButtonData();
 
-						createLayer(layerId.getText(), layerImagePath.getText(), width, height, left, top);
-						dialog.close();
-					} catch (NumberFormatException e){
-						// FIXME implement errorhandling
+					int left = 0;
+					int top = 0;
+					try {
+						left = Integer.parseInt(layerLeft.getText());
+						top = Integer.parseInt(layerTop.getText());
+					} catch(NumberFormatException e){
+						// nix
 					}
 
+					if(type.equals("Text")){
+						createTextLayer(layerId.getText(), 25, left, top);
+					}
+					else if(type.equals("Bild")){
+						createImageLayer(layerId.getText(), layerImagePath.getText(), left, top);
+						dialog.close();
+					}
 				}
 			});
 			PushButton cancel = (PushButton) serializer.getNamespace().get("cancel");
@@ -395,31 +453,58 @@ public class GraphicPanel extends Panel implements Observer {
 			System.err.println(exception);
 		}
 	}
-	
+
 	private void moveForward(Layer layer){
 		surface.moveLayerForward(layer);
 		repaint();
 	}
-	
+
 	private void moveBackward(Layer layer){
 		surface.moveLayerBackwards(layer);
 		repaint();
 	}
 
-	private void createLayer(String id, String imagePath, int width, int height, int left, int top){
-		Layer layer = new Layer()
-		.setWidth(width)
-		.setHeight(height)
+	private void createImageLayer(String id, String imagePath, int left, int top){
+		int width = 0;
+		int height = 0;
+		
+		File file = new File(imagePath);
+		if(file.exists()){
+			BufferedImage image;
+			try {
+				image = ImageIO.read(file);
+				width = image.getWidth();
+				height = image.getHeight();
+			} catch (IOException | NullPointerException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		ImageLayer layer = new ImageLayer();
+		layer
+		.setPivotX(width / 2)
+		.setPivotY(height / 2)
 		.setLeft(left)
 		.setTop(top)
 		.setId(id);
 
-		File file = new File(imagePath);
 		if(file.exists()){
 			layer.setImageDay(imagePath);
 		}
 		surface.addLayer(layer);
+		System.out.println(LuaParser.instrumentToLua(surface));
 
+		repaint();
+	}
+
+	private void createTextLayer(String id, int fontSize, int left, int top){
+		TextLayer layer = new TextLayer();
+		layer.setId(id);
+		layer.setFontSize(fontSize);
+		layer.setLeft(left);
+		layer.setTop(top);
+
+		surface.addLayer(layer);
 		System.out.println(LuaParser.instrumentToLua(surface));
 
 		repaint();

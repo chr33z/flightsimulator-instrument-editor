@@ -1,5 +1,6 @@
 package de.easemotion.fie.model.graphics;
 
+
 /**
  * One layer that builds up the instrument. Each layer can hold one image. Each layer has
  * a fixed order in the list that indicates drawing order. Layers at the top are drawn last
@@ -11,32 +12,26 @@ package de.easemotion.fie.model.graphics;
  *
  */
 public class Layer {
-
 	private static final String TAG = Layer.class.getSimpleName();
 	
+	public enum Type {
+		IMAGE, TEXT
+	}
+	
 	/** human readable id for this layer (like "hour-dial") */
-	private String id = "";
+	protected String id = "";
 	
-	private int width = 0;
-	private int height = 0;
-	private int left = 0;
-	private int top = 0;
+	protected int left = 0;
+	protected int top = 0;
 	
-	/**
-	 * The part of the luascript, responsible for this layer
-	 */
-	private String luaScript = "";
+	/** The part of the lua script, responsible for this layer */
+	protected String luaScript = "";
 	
-	/** wheter this layer is active in graphicpanel */
+	/** whether this layer is active in graphic panel */
 	boolean active = false;
 	
-	/** image file name for day images with file ending */
-	private String imageDay = "";
-	
-	/** image file name for night images with file ending */
-	private String imageNight = "";
-	
-	private boolean visible = true;
+	/** True if this layer is visible in the graphic editor */
+	protected boolean visible = true;
 	
 	public Layer(){
 		// FIXME implement
@@ -48,24 +43,6 @@ public class Layer {
 
 	public Layer setId(String id) {
 		this.id = id;
-		return this;
-	}
-
-	public int getWidth() {
-		return width;
-	}
-
-	public Layer setWidth(int width) {
-		this.width = width;
-		return this;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public Layer setHeight(int height) {
-		this.height = height;
 		return this;
 	}
 
@@ -85,23 +62,6 @@ public class Layer {
 	public Layer setTop(int top) {
 		this.top = top;
 		return this;
-	}
-
-	public String getImageDay() {
-		return imageDay;
-	}
-
-	public Layer setImageDay(String imageDay) {
-		this.imageDay = imageDay;
-		return this;
-	}
-
-	public String getImageNight() {
-		return imageNight;
-	}
-
-	public void setImageNight(String imageNight) {
-		this.imageNight = imageNight;
 	}
 
 	public boolean isActive() {

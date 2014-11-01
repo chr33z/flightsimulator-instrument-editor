@@ -1,7 +1,10 @@
 package de.easemotion.fie.lua;
 
+import sun.font.TextLabel;
 import de.easemotion.fie.model.graphics.GraphicSurface;
+import de.easemotion.fie.model.graphics.ImageLayer;
 import de.easemotion.fie.model.graphics.Layer;
+import de.easemotion.fie.model.graphics.TextLayer;
 import de.easemotion.fie.utils.Utils;
 
 /**
@@ -60,24 +63,36 @@ public class LuaParser {
 		layout += "instrument = {\n";
 		for (Layer layer : surface.getLayers()) {
 			layout += "\t" + layer.getId() + " = {\n";
-			layout += "\t\twidth = " + layer.getWidth() + ",\n";
-			layout += "\t\theight = " + layer.getHeight() + ",\n";
 			layout += "\t\tleft = " + layer.getLeft() + ",\n";
 			layout += "\t\ttop = " + layer.getTop() + ",\n";
-
-			// Strip image to filename
-			String imageDay = "";
-			if(Utils.notEmpty(layer.getImageDay()) && Utils.isFile(layer.getImageDay())){
-				imageDay = layer.getImageDay().substring(layer.getImageDay().lastIndexOf("/")+1);
-			}
-			layout += "\t\timage_day = " + imageDay + "\n";
 			
-			// Strip image to filename
-			String imageNight = "";
-			if(Utils.notEmpty(layer.getImageNight()) && Utils.isFile(layer.getImageNight())){
-				imageNight = layer.getImageDay().substring(layer.getImageDay().lastIndexOf("/")+1);
+			if(layer instanceof ImageLayer){
+				ImageLayer imageLayer = (ImageLayer) layer;
+				
+				layout += "\t\ttype = \"image\",\n";
+				layout += "\t\twidth = " + imageLayer.getWidth() + ",\n";
+				layout += "\t\theight = " + imageLayer.getHeight() + ",\n";
+
+				// Strip image to filename
+				String imageDay = "";
+				if(Utils.notEmpty(imageLayer.getImageDay()) && Utils.isFile(imageLayer.getImageDay())){
+					imageDay = imageLayer.getImageDay().substring(imageLayer.getImageDay().lastIndexOf("/")+1);
+				}
+				layout += "\t\timage_day = " + imageDay + "\n";
+				
+				// Strip image to filename
+				String imageNight = "";
+				if(Utils.notEmpty(imageLayer.getImageNight()) && Utils.isFile(imageLayer.getImageNight())){
+					imageNight = imageLayer.getImageDay().substring(imageLayer.getImageNight().lastIndexOf("/")+1);
+				}
+				layout += "\t\timage_night = " + imageNight + "\n";
+				
+			} else if(layer instanceof TextLayer){
+				TextLayer textLayer = (TextLayer) layer;
+				
+				layout += "\t\tfont_size = " + textLayer.getFontSize() + ",\n";
+				layout += "\t\tfont = " + textLayer.getFont() + ",\n";
 			}
-			layout += "\t\timage_night = " + imageNight + "\n";
 
 			layout += "\t},\n";
 		}

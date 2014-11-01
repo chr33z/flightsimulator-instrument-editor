@@ -31,6 +31,7 @@ import org.apache.pivot.wtk.effects.ReflectionDecorator;
 
 import de.easemotion.fie.EditorApplication;
 import de.easemotion.fie.model.graphics.GraphicSurface;
+import de.easemotion.fie.model.graphics.ImageLayer;
 import de.easemotion.fie.model.graphics.Layer;
 import de.easemotion.fie.utils.Constants;
 
@@ -94,9 +95,11 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 					
 					actionDay.setEnabled(true);
 					actionDay.setAttribute(Attribute.LAYER, layer);
+					actionDay.getButtonPressListeners().add(actionSelectDayImage);
 					
 					actionNight.setEnabled(true);
 					actionNight.setAttribute(Attribute.LAYER, layer);
+					actionNight.getButtonPressListeners().add(actionSelectNightImage);
 					
 					actionUp.setEnabled(true);
 					actionUp.setAttribute(Attribute.LAYER, layer);
@@ -159,6 +162,30 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 		}
 	};
 	
+	ButtonPressListener actionSelectDayImage = new ButtonPressListener() {
+		@Override
+		public void buttonPressed(Button button) {
+			System.out.println("Select day image");
+			Layer layer = (Layer) button.getAttribute(Attribute.LAYER);
+			
+			if(layer instanceof ImageLayer){
+				selectLayerImage((ImageLayer)layer, false);
+			}
+		}
+	};
+	
+	ButtonPressListener actionSelectNightImage = new ButtonPressListener() {
+		@Override
+		public void buttonPressed(Button button) {
+			System.out.println("Select night image");
+			Layer layer = (Layer) button.getAttribute(Attribute.LAYER);
+			
+			if(layer instanceof ImageLayer){
+				selectLayerImage((ImageLayer)layer, true);
+			}
+		}
+	};
+	
 	ButtonPressListener actionToggleVisibilityListener = new ButtonPressListener() {
 		@Override
 		public void buttonPressed(Button button) {
@@ -216,6 +243,37 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 			return false;
 		}
 	};
+	
+	private void selectLayerImage(final ImageLayer layer, final boolean nightImage){
+		File root = EditorApplication.lastFileBrowserPath;
+		
+		final FileBrowserSheet fileBrowserSheet = new FileBrowserSheet();
+		fileBrowserSheet.setMode(Mode.OPEN);
+		if(root != null && root.exists()){
+			fileBrowserSheet.setRootDirectory(root);
+		}
+		fileBrowserSheet.open(editor.window, new SheetCloseListener() {
+			@Override
+			public void sheetClosed(Sheet sheet) {
+				if (sheet.getResult()) {
+					Sequence<File> selectedFiles = fileBrowserSheet.getSelectedFiles();
+
+					if(selectedFiles.getLength() > 0){
+						String path = selectedFiles.get(0).getAbsolutePath();
+						if(new File(path).exists()){
+							if(!nightImage){
+								layer.setImageDay(path);
+							} else {
+								layer.setImageNight(path);
+							}
+						}
+					}
+					
+					EditorApplication.lastFileBrowserPath = fileBrowserSheet.getSelectedFile().getParentFile();
+				}
+			}
+		});
+	}
 	
 	private void createDeleteDialog(final Layer layer){
 		Component body = null;

@@ -18,11 +18,16 @@ public class Constants {
 		
 		public static final int MAX_LAYER_COUNT = 10;
 	}
+	
+	public static class font {
+		public static final String QUARTZ = "QUARTZ";
+	}
 
 	public static class paint {
 		public static final Paint GRID_LIGHT = new Color(0.8f, 0.8f, 0.8f);
 		public static final Paint GRID_DARK = new Color(0.65f, 0.65f, 0.65f);
 		
 		public static final Paint LAYER_ACTIVE_BORDER = new Color(1.0f, 0.0f, 0.0f);
+		public static final Paint LAYER_PIVOT = new Color(1.0f, 0.0f, 0.0f);
 	}
 }

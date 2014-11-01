@@ -32,14 +32,6 @@
     			<PushButton bxml:id="select_file" buttonData="Auswählen"/>
     		</BoxPane>
         
-            <TextInput bxml:id="layer_width" Form.label="Breite" text="240" textSize="12" maximumLength="3" 
-            	Form.flag="{messageType:'info', message:'Breite der Grafik in Pixel'}">
-            </TextInput>
-            
-            <TextInput bxml:id="layer_height" Form.label="Höhe" text="240" textSize="12" maximumLength="3" 
-            	Form.flag="{messageType:'info', message:'Höhe der Grafik in Pixel'}">
-            </TextInput>
-            
             <TextInput bxml:id="layer_top" Form.label="Abstand oben"
                 Form.flag="{messageType:'info', message:'Abstand der Grafik vom oberen Rand in Pixel'}"
                 text="0" textSize="12" maximumLength="3" >

@@ -17,14 +17,6 @@
 	            
 	    			<PushButton bxml:id="select_file" buttonData="Ändern"/>
 	    		</BoxPane>
-	        
-	            <TextInput bxml:id="prop_width" Form.label="Breite" textSize="12"
-	            	Form.flag="{messageType:'info', message:'Breite der Grafik in Pixel'}">
-	            </TextInput>
-	            
-	            <TextInput bxml:id="prop_height" Form.label="Höhe" textSize="12"
-	            	Form.flag="{messageType:'info', message:'Höhe der Grafik in Pixel'}">
-	            </TextInput>
 	            
 	            <TextInput bxml:id="prop_top" Form.label="Abstand oben"
 	                Form.flag="{messageType:'info', message:'Abstand der Grafik vom oberen Rand in Pixel'}"
@@ -35,6 +27,11 @@
 	                Form.flag="{messageType:'info', message:'Abstand der Grafik vom linken Rand in Pixel'}"
 	                textSize="12" >
 	           </TextInput>
+	           
+	           <TextInput bxml:id="prop_direction" Form.label="Rotation"
+	                Form.flag="{messageType:'info', message:'Rotation der Ebene'}"
+	                textSize="12" >
+	            </TextInput>
 	           
 	        </Form.Section>
 	    </Form>

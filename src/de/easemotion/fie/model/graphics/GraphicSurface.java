@@ -23,11 +23,25 @@ public class GraphicSurface extends Observable {
 
 	private static final String TAG = GraphicSurface.class.getSimpleName();
 	
+	/**
+	 * Mode describes whether he night or day images are shown in editor
+	 * 
+	 * @author Christopher Gebhardt
+	 * @date Nov 1, 2014
+	 * @project Flightsimulator-Instrument-Editor
+	 *
+	 */
+	public enum ImageMode {
+		DAY, NIGHT
+	}
+	
 	private int width = Constants.integer.INSTRUMENT_WIDTH;
 	
 	private int height = Constants.integer.INSTRUMENT_HEIGHT;
 	
 	private float scale = 1.0f;
+	
+	private ImageMode mode = ImageMode.DAY;
 	
 	private List<Layer> layers = new ArrayList<Layer>();
 	
@@ -245,6 +259,15 @@ public class GraphicSurface extends Observable {
 		return null;
 	}
 	
+	public ImageMode getMode() {
+		return mode;
+	}
+
+	public void setMode(ImageMode mode) {
+		this.mode = mode;
+		updateObservers();
+	}
+
 	public void updateObservers(){
 		setChanged();
 		notifyObservers();
