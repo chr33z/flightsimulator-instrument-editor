@@ -1,23 +1,16 @@
 package de.easemotion.fie.view;
 
-import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.imageio.ImageIO;
-
 import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.collections.Sequence;
 import org.apache.pivot.serialization.SerializationException;
-import org.apache.pivot.util.concurrent.TaskExecutionException;
-import org.apache.pivot.wtk.Alert;
 import org.apache.pivot.wtk.BoxPane;
 import org.apache.pivot.wtk.Button;
 import org.apache.pivot.wtk.ButtonPressListener;
@@ -27,7 +20,6 @@ import org.apache.pivot.wtk.ComponentMouseButtonListener;
 import org.apache.pivot.wtk.Dialog;
 import org.apache.pivot.wtk.FileBrowserSheet;
 import org.apache.pivot.wtk.LinkButton;
-import org.apache.pivot.wtk.MessageType;
 import org.apache.pivot.wtk.Sheet;
 import org.apache.pivot.wtk.SheetCloseListener;
 import org.apache.pivot.wtk.FileBrowserSheet.Mode;
@@ -36,16 +28,13 @@ import org.apache.pivot.wtk.Label;
 import org.apache.pivot.wtk.PushButton;
 import org.apache.pivot.wtk.TextInput;
 import org.apache.pivot.wtk.Keyboard.KeyLocation;
-import org.apache.pivot.wtk.content.ButtonData;
-import org.apache.pivot.wtk.effects.ReflectionDecorator;
-import org.apache.pivot.wtk.media.Image;
-
 import de.easemotion.fie.EditorApplication;
 import de.easemotion.fie.model.graphics.Instrument;
 import de.easemotion.fie.model.graphics.ImageLayer;
 import de.easemotion.fie.model.graphics.Layer;
 import de.easemotion.fie.utils.Constants;
-import de.easemotion.fie.view.IconLoader.Icon;
+import de.easemotion.fie.utils.IconLoader;
+import de.easemotion.fie.utils.IconLoader.Icon;
 
 public class LayerSetupPanel extends BoxPane implements Observer {
 
@@ -73,6 +62,8 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 			this.add(component);
 
 			layerListContainer = (BoxPane) s.getNamespace().get("layer_list_container");
+			
+			StyleDictionary dic = layerListContainer.getStyles();
 
 			renderLayers();
 

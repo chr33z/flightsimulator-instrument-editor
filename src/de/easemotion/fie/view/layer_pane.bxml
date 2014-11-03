@@ -1,9 +1,6 @@
-<Border xmlns:bxml="http://pivot.apache.org/bxml"
+<BoxPane xmlns:bxml="http://pivot.apache.org/bxml"
     xmlns:content="org.apache.pivot.wtk.content"
-    xmlns="org.apache.pivot.wtk">
-    
-    <BoxPane bxml:id="layer_list_container" orientation="vertical">
+    xmlns="org.apache.pivot.wtk"
+    bxml:id="layer_list_container" orientation="vertical" styles="{backgroundColor:'0xff000000', spacing:2}">
 	    <!-- layer list content -->
     </BoxPane> 
-	
-</Border>

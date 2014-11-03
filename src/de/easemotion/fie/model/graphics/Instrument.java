@@ -274,6 +274,13 @@ public class Instrument extends Observable {
 		return null;
 	}
 	
+	public void reset(){
+		layers = new ArrayList<>();
+		codeEncoderLeft = "";
+		codeEncoderRight = "";
+		mode = ImageMode.DAY;
+	}
+	
 	public ImageMode getMode() {
 		return mode;
 	}

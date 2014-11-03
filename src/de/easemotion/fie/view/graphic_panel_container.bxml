@@ -1,15 +1,14 @@
-<Border xmlns:bxml="http://pivot.apache.org/bxml"
+<BoxPane xmlns:bxml="http://pivot.apache.org/bxml"
     xmlns:content="org.apache.pivot.wtk.content"
-    xmlns="org.apache.pivot.wtk">
-    
-    <BoxPane orientation="vertical">
-    	<FillPane bxml:id="graphic_panel" width="240" height="240"/>
-    	
-    	<BoxPane orientation="horizontal">
-    		<PushButton bxml:id="button_mode_day" buttonData="Tag Modus"/>
-    		<PushButton bxml:id="button_mode_night" buttonData="Nacht Modus"/>
-    		<PushButton bxml:id="button_alignement_grid" buttonData="Gitter"/>
-    		<PushButton bxml:id="button_instrument_mask" buttonData="Mask"/>
-    	</BoxPane>
-    </BoxPane>
-</Border>
+    xmlns="org.apache.pivot.wtk"
+    orientation="vertical" styles="{spacing:10}">
+	
+	<FillPane bxml:id="graphic_panel" width="240" height="240"/>
+	
+	<BoxPane orientation="horizontal" styles="{spacing:0}">
+		<LinkButton bxml:id="button_mode_day"/>
+		<LinkButton bxml:id="button_mode_night"/>
+		<LinkButton bxml:id="button_alignement_grid"/>
+		<LinkButton bxml:id="button_instrument_mask"/>
+	</BoxPane>
+</BoxPane>

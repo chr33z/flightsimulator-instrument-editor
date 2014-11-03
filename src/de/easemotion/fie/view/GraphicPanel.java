@@ -64,7 +64,7 @@ public class GraphicPanel extends Panel implements Observer {
 
 	private static final String TAG = GraphicPanel.class.getSimpleName();
 
-	private Instrument surface;
+	private Instrument instrument;
 
 	private EditorApplication editor;
 
@@ -82,8 +82,8 @@ public class GraphicPanel extends Panel implements Observer {
 	private int currentX;
 	private int currentY;
 
-	public GraphicPanel(EditorApplication editor, Instrument surface){
-		this.surface = surface;
+	public GraphicPanel(EditorApplication editor, Instrument instrument){
+		this.instrument = instrument;
 		this.editor = editor;
 
 		this.setSize(Constants.integer.INSTRUMENT_WIDTH, Constants.integer.INSTRUMENT_HEIGHT);
@@ -97,12 +97,12 @@ public class GraphicPanel extends Panel implements Observer {
 
 	@Override
 	public void paint(Graphics2D g) {
-		g.setClip(new Rectangle(0, 0, surface.getWidth(), surface.getHeight()));
+		g.setClip(new Rectangle(0, 0, instrument.getWidth(), instrument.getHeight()));
 		
 		// print a background grid
 		paintBackgroundGrid(g);
 
-		for (Layer layer : surface.getLayers()) {
+		for (Layer layer : instrument.getLayers()) {
 			if(!layer.isVisible()){
 				continue;
 			}
@@ -113,7 +113,7 @@ public class GraphicPanel extends Panel implements Observer {
 					BufferedImage image;
 					ImageLayer imageLayer = (ImageLayer) layer;
 					
-					File file = surface.getMode() == 
+					File file = instrument.getMode() == 
 							ImageMode.DAY ? imageLayer.getImageDay():imageLayer.getImageNight();
 					
 					if(file != null && file.exists()){
@@ -157,7 +157,7 @@ public class GraphicPanel extends Panel implements Observer {
 			paintAlignementGrid(g);
 		}
 
-		Layer activeLayer = surface.getActiveLayer();
+		Layer activeLayer = instrument.getActiveLayer();
 		if(activeLayer != null && activeLayer instanceof ImageLayer){
 			ImageLayer layer = (ImageLayer) activeLayer;
 			
@@ -181,8 +181,8 @@ public class GraphicPanel extends Panel implements Observer {
 		Paint paint = g.getPaint();
 
 		int size = Constants.integer.GRID_SIZE;
-		for (int i = 0; i < surface.getWidth() / size; i++) {
-			for (int j = 0; j < surface.getHeight() / size; j++) {
+		for (int i = 0; i < instrument.getWidth() / size; i++) {
+			for (int j = 0; j < instrument.getHeight() / size; j++) {
 				if((i+j) % 2 == 0){
 					g.setPaint(Constants.paint.GRID_LIGHT);
 				} else {
@@ -204,8 +204,8 @@ public class GraphicPanel extends Panel implements Observer {
 		
 		g.setPaint(Constants.paint.GRID_ALIGNMENT);
 		int size = Constants.integer.GRID_SIZE * 2;
-		for (int i = 1; i < surface.getWidth() / size; i++) {
-			for (int j = 1; j < surface.getHeight() / size; j++) {
+		for (int i = 1; i < instrument.getWidth() / size; i++) {
+			for (int j = 1; j < instrument.getHeight() / size; j++) {
 				g.fillOval(size * i-1, size * j-1, 2, 2);
 			}
 		}
@@ -225,7 +225,7 @@ public class GraphicPanel extends Panel implements Observer {
 			}
 		}
 		g.drawImage(instrumentMask, 0, 0, 
-				surface.getWidth(), surface.getHeight(), null);
+				instrument.getWidth(), instrument.getHeight(), null);
 		g.setPaint(paint);
 	}
 
@@ -258,17 +258,17 @@ public class GraphicPanel extends Panel implements Observer {
 
 				// deactivate layer when clicked again
 				if(activeLayer != null && newActive.getId().equals(activeLayer.getId())){
-					surface.setLayersInactive();
+					instrument.setLayersInactive();
 					System.out.println("Layer "+activeLayer.getId()+" deactivated.");
 					activeLayer = null;
 				} else {
 					activeLayer = newActive;
-					surface.setLayerActive(activeLayer);
+					instrument.setLayerActive(activeLayer);
 					System.out.println("Layer "+activeLayer.getId()+" is active.");
 					GraphicPanel.this.setFocused(true, null);
 				}
 			} else {
-				surface.setLayersInactive();
+				instrument.setLayersInactive();
 			}
 
 			repaint();
@@ -405,7 +405,7 @@ public class GraphicPanel extends Panel implements Observer {
 	private Layer getClickedLayer(int x, int y){
 		Layer result = null;
 
-		for (Layer layer : surface.getLayers()) {
+		for (Layer layer : instrument.getLayers()) {
 			if(layer instanceof ImageLayer){
 				if( (x > layer.getLeft() && x < layer.getLeft() + ((ImageLayer)layer).getWidth()) && 
 						(y > layer.getTop() && y < layer.getTop() + ((ImageLayer)layer).getHeight())){
@@ -500,12 +500,12 @@ public class GraphicPanel extends Panel implements Observer {
 	}
 
 	private void moveForward(Layer layer){
-		surface.moveLayerForward(layer);
+		instrument.moveLayerForward(layer);
 		repaint();
 	}
 
 	private void moveBackward(Layer layer){
-		surface.moveLayerBackwards(layer);
+		instrument.moveLayerBackwards(layer);
 		repaint();
 	}
 
@@ -536,8 +536,8 @@ public class GraphicPanel extends Panel implements Observer {
 		if(file.exists()){
 			layer.setImageDay(file);
 		}
-		surface.addLayer(layer);
-		System.out.println(LuaParser.instrumentToLua(surface));
+		instrument.addLayer(layer);
+		System.out.println(LuaParser.instrumentToLua(instrument));
 
 		repaint();
 	}
@@ -575,14 +575,14 @@ public class GraphicPanel extends Panel implements Observer {
 		layer.setLeft(left);
 		layer.setTop(top);
 
-		surface.addLayer(layer);
-		System.out.println(LuaParser.instrumentToLua(surface));
+		instrument.addLayer(layer);
+		System.out.println(LuaParser.instrumentToLua(instrument));
 
 		repaint();
 	}
 
 	private void deleteLayer(Layer layer){
-		surface.deleteLayer(layer);
+		instrument.deleteLayer(layer);
 	}
 
 	@Override

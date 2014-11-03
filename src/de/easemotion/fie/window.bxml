@@ -17,7 +17,9 @@
 	        <TablePane.Row height="1*">
 	        	<TablePane.Filler/>
 	            
-	            <TablePane>
+	            <TablePane styles="{verticalSpacing:0, showHorizontalGridLines:true,
+            		horizontalSpacing:0, showVerticalGridLines:true}">
+	            	
 	            	<columns>
 			            <TablePane.Column width="1*"/>
 			        </columns>
@@ -26,13 +28,13 @@
 	            		<TablePane.Filler/>
 	            	</TablePane.Row>
 	            	
-	            	<TablePane.Row height="25" bxml:id="editor_instrument_name" />
+	            	<TablePane.Row height="25" bxml:id="editor_menu" />
 	            	
 	            	<TablePane.Row height="56">
 	            		<TablePane.Filler/>
 	            	</TablePane.Row>
 	            	
-	            	<TablePane.Row height="268" bxml:id="editor_layer_setup" />
+	            	<TablePane.Row height="268" bxml:id="editor_layer_setup"/>
 	            	
 	            	<TablePane.Row height="78">
 	            		<TablePane.Filler/>
@@ -43,6 +45,39 @@
 	           
 	            <TablePane.Filler/>
 	            
+	            <TablePane>
+	            	<columns>
+			            <TablePane.Column width="1*"/>
+			        </columns>
+	            
+	            	<TablePane.Row height="87">
+	            		<TablePane.Filler/>
+	            	</TablePane.Row>
+	            	
+	            	<TablePane.Row height="25" bxml:id="editor_instrument_name" />
+	            	
+	            	<TablePane.Row height="72">
+	            		<TablePane.Filler/>
+	            	</TablePane.Row>
+	            	
+	            	<TablePane.Row height="106" bxml:id="editor_layer_properties" />
+	            	
+	            	<TablePane.Row height="72">
+	            		<TablePane.Filler/>
+	            	</TablePane.Row>
+	            	
+	            	<TablePane.Row height="275" bxml:id="editor_instrument_preview" />
+	            	
+	            	<TablePane.Row height="76">
+	            		<TablePane.Filler/>
+	            	</TablePane.Row>
+	            	
+	            	<TablePane.Row height="25" bxml:id="editor_encoder_setup" />
+	            	
+	            	<TablePane.Row height="66">
+	            		<TablePane.Filler/>
+	            	</TablePane.Row>
+	            </TablePane>
 	            <BoxPane bxml:id="editor_right_column" orientation="vertical">
 	            	<!-- contents of right column -->
 	            </BoxPane>
