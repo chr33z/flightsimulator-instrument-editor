@@ -1,42 +1,41 @@
-<Border xmlns:bxml="http://pivot.apache.org/bxml"
-    xmlns:content="org.apache.pivot.wtk.content"
-    xmlns="org.apache.pivot.wtk">
+<BoxPane xmlns:bxml="http://pivot.apache.org/bxml"
+	xmlns:content="org.apache.pivot.wtk.content"
+	xmlns="org.apache.pivot.wtk"
+	orientation="vertical" styles="{spacing:2, padding:'{left:40}'}">
+	
+	<TextInput bxml:id="prop_id"
+		styles="{padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}"
+		preferredWidth="150" preferredHeight="25">
+    </TextInput>
     
-	<BoxPane orientation="vertical" styles="{padding:6, spacing:8, fill:true}">
-		
-	    <Form styles="{showFlagIcons:false, showFlagHighlight:false, padding:0}">
-	        <Form.Section>
-	        	<TextInput bxml:id="prop_id" Form.label="Ebenenname" textSize="12"
-	            	Form.flag="{messageType:'info', message:'Eindeutiger Name der Ebene'}">
-	            </TextInput>
-	            
-	            <TextInput bxml:id="prop_top" Form.label="Abstand oben"
-	                Form.flag="{messageType:'info', message:'Abstand der Grafik vom oberen Rand in Pixel'}"
-	                textSize="12" >
-	            </TextInput>
-	                
-	            <TextInput bxml:id="prop_left" Form.label="Abstand links"
-	                Form.flag="{messageType:'info', message:'Abstand der Grafik vom linken Rand in Pixel'}"
-	                textSize="12" >
-	           </TextInput>
-	           
-	           <TextInput bxml:id="prop_pivot_left" Form.label="Pivot Position links"
-	                Form.flag="{messageType:'info'}"
-	                textSize="12" >
-	            </TextInput>
-	                
-	            <TextInput bxml:id="prop_pivot_top" Form.label="Pivot Position oben"
-	                Form.flag="{messageType:'info'}"
-	                textSize="12" >
-	           </TextInput>
-	           
-	           <TextInput bxml:id="prop_direction" Form.label="DIR"
-	                Form.flag="{messageType:'info', message:'Rotation der Ebene'}"
-	                textSize="12" >
-	            </TextInput>
-	           
-	        </Form.Section>
-	    </Form>
-	    
+    <BoxPane orientation="horizontal" styles="{spacing:22, padding:'{left:21}'}">
+	    <TextInput bxml:id="prop_top"
+	    styles="{padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}"
+	    preferredWidth="53" preferredHeight="25">
+	    </TextInput>
+	        
+	    <TextInput bxml:id="prop_left"
+	    styles="{padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}"
+	    preferredWidth="54" preferredHeight="25">
+	   	</TextInput>
+	</BoxPane>
+	
+	<BoxPane orientation="horizontal" styles="{spacing:22, padding:'{left:21}'}">
+	    <TextInput bxml:id="prop_pivot_left"
+	    styles="{padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}"
+	    preferredWidth="53" preferredHeight="25">
+	    </TextInput>
+	        
+	    <TextInput bxml:id="prop_pivot_top"
+	    styles="{padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}"
+	    preferredWidth="54" preferredHeight="25">
+	   	</TextInput>
+	</BoxPane>
+   
+   	<BoxPane orientation="horizontal" styles="{padding:'{left:48}'}">
+	    <TextInput bxml:id="prop_direction"
+	    styles="{padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}"
+	    preferredWidth="53" preferredHeight="25">
+	    </TextInput>
+	</BoxPane>
 </BoxPane>
-</Border>

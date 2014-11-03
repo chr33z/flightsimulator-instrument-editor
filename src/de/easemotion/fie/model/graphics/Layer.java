@@ -1,5 +1,7 @@
 package de.easemotion.fie.model.graphics;
 
+import java.util.Observable;
+
 
 /**
  * One layer that builds up the instrument. Each layer can hold one image. Each layer has
@@ -27,6 +29,8 @@ public class Layer {
 	/** The part of the lua script, responsible for this layer */
 	protected String luaScript = "";
 	
+	protected Instrument parent;
+	
 	/** whether this layer is active in graphic panel */
 	boolean active = false;
 	
@@ -35,6 +39,10 @@ public class Layer {
 	
 	public Layer(){
 		// FIXME implement
+	}
+	
+	public void setParent(Instrument parent){
+		this.parent = parent;
 	}
 
 	public String getId() {

@@ -6,17 +6,20 @@
 	
 	<!-- layer name -->
     <Label bxml:id="layer_label" preferredWidth="150" preferredHeight="25" 
-    	styles="{backgroundColor:'0xff0000dd', color:'#ff0000'}"/>
+    	styles="{backgroundColor:'0xff000000', color:'#ff0000', font:'monospace normal 14', verticalAlignment:'center', padding:5}"/>
     <Label bxml:id="layer_content" preferredWidth="110" preferredHeight="25" 
-    	styles="{backgroundColor:'0xff0000dd', color:'#ff0000'}" />
+    	styles="{backgroundColor:'0xff000000', color:'#ff0000', font:'monospace normal 14', verticalAlignment:'center'}" />
 
 	<!-- layer buttons -->
-    <FillPane>
+    <BoxPane orientation="horizontal" styles="{spacing:0}">
     	<LinkButton bxml:id="layer_button_day" enabled="false">
             <content:ButtonData icon="/de/easemotion/fie/images/B_Day30_0.png"/>
         </LinkButton>
         <LinkButton bxml:id="layer_button_night" enabled="false">
             <content:ButtonData icon="/de/easemotion/fie/images/B_Night30_0.png"/>
+        </LinkButton>
+        <LinkButton bxml:id="layer_button_text" enabled="false">
+            <content:ButtonData icon="/de/easemotion/fie/images/B_Text30_0.png"/>
         </LinkButton>
         <LinkButton bxml:id="layer_button_up" enabled="false">
             <content:ButtonData icon="/de/easemotion/fie/images/B_Up30_0.png"/>
@@ -33,5 +36,5 @@
         <LinkButton bxml:id="layer_button_delete" enabled="false">
             <content:ButtonData icon="/de/easemotion/fie/images/B_Delete30_0.png"/>
         </LinkButton>
-    </FillPane>
+    </BoxPane>
 </BoxPane>

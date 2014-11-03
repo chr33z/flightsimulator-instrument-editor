@@ -206,7 +206,7 @@ public class GraphicPanel extends Panel implements Observer {
 		int size = Constants.integer.GRID_SIZE * 2;
 		for (int i = 1; i < instrument.getWidth() / size; i++) {
 			for (int j = 1; j < instrument.getHeight() / size; j++) {
-				g.fillOval(size * i-1, size * j-1, 2, 2);
+				g.fillOval(size * i, size * j, 1, 1);
 			}
 		}
 

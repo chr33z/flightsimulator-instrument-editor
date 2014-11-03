@@ -56,7 +56,7 @@
 	            	
 	            	<TablePane.Row height="25" bxml:id="editor_instrument_name" />
 	            	
-	            	<TablePane.Row height="72">
+	            	<TablePane.Row height="76">
 	            		<TablePane.Filler/>
 	            	</TablePane.Row>
 	            	

@@ -1,9 +1,17 @@
-<Border xmlns:bxml="http://pivot.apache.org/bxml"
+<BoxPane xmlns:bxml="http://pivot.apache.org/bxml"
     xmlns:content="org.apache.pivot.wtk.content"
-    xmlns="org.apache.pivot.wtk">
+    xmlns="org.apache.pivot.wtk"
+    orientation="horizontal" styles="{spacing:20}">
     
-    <TextInput bxml:id="instrument_name" textSize="12"
+    <TextInput bxml:id="instrument_name" textSize="12" preferredWidth="190" preferredHeight="25"
+    	styles="{verticalAlignment:'center', padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}"
     	Form.flag="{messageType:'info', message:'Instrumentname'}">
     </TextInput>
     
-</Border>
+    <BoxPane orientation="horizontal" styles="{spacing:0}">
+        <LinkButton bxml:id="button_delete">
+            <content:ButtonData icon="/de/easemotion/fie/images/B_Delete30_0.png"/>
+        </LinkButton>
+	</BoxPane>
+    
+</BoxPane>

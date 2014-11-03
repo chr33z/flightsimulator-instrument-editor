@@ -107,12 +107,14 @@ public class Instrument extends Observable {
 	 * @param layer
 	 */
 	public void addLayer(Layer layer) {
-		this.layers.add(layer);
+		layer.setParent(this);
+		layers.add(layer);
 		updateObservers();
 	}
 	
 	public void addLayer(int index, Layer layer) {
-		this.layers.add(index, layer);
+		layer.setParent(this);
+		layers.add(index, layer);
 		updateObservers();
 	}
 	
@@ -279,6 +281,8 @@ public class Instrument extends Observable {
 		codeEncoderLeft = "";
 		codeEncoderRight = "";
 		mode = ImageMode.DAY;
+		
+		updateObservers();
 	}
 	
 	public ImageMode getMode() {

@@ -63,8 +63,6 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 
 			layerListContainer = (BoxPane) s.getNamespace().get("layer_list_container");
 			
-			StyleDictionary dic = layerListContainer.getStyles();
-
 			renderLayers();
 
 		} catch (IOException | SerializationException e) {
@@ -86,11 +84,13 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 
 				LinkButton actionDay = (LinkButton)s.getNamespace().get("layer_button_day");
 				LinkButton actionNight = (LinkButton)s.getNamespace().get("layer_button_night");
+				LinkButton actionText = (LinkButton)s.getNamespace().get("layer_button_text");
 				LinkButton actionUp = (LinkButton)s.getNamespace().get("layer_button_up");
 				LinkButton actionDown = (LinkButton)s.getNamespace().get("layer_button_down");
 				LinkButton actionEdit = (LinkButton)s.getNamespace().get("layer_button_edit");
 				LinkButton actionVisibility = (LinkButton)s.getNamespace().get("layer_button_visibility");
 				LinkButton actionDelete = (LinkButton)s.getNamespace().get("layer_button_delete");
+				
 				/*
 				 * If there is a corresponding layer, read the data and fill the row
 				 */
@@ -100,7 +100,15 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 					boolean isActive = instrument.find(layer.getId()).isActive();
 
 					Label label = (Label) s.getNamespace().get("layer_label");
-					label.setText(layer.getId());
+					
+					label.getStyles().put("font", Constants.font.FONT_GLASS);
+					if(layer.getId().equals("")){
+						label.setText("NO LAYER NAME");
+						label.getStyles().put("color", Constants.color.TEXT_DARK_GREY);
+					} else {
+						label.setText(layer.getId());
+						label.getStyles().put("color", Constants.color.TEXT_LIGHT_GREY);
+					}
 					label.getComponentMouseButtonListeners().add(new ComponentMouseButtonListener() {
 
 						@Override
@@ -155,6 +163,10 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 						actionDay.setButtonData(IconLoader.icons.get(Icon.DAY)[IconLoader.DEACTIVE]);
 						actionNight.setButtonData(IconLoader.icons.get(Icon.NIGHT)[IconLoader.DEACTIVE]);
 					}
+					
+					actionText.setEnabled(true);
+					actionText.setAttribute(Attribute.LAYER, layer);
+					actionText.getButtonPressListeners().add(actioncreateTextLayer);
 
 					actionUp.setEnabled(true);
 					actionUp.setAttribute(Attribute.LAYER, layer);
@@ -187,6 +199,8 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 					actionDelete.getButtonPressListeners().add(actionDeleteListener);
 				}
 				else if(i == instrument.getLayers().size()){
+					// this is the first layer after the last layer
+					
 					actionDay.setEnabled(true);
 					actionDay.setAttribute(Attribute.NEW_LAYER, true);
 					actionDay.getButtonPressListeners().add(actionSelectDayImage);
@@ -194,10 +208,10 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 					actionNight.setEnabled(true);
 					actionNight.setAttribute(Attribute.NEW_LAYER, true);
 					actionNight.getButtonPressListeners().add(actionSelectNightImage);
-
-					//					actionEdit.setEnabled(true);
-					//					actionEdit.setAttribute(Attribute.LAYER, layer);
-					//					actionEdit.setAttribute(Attribute.NEW_LAYER, true);
+					
+					actionText.setEnabled(true);
+					actionText.setAttribute(Attribute.NEW_LAYER, true);
+					actionText.getButtonPressListeners().add(actioncreateTextLayer);
 				}
 
 				layerItems.add(item);
@@ -275,6 +289,28 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 		@Override
 		public void buttonPressed(Button button) {
 			System.out.println("Select night image");
+			Layer layer = (Layer) button.getAttribute(Attribute.LAYER);
+			
+			// create new layer
+			if(button.getAttribute(Attribute.NEW_LAYER) != null){
+				layer = new ImageLayer();
+				instrument.addLayer(layer);
+			}
+
+			if(layer != null){
+				instrument.setLayerActive(layer);
+
+				if(layer instanceof ImageLayer){
+					selectLayerImage((ImageLayer)layer, true);
+				}
+			}
+		}
+	};
+	
+	ButtonPressListener actioncreateTextLayer = new ButtonPressListener() {
+		@Override
+		public void buttonPressed(Button button) {
+			System.out.println("CreateTextLayer");
 			Layer layer = (Layer) button.getAttribute(Attribute.LAYER);
 			
 			// create new layer
