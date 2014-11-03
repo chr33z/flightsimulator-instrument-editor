@@ -1,12 +1,9 @@
-<FillPane xmlns:bxml="http://pivot.apache.org/bxml"
+<Border xmlns:bxml="http://pivot.apache.org/bxml"
     xmlns:content="org.apache.pivot.wtk.content"
-    xmlns="org.apache.pivot.wtk"
-    styles="{padding:6, spacing:8}">
+    xmlns="org.apache.pivot.wtk">
     
-    <Border>
-	    <ScrollPane horizontalScrollBarPolicy="fill" verticalScrollBarPolicy="fill_to_capacity" preferredHeight="240">
-	    	<TextArea bxml:id="lua_text_area"/>
-	    </ScrollPane>
-    </Border>
+    <ScrollPane horizontalScrollBarPolicy="fill" verticalScrollBarPolicy="fill_to_capacity" preferredHeight="240" preferredWidth="240">
+    	<TextArea bxml:id="lua_text_area" width="240" height="240"/>
+    </ScrollPane>
 	
-</FillPane>
+</Border>

@@ -19,9 +19,9 @@ import de.easemotion.fie.utils.Constants;
  * @project Flightsimulator-Instrument-Editor
  *
  */
-public class GraphicSurface extends Observable {
+public class Instrument extends Observable {
 
-	private static final String TAG = GraphicSurface.class.getSimpleName();
+	private static final String TAG = Instrument.class.getSimpleName();
 	
 	/**
 	 * Mode describes whether he night or day images are shown in editor
@@ -45,15 +45,21 @@ public class GraphicSurface extends Observable {
 	
 	private List<Layer> layers = new ArrayList<Layer>();
 	
-	private static GraphicSurface sInstance;
+	/** Code for left encoder */
+	private String codeEncoderLeft = "";
 	
-	private GraphicSurface(){
+	/** Code for right encoder */
+	private String codeEncoderRight = "";
+	
+	private static Instrument sInstance;
+	
+	private Instrument(){
 		// Implemented as Singleton
 	}
 	
-	public static GraphicSurface getInstance(){
+	public static Instrument getInstance(){
 		if(sInstance == null){
-			sInstance = new GraphicSurface();
+			sInstance = new Instrument();
 		}
 		return sInstance;
 	}
@@ -259,6 +265,15 @@ public class GraphicSurface extends Observable {
 		return null;
 	}
 	
+	public Layer find(String id){
+		for (Layer layer : layers) {
+			if(layer.getId().equals(id)){
+				return layer;
+			}
+		}
+		return null;
+	}
+	
 	public ImageMode getMode() {
 		return mode;
 	}
@@ -266,6 +281,22 @@ public class GraphicSurface extends Observable {
 	public void setMode(ImageMode mode) {
 		this.mode = mode;
 		updateObservers();
+	}
+
+	public String getCodeEncoderLeft() {
+		return codeEncoderLeft;
+	}
+
+	public void setCodeEncoderLeft(String codeEncoderLeft) {
+		this.codeEncoderLeft = codeEncoderLeft;
+	}
+
+	public String getCodeEncoderRight() {
+		return codeEncoderRight;
+	}
+
+	public void setCodeEncoderRight(String codeEncoderRight) {
+		this.codeEncoderRight = codeEncoderRight;
 	}
 
 	public void updateObservers(){

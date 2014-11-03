@@ -20,17 +20,17 @@ import org.apache.pivot.wtk.Keyboard.KeyCode;
 import org.apache.pivot.wtk.Keyboard.KeyLocation;
 
 import de.easemotion.fie.EditorApplication;
-import de.easemotion.fie.model.graphics.GraphicSurface;
+import de.easemotion.fie.model.graphics.Instrument;
 import de.easemotion.fie.model.graphics.Layer;
-import de.easemotion.fie.model.graphics.GraphicSurface.ImageMode;
+import de.easemotion.fie.model.graphics.Instrument.ImageMode;
 
 public class GraphicPanelContainer extends BoxPane implements Observer {
 	
 	private GraphicPanel graphicPanel;
 	
-	private GraphicSurface surface;
+	private Instrument surface;
 
-	public GraphicPanelContainer(EditorApplication editor, final GraphicSurface surface){
+	public GraphicPanelContainer(EditorApplication editor, final Instrument surface){
 		this.surface = surface;
 		
 		try {
@@ -53,6 +53,22 @@ public class GraphicPanelContainer extends BoxPane implements Observer {
 					setImageMode(false);
 				}
 			});
+			PushButton buttonAlignementGrid = (PushButton) s.getNamespace().get("button_alignement_grid");
+			buttonAlignementGrid.getButtonPressListeners().add(new ButtonPressListener() {
+				
+				@Override
+				public void buttonPressed(Button button) {
+					setGridMode();
+				}
+			});
+			PushButton buttonInstrumentMask = (PushButton) s.getNamespace().get("button_instrument_mask");
+			buttonInstrumentMask.getButtonPressListeners().add(new ButtonPressListener() {
+				
+				@Override
+				public void buttonPressed(Button button) {
+					setMaskMode();
+				}
+			});
 			
 			FillPane panel = (FillPane) s.getNamespace().get("graphic_panel");
 			graphicPanel = new GraphicPanel(editor, surface);
@@ -70,6 +86,14 @@ public class GraphicPanelContainer extends BoxPane implements Observer {
 	 */
 	private void setImageMode(boolean day){
 		surface.setMode(day ? ImageMode.DAY : ImageMode.NIGHT);
+	}
+	
+	private void setGridMode(){
+		graphicPanel.setShowGrid(!graphicPanel.isShowGrid());
+	}
+	
+	private void setMaskMode(){
+		graphicPanel.setShowInstrumentMask(!graphicPanel.isShowInstrumentMask());
 	}
 
 	@Override

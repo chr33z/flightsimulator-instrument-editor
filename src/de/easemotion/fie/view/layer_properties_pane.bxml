@@ -10,14 +10,6 @@
 	            	Form.flag="{messageType:'info', message:'Eindeutiger Name der Ebene'}">
 	            </TextInput>
 	            
-	            <BoxPane orientation="horizontal" Form.label="Bilddatei" styles="{fill:true}">
-	    			<TextInput bxml:id="prop_file" textSize="12"
-	            		Form.flag="{messageType:'info', message:'Eindeutiger Name der Ebene'}">
-	            	</TextInput>
-	            
-	    			<PushButton bxml:id="select_file" buttonData="Ändern"/>
-	    		</BoxPane>
-	            
 	            <TextInput bxml:id="prop_top" Form.label="Abstand oben"
 	                Form.flag="{messageType:'info', message:'Abstand der Grafik vom oberen Rand in Pixel'}"
 	                textSize="12" >
@@ -28,7 +20,17 @@
 	                textSize="12" >
 	           </TextInput>
 	           
-	           <TextInput bxml:id="prop_direction" Form.label="Rotation"
+	           <TextInput bxml:id="prop_pivot_left" Form.label="Pivot Position links"
+	                Form.flag="{messageType:'info'}"
+	                textSize="12" >
+	            </TextInput>
+	                
+	            <TextInput bxml:id="prop_pivot_top" Form.label="Pivot Position oben"
+	                Form.flag="{messageType:'info'}"
+	                textSize="12" >
+	           </TextInput>
+	           
+	           <TextInput bxml:id="prop_direction" Form.label="DIR"
 	                Form.flag="{messageType:'info', message:'Rotation der Ebene'}"
 	                textSize="12" >
 	            </TextInput>

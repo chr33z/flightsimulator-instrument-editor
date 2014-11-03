@@ -15,20 +15,20 @@ import org.apache.pivot.wtk.Keyboard.KeyCode;
 import org.apache.pivot.wtk.Keyboard.KeyLocation;
 
 import de.easemotion.fie.EditorApplication;
-import de.easemotion.fie.model.graphics.GraphicSurface;
+import de.easemotion.fie.model.graphics.Instrument;
 import de.easemotion.fie.model.graphics.Layer;
 
 public class InstrumentNamePanel extends BoxPane implements Observer {
 	
 	private static final String TAG = InstrumentNamePanel.class.getSimpleName();
 
-	private GraphicSurface surface;
+	private Instrument surface;
 
 	private EditorApplication editor;
 	
 	private TextInput nameInput;
 
-	public InstrumentNamePanel(EditorApplication editor, final GraphicSurface surface){
+	public InstrumentNamePanel(EditorApplication editor, final Instrument surface){
 		this.editor = editor;
 		this.surface = surface;
 

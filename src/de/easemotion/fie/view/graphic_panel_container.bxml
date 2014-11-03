@@ -8,6 +8,8 @@
     	<BoxPane orientation="horizontal">
     		<PushButton bxml:id="button_mode_day" buttonData="Tag Modus"/>
     		<PushButton bxml:id="button_mode_night" buttonData="Nacht Modus"/>
+    		<PushButton bxml:id="button_alignement_grid" buttonData="Gitter"/>
+    		<PushButton bxml:id="button_instrument_mask" buttonData="Mask"/>
     	</BoxPane>
     </BoxPane>
 </Border>

@@ -1,22 +1,39 @@
-<Border xmlns:bxml="http://pivot.apache.org/bxml"
-    xmlns:content="org.apache.pivot.wtk.content"
-    xmlns="org.apache.pivot.wtk">
-    
-    <BoxPane orientation="horizontal">
-    	<!-- layer name -->
-	    <Label bxml:id="layer_label" />
-    
-    	<!-- layer buttons -->
-	    <FillPane>
-	    	<PushButton bxml:id="layer_button_day" 			enabled="false" buttonData="day"/>
-	    	<PushButton bxml:id="layer_button_night" 		enabled="false" buttonData="night"/>
-	    	<PushButton bxml:id="layer_button_up" 			enabled="false" buttonData="up"/>
-	    	<PushButton bxml:id="layer_button_down" 		enabled="false" buttonData="down"/>
-	    	<PushButton bxml:id="layer_button_edit" 		enabled="false" buttonData="edit"/>
-	    	<PushButton bxml:id="layer_button_hand" 		enabled="false" buttonData="hand"/>
-	    	<PushButton bxml:id="layer_button_visibility" 	enabled="false" buttonData="visibility"/>
-	    	<PushButton bxml:id="layer_button_delete" 		enabled="false" buttonData="delete"/>
-	    </FillPane>
-    </BoxPane> 
+<BoxPane xmlns:bxml="http://pivot.apache.org/bxml"
+	xmlns:content="org.apache.pivot.wtk.content"
+	xmlns="org.apache.pivot.wtk"
+	orientation="horizontal">
 	
-</Border>
+	<!-- layer name -->
+    <Border>
+    	<Label bxml:id="layer_label" preferredWidth="150" preferredHeight="25" />
+    </Border>
+    
+    <Border>
+    	<Label bxml:id="layer_content" preferredWidth="110" preferredHeight="25" />
+    </Border>
+
+	<!-- layer buttons -->
+    <FillPane>
+    	<LinkButton bxml:id="layer_button_day" enabled="false">
+            <content:ButtonData icon="@B_Day30_0.png"/>
+        </LinkButton>
+        <LinkButton bxml:id="layer_button_night" enabled="false">
+            <content:ButtonData icon="@B_Night30_0.png"/>
+        </LinkButton>
+        <LinkButton bxml:id="layer_button_up" enabled="false">
+            <content:ButtonData icon="@B_Up30_0.png"/>
+        </LinkButton>
+        <LinkButton bxml:id="layer_button_down" enabled="false">
+            <content:ButtonData icon="@B_Down_0.png"/>
+        </LinkButton>
+        <LinkButton bxml:id="layer_button_edit" enabled="false">
+            <content:ButtonData icon="@B_Edit30_0.png"/>
+        </LinkButton>
+        <LinkButton bxml:id="layer_button_visibility" enabled="false">
+            <content:ButtonData icon="@B_View30_0.png"/>
+        </LinkButton>
+        <LinkButton bxml:id="layer_button_delete" enabled="false">
+            <content:ButtonData icon="@B_Delete30_0.png"/>
+        </LinkButton>
+    </FillPane>
+</BoxPane>

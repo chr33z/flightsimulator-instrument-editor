@@ -1,7 +1,7 @@
-package de.easemotion.fie.lua;
+package de.easemotion.fie.data;
 
 import sun.font.TextLabel;
-import de.easemotion.fie.model.graphics.GraphicSurface;
+import de.easemotion.fie.model.graphics.Instrument;
 import de.easemotion.fie.model.graphics.ImageLayer;
 import de.easemotion.fie.model.graphics.Layer;
 import de.easemotion.fie.model.graphics.TextLayer;
@@ -55,7 +55,7 @@ public class LuaParser {
 	 * @param surface
 	 * @return instrument as a string describing the lua script
 	 */
-	public static String instrumentToLua(GraphicSurface surface){
+	public static String instrumentToLua(Instrument surface){
 		/*
 		 * First part: Lua layout file with all layers
 		 */
@@ -75,15 +75,15 @@ public class LuaParser {
 
 				// Strip image to filename
 				String imageDay = "";
-				if(Utils.notEmpty(imageLayer.getImageDay()) && Utils.isFile(imageLayer.getImageDay())){
-					imageDay = imageLayer.getImageDay().substring(imageLayer.getImageDay().lastIndexOf("/")+1);
+				if(imageLayer.getImageDay() != null && imageLayer.getImageDay().exists()){
+					imageDay = imageLayer.getImageDay().getName();
 				}
 				layout += "\t\timage_day = " + imageDay + "\n";
 				
 				// Strip image to filename
 				String imageNight = "";
-				if(Utils.notEmpty(imageLayer.getImageNight()) && Utils.isFile(imageLayer.getImageNight())){
-					imageNight = imageLayer.getImageDay().substring(imageLayer.getImageNight().lastIndexOf("/")+1);
+				if(imageLayer.getImageNight() != null && imageLayer.getImageNight().exists()){
+					imageNight = imageLayer.getImageNight().getName();
 				}
 				layout += "\t\timage_night = " + imageNight + "\n";
 				

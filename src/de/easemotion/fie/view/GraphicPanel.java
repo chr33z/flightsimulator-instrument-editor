@@ -43,12 +43,12 @@ import org.apache.pivot.wtk.Mouse.Button;
 import com.sun.org.apache.bcel.internal.generic.Type;
 
 import de.easemotion.fie.EditorApplication;
-import de.easemotion.fie.lua.LuaParser;
-import de.easemotion.fie.model.graphics.GraphicSurface;
+import de.easemotion.fie.data.LuaParser;
+import de.easemotion.fie.model.graphics.Instrument;
 import de.easemotion.fie.model.graphics.ImageLayer;
 import de.easemotion.fie.model.graphics.Layer;
 import de.easemotion.fie.model.graphics.TextLayer;
-import de.easemotion.fie.model.graphics.GraphicSurface.ImageMode;
+import de.easemotion.fie.model.graphics.Instrument.ImageMode;
 import de.easemotion.fie.utils.Constants;
 
 /**
@@ -64,19 +64,25 @@ public class GraphicPanel extends Panel implements Observer {
 
 	private static final String TAG = GraphicPanel.class.getSimpleName();
 
-	private GraphicSurface surface;
+	private Instrument surface;
 
 	private EditorApplication editor;
 
 	private Layer activeLayer = null;
 	private Layer pressedLayer = null;
+	
+	private boolean showInstrumentMask = true;
+	
+	private boolean showGrid = true;
 
+	private BufferedImage instrumentMask = null;
+	
 	private Button lastMouseButton;
 
 	private int currentX;
 	private int currentY;
 
-	public GraphicPanel(EditorApplication editor, GraphicSurface surface){
+	public GraphicPanel(EditorApplication editor, Instrument surface){
 		this.surface = surface;
 		this.editor = editor;
 
@@ -107,12 +113,10 @@ public class GraphicPanel extends Panel implements Observer {
 					BufferedImage image;
 					ImageLayer imageLayer = (ImageLayer) layer;
 					
-
-					String path = surface.getMode() == 
+					File file = surface.getMode() == 
 							ImageMode.DAY ? imageLayer.getImageDay():imageLayer.getImageNight();
-					File file = new File(path);
 					
-					if(file.exists()){
+					if(file != null && file.exists()){
 						System.out.println();
 						image = ImageIO.read(file);
 
@@ -145,7 +149,14 @@ public class GraphicPanel extends Panel implements Observer {
 				g.setPaint(paint);
 			}
 		}
+		if(showInstrumentMask){
+			paintInstrumentMask(g);
+		}
 		
+		if(showGrid){
+			paintAlignementGrid(g);
+		}
+
 		Layer activeLayer = surface.getActiveLayer();
 		if(activeLayer != null && activeLayer instanceof ImageLayer){
 			ImageLayer layer = (ImageLayer) activeLayer;
@@ -158,7 +169,7 @@ public class GraphicPanel extends Panel implements Observer {
 					2, 2);
 			g.setPaint(paint);
 		}
-		
+			
 		super.paint(g);
 	}
 
@@ -181,6 +192,40 @@ public class GraphicPanel extends Panel implements Observer {
 			}
 		}
 
+		g.setPaint(paint);
+	}
+	
+	/**
+	 * Paint an alignement grid
+	 * @param g
+	 */
+	private void paintAlignementGrid(Graphics2D g){
+		Paint paint = g.getPaint();
+		
+		g.setPaint(Constants.paint.GRID_ALIGNMENT);
+		int size = Constants.integer.GRID_SIZE * 2;
+		for (int i = 1; i < surface.getWidth() / size; i++) {
+			for (int j = 1; j < surface.getHeight() / size; j++) {
+				g.fillOval(size * i-1, size * j-1, 2, 2);
+			}
+		}
+
+		g.setPaint(paint);
+	}
+	
+	private void paintInstrumentMask(Graphics2D g){
+		Paint paint = g.getPaint();
+		
+		if(instrumentMask == null){
+			String dir = new File("").getAbsolutePath() + "/assets/images";
+			try {
+				instrumentMask = ImageIO.read(new File(new File(dir), "shadow_general.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		g.drawImage(instrumentMask, 0, 0, 
+				surface.getWidth(), surface.getHeight(), null);
 		g.setPaint(paint);
 	}
 
@@ -489,11 +534,37 @@ public class GraphicPanel extends Panel implements Observer {
 		.setId(id);
 
 		if(file.exists()){
-			layer.setImageDay(imagePath);
+			layer.setImageDay(file);
 		}
 		surface.addLayer(layer);
 		System.out.println(LuaParser.instrumentToLua(surface));
 
+		repaint();
+	}
+
+	public boolean isShowGrid() {
+		return showGrid;
+	}
+
+	/**
+	 * Set alignment grid visible
+	 * @param show
+	 */
+	public void setShowGrid(boolean show) {
+		this.showGrid = show;
+		repaint();
+	}
+	
+	public boolean isShowInstrumentMask() {
+		return showInstrumentMask;
+	}
+
+	/**
+	 * Set instrument mask visible
+	 * @param show
+	 */
+	public void setShowInstrumentMask(boolean show) {
+		this.showInstrumentMask = show;
 		repaint();
 	}
 

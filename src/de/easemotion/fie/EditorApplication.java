@@ -13,9 +13,11 @@ import org.apache.pivot.wtk.FillPane;
 import org.apache.pivot.wtk.TablePane;
 import org.apache.pivot.wtk.Window;
 
-import de.easemotion.fie.model.graphics.GraphicSurface;
+import de.easemotion.fie.model.graphics.Instrument;
+import de.easemotion.fie.view.EncoderSetupPanel;
 import de.easemotion.fie.view.GraphicPanel;
 import de.easemotion.fie.view.GraphicPanelContainer;
+import de.easemotion.fie.view.IconLoader;
 import de.easemotion.fie.view.InstrumentNamePanel;
 import de.easemotion.fie.view.LayerSetupPanel;
 import de.easemotion.fie.view.LuaEditorPanel;
@@ -27,9 +29,16 @@ public class EditorApplication implements Application {
 	
 	public Window window = null;
 	
-	public GraphicSurface graphicSurface;
+	public Instrument instrument;
 	
 	public static File lastFileBrowserPath = null;
+	
+	LayerSetupPanel layerPanel;
+	LuaEditorPanel luaPanel;
+	InstrumentNamePanel instrumentNamePanel;
+	PropertyPanel propertyPanel;
+	GraphicPanelContainer graphicPanelContainer;
+	EncoderSetupPanel encoderSetupPanel;
 	
 	public static void main(String[] args) {
 	    DesktopApplicationContext.main(EditorApplication.class, args);
@@ -41,35 +50,45 @@ public class EditorApplication implements Application {
 		
 		window = new Window();
 		
-		graphicSurface = GraphicSurface.getInstance();
+		IconLoader.loadIcons();
+		
+		instrument = Instrument.getInstance();
 		 
 		BXMLSerializer bxmlSerializer = new BXMLSerializer();
         window = (Window) bxmlSerializer.readObject(EditorApplication.class, "window.bxml");
         bxmlSerializer.bind(this, EditorApplication.class);
-        BoxPane leftContainer = (BoxPane) bxmlSerializer.getNamespace().get("editor_left_column");
+        
+        // Add all components for left colum
+        TablePane.Row editorInstrumentName = (TablePane.Row) bxmlSerializer.getNamespace().get("editor_instrument_name");
+        TablePane.Row editorLayerSetup = (TablePane.Row) bxmlSerializer.getNamespace().get("editor_layer_setup");
+        TablePane.Row editorLuaEditor = (TablePane.Row) bxmlSerializer.getNamespace().get("editor_lua_editor");
+
+        layerPanel = new LayerSetupPanel(this, instrument);
+        instrument.addObserver(layerPanel);
+        editorLayerSetup.add(layerPanel);
+        
+        luaPanel = new LuaEditorPanel(this, instrument);
+        instrument.addObserver(luaPanel);
+        editorLuaEditor.add(luaPanel);
+        
+        // Add all components for right colum
         BoxPane rightContainer = (BoxPane) bxmlSerializer.getNamespace().get("editor_right_column");
         
-        // add panel in left column
-        LayerSetupPanel layerPanel = new LayerSetupPanel(this, graphicSurface);
-        graphicSurface.addObserver(layerPanel);
-        leftContainer.add(layerPanel);
-
-        LuaEditorPanel luaPanel = new LuaEditorPanel(this, graphicSurface);
-        graphicSurface.addObserver(luaPanel);
-        leftContainer.add(luaPanel);
-
-        // add panel in right column
-        InstrumentNamePanel instrumentNamePanel = new InstrumentNamePanel(this, graphicSurface);
-        graphicSurface.addObserver(instrumentNamePanel);
+        instrumentNamePanel = new InstrumentNamePanel(this, instrument);
+        instrument.addObserver(instrumentNamePanel);
         rightContainer.add(instrumentNamePanel);
         
-        PropertyPanel propertyPanel = new PropertyPanel(this, graphicSurface);
-        graphicSurface.addObserver(propertyPanel);
+        propertyPanel = new PropertyPanel(this, instrument);
+        instrument.addObserver(propertyPanel);
         rightContainer.add(propertyPanel);
         
-        GraphicPanelContainer graphicPanelContainer = new GraphicPanelContainer(this, graphicSurface);
-        graphicSurface.addObserver(graphicPanelContainer);
+        graphicPanelContainer = new GraphicPanelContainer(this, instrument);
+        instrument.addObserver(graphicPanelContainer);
         rightContainer.add(graphicPanelContainer);
+        
+        encoderSetupPanel = new EncoderSetupPanel(this, instrument);
+        instrument.addObserver(encoderSetupPanel);
+        rightContainer.add(encoderSetupPanel);
         
         window.open(display);
 	}
@@ -93,5 +112,14 @@ public class EditorApplication implements Application {
 	public void suspend() throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	/**
+	 * Activate Lua Script Editor to show encoder script
+	 * 
+	 * @param encoderLeft
+	 */
+	public void enableEncoderEdit(boolean encoderLeft){
+		luaPanel.enableEncoderEdit(encoderLeft);
 	}
 }
