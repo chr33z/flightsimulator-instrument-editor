@@ -9,13 +9,19 @@ import org.apache.pivot.serialization.SerializationException;
 import org.apache.pivot.wtk.BoxPane;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.ComponentKeyListener;
+import org.apache.pivot.wtk.Container;
+import org.apache.pivot.wtk.FocusTraversalDirection;
+import org.apache.pivot.wtk.FocusTraversalPolicy;
 import org.apache.pivot.wtk.TextArea;
 import org.apache.pivot.wtk.Keyboard.KeyCode;
 import org.apache.pivot.wtk.Keyboard.KeyLocation;
 
+import sun.java2d.Surface;
 import de.easemotion.fie.EditorApplication;
+import de.easemotion.fie.model.graphics.EditorStatus;
 import de.easemotion.fie.model.graphics.Instrument;
 import de.easemotion.fie.model.graphics.Layer;
+import de.easemotion.fie.utils.Constants;
 
 public class LuaEditorPanel extends BoxPane implements Observer {
 
@@ -39,8 +45,23 @@ public class LuaEditorPanel extends BoxPane implements Observer {
 			Component component = (Component) s.readObject(LuaEditorPanel.class, "lua_pane.bxml");
 
 			textArea = (TextArea) s.getNamespace().get("lua_text_area");
+			textArea.getStyles().put("color", Constants.color.TEXT_PRIMARY);
+			textArea.getStyles().put("font", Constants.font.FONT_CODE);
 			textArea.setEditable(false);
 			textArea.setEnabled(false);
+			
+			/*
+			 * Keep focus in text area when pressing tab
+			 */
+			this.setFocusTraversalPolicy(new FocusTraversalPolicy() {
+				
+				@Override
+				public Component getNextComponent(Container container, Component component,
+						FocusTraversalDirection direction) {
+					// TODO Auto-generated method stub
+					return textArea;
+				}
+			});
 
 			textArea.getComponentKeyListeners().add(new ComponentKeyListener() {
 
@@ -77,7 +98,7 @@ public class LuaEditorPanel extends BoxPane implements Observer {
 
 					switch (keyCode) {
 					case KeyCode.TAB:
-						textArea.setText(textArea.getText() + '\t');
+						textArea.setText(textArea.getText() + "    ");
 						break;
 					default:
 						break;
@@ -101,8 +122,10 @@ public class LuaEditorPanel extends BoxPane implements Observer {
 		textArea.setEnabled(true);
 
 		if(encoderLeft){
+			EditorStatus.setEncoderEditLeft(true);
 			textArea.setText(instrument.getCodeEncoderLeft());
 		} else {
+			EditorStatus.setEncoderEditRight(true);
 			textArea.setText(instrument.getCodeEncoderRight());
 		}
 	}

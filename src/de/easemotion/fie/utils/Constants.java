@@ -10,6 +10,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class Constants {
+	
+	public static class dir {
+		public static final File BASE = new File(System.getProperty("user.dir"));
+		public static final File IMAGE_ASSETS = new File(BASE + "/assets/images/");
+		public static final File FONT_ASSETS = new File(BASE + "/assets/fonts/");
+	}
 
 	public static class string {
 		public static final String APP_NAME = "Instrument Editor";
@@ -21,7 +27,6 @@ public class Constants {
 
 		public static final int GRID_SIZE = 10;
 		
-		
 		public static final int MAX_LAYER_COUNT = 10;
 	}
 	
@@ -30,20 +35,34 @@ public class Constants {
 		
 		public static Font FONT_QUARZ = null;
 		public static Font FONT_GLASS = null;
+		public static Font FONT_CODE = null;
+		public static Font FONT_REGULAR = null;
 		
 		static {
-			String dir = System.getProperty("user.dir");
-			
 			try {
-				Font font = Font.createFont(Font.TRUETYPE_FONT, new File(dir + "/assets/fonts/QUARTZ.TTF"));
-				FONT_QUARZ = font.deriveFont(16.0f);
+				Font font = Font.createFont(Font.TRUETYPE_FONT, new File(Constants.dir.FONT_ASSETS + "/QUARTZ.TTF"));
+				FONT_QUARZ = font.deriveFont(14.0f);
 			} catch (FontFormatException | IOException e) {
 				e.printStackTrace();
 			}
 			
 			try {
-				Font font = Font.createFont(Font.TRUETYPE_FONT, new File(dir + "/assets/fonts/GLASSGA_0.TTF"));
-				FONT_GLASS = font.deriveFont(16.0f);
+				Font font = Font.createFont(Font.TRUETYPE_FONT, new File(Constants.dir.FONT_ASSETS + "/GLASSGA_0.TTF"));
+				FONT_GLASS = font.deriveFont(14.0f);
+			} catch (FontFormatException | IOException e) {
+				e.printStackTrace();
+			}
+			
+			try {
+				Font font = Font.createFont(Font.TRUETYPE_FONT, new File(Constants.dir.FONT_ASSETS + "/OpenSans-Regular.ttf"));
+				FONT_REGULAR = font.deriveFont(14.0f);
+			} catch (FontFormatException | IOException e) {
+				e.printStackTrace();
+			}
+			
+			try {
+				Font font = Font.createFont(Font.TRUETYPE_FONT, new File(Constants.dir.FONT_ASSETS + "/SourceCodePro-Regular.ttf"));
+				FONT_CODE = font.deriveFont(14.0f);
 			} catch (FontFormatException | IOException e) {
 				e.printStackTrace();
 			}
@@ -62,5 +81,6 @@ public class Constants {
 	public static class color {
 		public static final String TEXT_DARK_GREY = "#444444";
 		public static final String TEXT_LIGHT_GREY = "#dddddd";
+		public static final String TEXT_PRIMARY = "#b6dab6";
 	}
 }

@@ -4,14 +4,11 @@
     orientation="horizontal" styles="{spacing:20}">
     
     <TextInput bxml:id="instrument_name" textSize="12" preferredWidth="190" preferredHeight="25"
-    	styles="{verticalAlignment:'center', padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}"
-    	Form.flag="{messageType:'info', message:'Instrumentname'}">
+    	styles="{verticalAlignment:'center', padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}">
     </TextInput>
     
     <BoxPane orientation="horizontal" styles="{spacing:0}">
-        <LinkButton bxml:id="button_delete">
-            <content:ButtonData icon="/de/easemotion/fie/images/B_Delete30_0.png"/>
-        </LinkButton>
+        <LinkButton bxml:id="button_delete"/>
 	</BoxPane>
     
 </BoxPane>

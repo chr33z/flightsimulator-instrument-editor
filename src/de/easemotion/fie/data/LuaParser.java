@@ -20,11 +20,15 @@ import de.easemotion.fie.utils.Utils;
 public class LuaParser {
 	
 	private static final String LUA_SCRIPT_LAYOUT = ""
-			+ "%s\n"
+			+ "%s\n" // layout
 			+ "\n"
-			+ "%s\n"
+			+ "%s\n" // layer functions
 			+ "\n"
-			+ "%s\n";
+			+ "%s\n" // main function
+			+ "\n"
+			+ "%s\n" // encoder left
+			+ "\n"
+			+ "%s\n";// encoder right
 	
 	private static final String INSTRUMENT_LAYOUT_HEADER = "--[[\n"
 			+ "\tLayout definition for instrument \"%s\" \n"
@@ -35,9 +39,27 @@ public class LuaParser {
 			+ "\tThis function is called in every render step \n"
 			+ "]]\n";
 	
+	private static final String ENCODER_LEFT_HEADER = "--[[\n"
+			+ "\tDefinition encoder left function:\n"
+			+ "\tThis function is NOT called in every render step \n"
+			+ "]]\n";
+	
+	private static final String ENCODER_RIGHT_HEADER = "--[[\n"
+			+ "\tDefinition encoder right function:\n"
+			+ "\tThis function is NOT called in every render step \n"
+			+ "]]\n";
+	
 	private static final String LAYER_FUNCTION_HEADER = "--[[\n"
 			+ "\tDefinition layer function \"%s\" \n"
 			+ "]]\n";
+	
+	private static final String ENCODER_LEFT_TEMPLATE = "function_encoder_left = function()\n"
+			+ "%s"
+			+ "end\n";
+	
+	private static final String ENCODER_RIGHT_TEMPLATE = "function_encoder_right = function()\n"
+			+ "%s"
+			+ "end\n";
 	
 	private static final String LAYER_FUNCTION_TEMPLATE = "function_%s = function()\n"
 			+ "%s"
@@ -52,16 +74,16 @@ public class LuaParser {
 	/**
 	 * Parse an instrument to a lua script
 	 * 
-	 * @param surface
+	 * @param instrument
 	 * @return instrument as a string describing the lua script
 	 */
-	public static String instrumentToLua(Instrument surface){
+	public static String instrumentToLua(Instrument instrument){
 		/*
 		 * First part: Lua layout file with all layers
 		 */
 		String layout = INSTRUMENT_LAYOUT_HEADER;
 		layout += "instrument = {\n";
-		for (Layer layer : surface.getLayers()) {
+		for (Layer layer : instrument.getLayers()) {
 			layout += "\t" + layer.getId() + " = {\n";
 			layout += "\t\tleft = " + layer.getLeft() + ",\n";
 			layout += "\t\ttop = " + layer.getTop() + ",\n";
@@ -72,20 +94,14 @@ public class LuaParser {
 				layout += "\t\ttype = \"image\",\n";
 				layout += "\t\twidth = " + imageLayer.getWidth() + ",\n";
 				layout += "\t\theight = " + imageLayer.getHeight() + ",\n";
-
-				// Strip image to filename
-				String imageDay = "";
-				if(imageLayer.getImageDay() != null && imageLayer.getImageDay().exists()){
-					imageDay = imageLayer.getImageDay().getName();
-				}
-				layout += "\t\timage_day = " + imageDay + "\n";
 				
-				// Strip image to filename
-				String imageNight = "";
-				if(imageLayer.getImageNight() != null && imageLayer.getImageNight().exists()){
-					imageNight = imageLayer.getImageNight().getName();
+				if(imageLayer.getImageDay() != null){
+					layout += "\t\timage_day = " + imageLayer.getImageDay().getPath() + "\n";
 				}
-				layout += "\t\timage_night = " + imageNight + "\n";
+				
+				if(imageLayer.getImageNight() != null){
+					layout += "\t\timage_night = " + imageLayer.getImageNight().getPath() + "\n";
+				}
 				
 			} else if(layer instanceof TextLayer){
 				TextLayer textLayer = (TextLayer) layer;
@@ -103,24 +119,30 @@ public class LuaParser {
 		 * Parse layer functions
 		 */
 		String layerFunctions = "";
-		for (Layer layer : surface.getLayers()) {
+		for (Layer layer : instrument.getLayers()) {
 			layerFunctions += String.format(LAYER_FUNCTION_HEADER, layer.getId());
 			layerFunctions += String.format(LAYER_FUNCTION_TEMPLATE, layer.getId(), layer.getLuaScript()) + "\n";
 		}
 		
 		String mainFunctionContent = "";
-		for (Layer layer : surface.getLayers()) {
+		for (Layer layer : instrument.getLayers()) {
 			mainFunctionContent += "\t" + String.format(LAYER_FUNCTION_CALL_TEMPLATE, layer.getId()) + "\n";
 		}
 		
 		String mainFunction = MAIN_FUNCTION_HEADER;
 		mainFunction += String.format(MAIN_FUNCTION_TEMPLATE, mainFunctionContent);
 		
+		String encoderLeft = ENCODER_LEFT_HEADER;
+		encoderLeft += String.format(ENCODER_LEFT_TEMPLATE, instrument.getCodeEncoderLeft() + "\n");
+		
+		String encoderRight = ENCODER_RIGHT_HEADER;
+		encoderRight += String.format(ENCODER_RIGHT_TEMPLATE, instrument.getCodeEncoderRight() + "\n");
+		
 		/*
 		 * Collect all parts and store as script
 		 */
 		String luaScript = String.format(LUA_SCRIPT_LAYOUT, 
-				new Object[]{layout, layerFunctions, mainFunction});
+				new Object[]{layout, layerFunctions, mainFunction, encoderLeft, encoderRight});
 		
 		return luaScript;
 	}

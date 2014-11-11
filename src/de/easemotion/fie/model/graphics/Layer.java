@@ -13,7 +13,7 @@ import java.util.Observable;
  * @project Flightsimulator-Instrument-Editor
  *
  */
-public class Layer {
+public abstract class Layer {
 	private static final String TAG = Layer.class.getSimpleName();
 	
 	public enum Type {
@@ -71,6 +71,11 @@ public class Layer {
 		this.top = top;
 		return this;
 	}
+	
+	public void resetPosition(){
+		top = 0;
+		left = 0;
+	}
 
 	public boolean isActive() {
 		return active;
@@ -95,4 +100,6 @@ public class Layer {
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 	}
+	
+	public abstract Layer copy(Instrument instrument);
 }

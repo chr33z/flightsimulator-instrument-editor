@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.security.auth.callback.TextOutputCallback;
 
@@ -12,8 +14,11 @@ import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.serialization.SerializationException;
 import org.apache.pivot.util.Vote;
 import org.apache.pivot.wtk.BoxPane;
+import org.apache.pivot.wtk.Button;
+import org.apache.pivot.wtk.ButtonPressListener;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.ComponentKeyListener;
+import org.apache.pivot.wtk.LinkButton;
 import org.apache.pivot.wtk.TextInputContentListener;
 import org.apache.pivot.wtk.Keyboard.KeyCode;
 import org.apache.pivot.wtk.TextInput;
@@ -27,6 +32,7 @@ import de.easemotion.fie.model.graphics.Instrument;
 import de.easemotion.fie.model.graphics.ImageLayer;
 import de.easemotion.fie.model.graphics.Layer;
 import de.easemotion.fie.model.graphics.TextLayer;
+import de.easemotion.fie.utils.Constants;
 
 public class PropertyPanel extends BoxPane implements Observer {
 
@@ -35,7 +41,7 @@ public class PropertyPanel extends BoxPane implements Observer {
 	private Instrument surface;
 
 	public enum Attribute {
-		ID
+		ID, INPUT_COMPONENT_1, INPUT_COMPONENT_2
 	}
 
 	private EditorApplication editor;
@@ -46,6 +52,11 @@ public class PropertyPanel extends BoxPane implements Observer {
 	private TextInput propPivotLeft;
 	private TextInput propPivotTop;
 	private TextInput propRotation;
+	
+	private LinkButton buttonName;
+	private LinkButton buttonPosition;
+	private LinkButton buttonPivot;
+	private LinkButton buttonDirection;
 
 	public PropertyPanel(EditorApplication editor, Instrument surface){
 		this.editor = editor;
@@ -55,30 +66,57 @@ public class PropertyPanel extends BoxPane implements Observer {
 			BXMLSerializer s = new BXMLSerializer();
 			Component component = (Component) s.readObject(PropertyPanel.class, "layer_properties_pane.bxml");
 			this.add(component);
-
+			
 			propName = (TextInput) s.getNamespace().get("prop_id");
+			propName.getStyles().put("color", Constants.color.TEXT_PRIMARY);
+			propName.getStyles().put("font", Constants.font.FONT_REGULAR);
 			propName.getComponentKeyListeners().add(keyListener);
 			propName.setAttribute(Attribute.ID, "prop_id");
 
 			propLeft = (TextInput) s.getNamespace().get("prop_left");
+			propLeft.getStyles().put("color", Constants.color.TEXT_PRIMARY);
+			propLeft.getStyles().put("font", Constants.font.FONT_REGULAR);
 			propLeft.getComponentKeyListeners().add(keyListener);
 			propLeft.setAttribute(Attribute.ID, "prop_left");
 
 			propTop = (TextInput) s.getNamespace().get("prop_top");
+			propTop.getStyles().put("color", Constants.color.TEXT_PRIMARY);
+			propTop.getStyles().put("font", Constants.font.FONT_REGULAR);
 			propTop.getComponentKeyListeners().add(keyListener);
 			propTop.setAttribute(Attribute.ID, "prop_top");
 			
 			propPivotLeft = (TextInput) s.getNamespace().get("prop_pivot_left");
+			propPivotLeft.getStyles().put("color", Constants.color.TEXT_PRIMARY);
+			propPivotLeft.getStyles().put("font", Constants.font.FONT_REGULAR);
 			propPivotLeft.getComponentKeyListeners().add(keyListener);
 			propPivotLeft.setAttribute(Attribute.ID, "prop_pivot_left");
 			
 			propPivotTop = (TextInput) s.getNamespace().get("prop_pivot_top");
+			propPivotTop.getStyles().put("color", Constants.color.TEXT_PRIMARY);
+			propPivotTop.getStyles().put("font", Constants.font.FONT_REGULAR);
 			propPivotTop.getComponentKeyListeners().add(keyListener);
 			propPivotTop.setAttribute(Attribute.ID, "prop_pivot_top");
 			
 			propRotation = (TextInput) s.getNamespace().get("prop_direction");
+			propRotation.getStyles().put("color", Constants.color.TEXT_PRIMARY);
+			propRotation.getStyles().put("font", Constants.font.FONT_REGULAR);
 			propRotation.getComponentKeyListeners().add(keyListener);
 			propRotation.setAttribute(Attribute.ID, "prop_direction");
+			
+			/*
+			 * Buttons
+			 */
+			buttonName = (LinkButton) s.getNamespace().get("button_id_delete");
+			buttonName.getButtonPressListeners().add(nameDeleteListener);
+			
+			buttonPosition = (LinkButton) s.getNamespace().get("button_pos_delete");
+			buttonPosition.getButtonPressListeners().add(positionDeleteListener);
+			
+			buttonPivot = (LinkButton) s.getNamespace().get("button_pivot_delete");
+			buttonPivot.getButtonPressListeners().add(pivotDeleteListener);
+			
+			buttonDirection = (LinkButton) s.getNamespace().get("button_direction_delete");
+			buttonDirection.getButtonPressListeners().add(directionDeleteListener);
 			
 		} catch (IOException | SerializationException e) {
 			e.printStackTrace();
@@ -113,14 +151,60 @@ public class PropertyPanel extends BoxPane implements Observer {
 			propRotation.setText("");
 		}
 	}
+	
+	private ButtonPressListener nameDeleteListener = new ButtonPressListener() {
+		
+		@Override
+		public void buttonPressed(Button button) {
+			propName.setText("");
+			updateLayer();
+		}
+	};
+	
+	private ButtonPressListener positionDeleteListener = new ButtonPressListener() {
+		
+		@Override
+		public void buttonPressed(Button button) {
+			try {
+				ImageLayer layer = (ImageLayer) surface.getActiveLayer();
+				layer.resetPosition();
+				surface.updateObservers();
+			} catch(ClassCastException e){
+				// not an image layer
+			}
+		}
+	};
+	
+	private ButtonPressListener pivotDeleteListener = new ButtonPressListener() {
+		
+		@Override
+		public void buttonPressed(Button button) {
+			try {
+				ImageLayer layer = (ImageLayer) surface.getActiveLayer();
+				layer.resetPivot();
+				surface.updateObservers();
+			} catch(ClassCastException e){
+				// not an image layer
+			}
+		}
+	};
+	
+	private ButtonPressListener directionDeleteListener = new ButtonPressListener() {
+		
+		@Override
+		public void buttonPressed(Button button) {
+			propRotation.setText(0+"");
+			updateLayer();
+		}
+	};
 
 	private void updateLayer(){
 		Layer layer = surface.getActiveLayer();
 		if(layer != null){
 			try {
-				layer.setId(propName.getText());
 				layer.setLeft(Integer.parseInt(propLeft.getText()));
 				layer.setTop(Integer.parseInt(propTop.getText()));
+				layer.setId(propName.getText());
 
 				if(layer instanceof ImageLayer){
 					ImageLayer imageLayer = (ImageLayer) layer;
@@ -140,8 +224,6 @@ public class PropertyPanel extends BoxPane implements Observer {
 
 		@Override
 		public boolean keyTyped(Component component, char character) {
-			System.out.println("typed");
-			
 			if(component instanceof TextInput){
 				TextInput input = (TextInput) component;
 
@@ -153,7 +235,7 @@ public class PropertyPanel extends BoxPane implements Observer {
 				}
 
 				if(id != null && id.equals("prop_id")){
-					if(!String.valueOf(character).matches("([A-Za-z0-9\\_\b]+)")){
+					if(!String.valueOf(character).matches("([A-Za-z0-9\\_\b\n\r\\x00\\x08\\x0B\\x0C\\x0E-\\x1F]+)")){
 						String txt = input.getText();
 						input.setText(txt.substring(0, txt.length()-1));
 						return true;
@@ -165,7 +247,7 @@ public class PropertyPanel extends BoxPane implements Observer {
 						id.equals("prop_pivot_top") ||
 						id.equals("prop_direction"))){
 					
-					if(!String.valueOf(character).matches("([0-9\b]+)")){
+					if(!String.valueOf(character).matches("([0-9\b\n\r\\x00\\x08\\x0B\\x0C\\x0E-\\x1F]+)")){
 						String txt = input.getText();
 						input.setText(txt.substring(0, txt.length()-1));
 						return true;
@@ -178,15 +260,12 @@ public class PropertyPanel extends BoxPane implements Observer {
 		@Override
 		public boolean keyReleased(Component component, int keyCode,
 				KeyLocation keyLocation) {
-			System.out.println("released");
 			return false;
 		}
 
 		@Override
 		public boolean keyPressed(Component component, int keyCode,
 				KeyLocation keyLocation) {
-			System.out.println("pressed");
-
 			if(component instanceof TextInput){
 				switch (keyCode) {
 				case KeyCode.ENTER:

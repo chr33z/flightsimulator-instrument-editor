@@ -63,6 +63,10 @@ import de.easemotion.fie.utils.Constants;
 public class GraphicPanel extends Panel implements Observer {
 
 	private static final String TAG = GraphicPanel.class.getSimpleName();
+	
+	private static final boolean DRAW_ACTIVE_BOARDER = false;
+	
+	private static final boolean LAYER_CLICKABLE = true;
 
 	private Instrument instrument;
 
@@ -127,7 +131,7 @@ public class GraphicPanel extends Panel implements Observer {
 								imageLayer.getWidth(), imageLayer.getHeight(), null);
 					}
 
-					if(imageLayer.isActive()){
+					if(DRAW_ACTIVE_BOARDER && imageLayer.isActive()){
 						Paint paint = g.getPaint();
 						g.setPaint(Constants.paint.LAYER_ACTIVE_BORDER);
 						g.setStroke(new BasicStroke(2));
@@ -242,39 +246,31 @@ public class GraphicPanel extends Panel implements Observer {
 		public boolean mouseDown(Component component, Button button, int x, int y) {
 			System.out.println("Mouse down");
 
-			switch (button) {
-			case RIGHT:
-
-				break;
-			case LEFT:
-				break;
-			default:
-				break;
-			}
-
-			Layer newActive = getClickedLayer(x, y);
-			if (newActive != null) {
-				pressedLayer = newActive;
-
-				// deactivate layer when clicked again
-				if(activeLayer != null && newActive.getId().equals(activeLayer.getId())){
-					instrument.setLayersInactive();
-					System.out.println("Layer "+activeLayer.getId()+" deactivated.");
-					activeLayer = null;
+			if(LAYER_CLICKABLE){
+				Layer newActive = getClickedLayer(x, y);
+				if (newActive != null) {
+					pressedLayer = newActive;
+	
+					// deactivate layer when clicked again
+					if(activeLayer != null && newActive.getId().equals(activeLayer.getId())){
+						instrument.setLayersInactive();
+						System.out.println("Layer "+activeLayer.getId()+" deactivated.");
+						activeLayer = null;
+					} else {
+						activeLayer = newActive;
+						instrument.setLayerActive(activeLayer);
+						System.out.println("Layer "+activeLayer.getId()+" is active.");
+						GraphicPanel.this.setFocused(true, null);
+					}
 				} else {
-					activeLayer = newActive;
-					instrument.setLayerActive(activeLayer);
-					System.out.println("Layer "+activeLayer.getId()+" is active.");
-					GraphicPanel.this.setFocused(true, null);
+					instrument.setLayersInactive();
 				}
-			} else {
-				instrument.setLayersInactive();
+	
+				repaint();
+				lastMouseButton = button;
+				currentX = x;
+				currentY = y;
 			}
-
-			repaint();
-			lastMouseButton = button;
-			currentX = x;
-			currentY = y;
 			return false;
 		}
 

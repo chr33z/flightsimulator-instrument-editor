@@ -51,6 +51,8 @@ public class Instrument extends Observable {
 	/** Code for right encoder */
 	private String codeEncoderRight = "";
 	
+	private String instrumentName = "";
+	
 	private static Instrument sInstance;
 	
 	private Instrument(){
@@ -310,8 +312,31 @@ public class Instrument extends Observable {
 		this.codeEncoderRight = codeEncoderRight;
 	}
 
+	public String getInstrumentName() {
+		return instrumentName;
+	}
+
+	public void setInstrumentName(String instrumentName) {
+		this.instrumentName = instrumentName;
+	}
+
 	public void updateObservers(){
 		setChanged();
 		notifyObservers();
+	}
+	
+	public Instrument copy(){
+		Instrument instrument = new Instrument();
+		instrument.width = this.width;
+		instrument.height = this.height;
+		instrument.codeEncoderLeft = this.codeEncoderLeft;
+		instrument.codeEncoderRight = this.codeEncoderRight;
+		instrument.instrumentName = this.instrumentName;
+		
+		for (Layer layer : this.layers) {
+			instrument.addLayer(layer.copy(this));
+		}
+		
+		return instrument;
 	}
 }

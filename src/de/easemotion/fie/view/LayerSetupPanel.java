@@ -62,7 +62,7 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 			this.add(component);
 
 			layerListContainer = (BoxPane) s.getNamespace().get("layer_list_container");
-			
+
 			renderLayers();
 
 		} catch (IOException | SerializationException e) {
@@ -90,47 +90,40 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 				LinkButton actionEdit = (LinkButton)s.getNamespace().get("layer_button_edit");
 				LinkButton actionVisibility = (LinkButton)s.getNamespace().get("layer_button_visibility");
 				LinkButton actionDelete = (LinkButton)s.getNamespace().get("layer_button_delete");
-				
+
 				/*
 				 * If there is a corresponding layer, read the data and fill the row
 				 */
 				if(i < instrument.getLayers().size()){
 					final Layer layer = layerList.get(i);
-					
+
 					boolean isActive = instrument.find(layer.getId()).isActive();
 
-					Label label = (Label) s.getNamespace().get("layer_label");
-					
-					label.getStyles().put("font", Constants.font.FONT_GLASS);
+					/*
+					 * Layer name label
+					 */
+					Label labelName = (Label) s.getNamespace().get("layer_label");
+					labelName.setAttribute(Attribute.LAYER, layer);
+					labelName.getStyles().put("font", Constants.font.FONT_REGULAR);
 					if(layer.getId().equals("")){
-						label.setText("NO LAYER NAME");
-						label.getStyles().put("color", Constants.color.TEXT_DARK_GREY);
-					} else {
-						label.setText(layer.getId());
-						label.getStyles().put("color", Constants.color.TEXT_LIGHT_GREY);
+						labelName.setText("NO LAYER NAME");
+						labelName.setTooltipText("NO LAYER NAME");
+						labelName.getStyles().put("color", Constants.color.TEXT_DARK_GREY);
 					}
-					label.getComponentMouseButtonListeners().add(new ComponentMouseButtonListener() {
-
-						@Override
-						public boolean mouseUp(Component component,
-								org.apache.pivot.wtk.Mouse.Button button, int x, int y) {
-							return false;
-						}
-
-						@Override
-						public boolean mouseDown(Component component,
-								org.apache.pivot.wtk.Mouse.Button button, int x, int y) {
-							return false;
-						}
-
-						@Override
-						public boolean mouseClick(Component component,
-								org.apache.pivot.wtk.Mouse.Button button, int x, int y, int count) {
-							instrument.setLayerActive(layer);
-							return false;
-						}
-					});
-
+					else {
+						labelName.setText(layer.getId());
+						labelName.setTooltipText(layer.getId());
+						labelName.getStyles().put("color", Constants.color.TEXT_PRIMARY);
+					}
+					labelName.getComponentMouseButtonListeners().add(activeClickListener);
+					
+					/*
+					 * Layer second label
+					 */
+					Label labelPath = (Label) s.getNamespace().get("layer_content");
+					labelPath.setAttribute(Attribute.LAYER, layer);
+					labelPath.getStyles().put("font", Constants.font.FONT_REGULAR);
+					
 					actionDay.setEnabled(true);
 					actionDay.setAttribute(Attribute.LAYER, layer);
 					actionDay.getButtonPressListeners().add(actionSelectDayImage);
@@ -142,6 +135,22 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 					if(layer instanceof ImageLayer){
 						ImageLayer imageLayer = (ImageLayer) layer;
 						
+						/*
+						 * Layer second label logic
+						 */
+						if(imageLayer.getImageDay() == null || 
+								imageLayer.getImageDay().getAbsolutePath().equals("")){
+							labelPath.setText("NO FILE ALLOC");
+							labelPath.setTooltipText("NO FILE ALLOC");
+							labelPath.getStyles().put("color", Constants.color.TEXT_DARK_GREY);
+						}
+						else {
+							labelPath.setText(imageLayer.getImageDay().getAbsolutePath());
+							labelPath.setTooltipText(imageLayer.getImageDay().getAbsolutePath());
+							labelPath.getStyles().put("color", Constants.color.TEXT_PRIMARY);
+						}
+						labelPath.getComponentMouseButtonListeners().add(activeClickListener);
+
 						if(imageLayer.getImageDay() != null && imageLayer.getImageDay().exists()){
 							actionDay.setButtonData(IconLoader.icons.get(Icon.DAY)[IconLoader.LOADED]);
 						} else if(imageLayer.getImageDay() == null || !imageLayer.getImageDay().exists()){
@@ -150,7 +159,7 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 						else if(isActive){
 							actionDay.setButtonData(IconLoader.icons.get(Icon.DAY)[IconLoader.ACTIVE]);
 						}
-						
+
 						if(imageLayer.getImageNight() != null && imageLayer.getImageNight().exists()){
 							actionNight.setButtonData(IconLoader.icons.get(Icon.NIGHT)[IconLoader.LOADED]);
 						} else if(imageLayer.getImageNight() == null || !imageLayer.getImageDay().exists()){
@@ -163,7 +172,7 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 						actionDay.setButtonData(IconLoader.icons.get(Icon.DAY)[IconLoader.DEACTIVE]);
 						actionNight.setButtonData(IconLoader.icons.get(Icon.NIGHT)[IconLoader.DEACTIVE]);
 					}
-					
+
 					actionText.setEnabled(true);
 					actionText.setAttribute(Attribute.LAYER, layer);
 					actionText.getButtonPressListeners().add(actioncreateTextLayer);
@@ -200,7 +209,7 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 				}
 				else if(i == instrument.getLayers().size()){
 					// this is the first layer after the last layer
-					
+
 					actionDay.setEnabled(true);
 					actionDay.setAttribute(Attribute.NEW_LAYER, true);
 					actionDay.getButtonPressListeners().add(actionSelectDayImage);
@@ -208,10 +217,26 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 					actionNight.setEnabled(true);
 					actionNight.setAttribute(Attribute.NEW_LAYER, true);
 					actionNight.getButtonPressListeners().add(actionSelectNightImage);
-					
+
 					actionText.setEnabled(true);
 					actionText.setAttribute(Attribute.NEW_LAYER, true);
 					actionText.getButtonPressListeners().add(actioncreateTextLayer);
+
+//					actionUp.setButtonData(IconLoader.icons.get(Icon.OFF)[IconLoader.DEACTIVE]);
+//					actionDown.setButtonData(IconLoader.icons.get(Icon.OFF)[IconLoader.DEACTIVE]);
+//					actionEdit.setButtonData(IconLoader.icons.get(Icon.OFF)[IconLoader.DEACTIVE]);
+//					actionVisibility.setButtonData(IconLoader.icons.get(Icon.OFF)[IconLoader.DEACTIVE]);
+//					actionDelete.setButtonData(IconLoader.icons.get(Icon.OFF)[IconLoader.DEACTIVE]);
+				} else {
+					// All other inactive buttons
+//					actionDay.setButtonData(IconLoader.icons.get(Icon.OFF)[IconLoader.DEACTIVE]);
+//					actionNight.setButtonData(IconLoader.icons.get(Icon.OFF)[IconLoader.DEACTIVE]);
+//					actionText.setButtonData(IconLoader.icons.get(Icon.OFF)[IconLoader.DEACTIVE]);
+//					actionUp.setButtonData(IconLoader.icons.get(Icon.OFF)[IconLoader.DEACTIVE]);
+//					actionDown.setButtonData(IconLoader.icons.get(Icon.OFF)[IconLoader.DEACTIVE]);
+//					actionEdit.setButtonData(IconLoader.icons.get(Icon.OFF)[IconLoader.DEACTIVE]);
+//					actionVisibility.setButtonData(IconLoader.icons.get(Icon.OFF)[IconLoader.DEACTIVE]);
+//					actionDelete.setButtonData(IconLoader.icons.get(Icon.OFF)[IconLoader.DEACTIVE]);
 				}
 
 				layerItems.add(item);
@@ -232,6 +257,29 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 		renderLayers();
 	}
 	
+	ComponentMouseButtonListener activeClickListener = new ComponentMouseButtonListener() {
+
+		@Override
+		public boolean mouseUp(Component component,
+				org.apache.pivot.wtk.Mouse.Button button, int x, int y) {
+			return false;
+		}
+
+		@Override
+		public boolean mouseDown(Component component,
+				org.apache.pivot.wtk.Mouse.Button button, int x, int y) {
+			return false;
+		}
+
+		@Override
+		public boolean mouseClick(Component component,
+				org.apache.pivot.wtk.Mouse.Button button, int x, int y, int count) {
+			Layer layer = (Layer) component.getAttribute(Attribute.LAYER);
+			instrument.setLayerActive(layer);
+			return false;
+		}
+	};
+
 	ButtonPressListener actionEditListener = new ButtonPressListener() {
 		@Override
 		public void buttonPressed(Button button) {
@@ -290,7 +338,7 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 		public void buttonPressed(Button button) {
 			System.out.println("Select night image");
 			Layer layer = (Layer) button.getAttribute(Attribute.LAYER);
-			
+
 			// create new layer
 			if(button.getAttribute(Attribute.NEW_LAYER) != null){
 				layer = new ImageLayer();
@@ -306,13 +354,13 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 			}
 		}
 	};
-	
+
 	ButtonPressListener actioncreateTextLayer = new ButtonPressListener() {
 		@Override
 		public void buttonPressed(Button button) {
 			System.out.println("CreateTextLayer");
 			Layer layer = (Layer) button.getAttribute(Attribute.LAYER);
-			
+
 			// create new layer
 			if(button.getAttribute(Attribute.NEW_LAYER) != null){
 				layer = new ImageLayer();
@@ -405,13 +453,14 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 
 					if(selectedFiles.getLength() > 0){
 						File file = fileBrowserSheet.getSelectedFile();
-						
+
 						if(file.exists()){
 							if(!nightImage){
 								layer.setImageDay(file);
 							} else {
 								layer.setImageNight(file);
 							}
+							instrument.updateObservers();
 						}
 					}
 

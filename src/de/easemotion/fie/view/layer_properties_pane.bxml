@@ -3,39 +3,63 @@
 	xmlns="org.apache.pivot.wtk"
 	orientation="vertical" styles="{spacing:2, padding:'{left:40}'}">
 	
-	<TextInput bxml:id="prop_id"
-		styles="{padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}"
-		preferredWidth="150" preferredHeight="25">
-    </TextInput>
-    
-    <BoxPane orientation="horizontal" styles="{spacing:22, padding:'{left:21}'}">
-	    <TextInput bxml:id="prop_top"
-	    styles="{padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}"
-	    preferredWidth="53" preferredHeight="25">
+	<BoxPane orientation="horizontal" styles="{spacing:20}">
+		<TextInput bxml:id="prop_id"
+			styles="{padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}"
+			preferredWidth="150" preferredHeight="25">
 	    </TextInput>
-	        
-	    <TextInput bxml:id="prop_left"
-	    styles="{padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}"
-	    preferredWidth="54" preferredHeight="25">
-	   	</TextInput>
+	    
+	    <LinkButton bxml:id="button_id_delete">
+			<content:ButtonData icon="@B_Delete30_0.png"/>
+		</LinkButton>
+    </BoxPane>
+    
+    <BoxPane orientation="horizontal" styles="{spacing:20}">
+	    <BoxPane orientation="horizontal" styles="{spacing:22, padding:'{left:21}'}">
+		    <TextInput bxml:id="prop_left"
+			    styles="{padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}"
+			    preferredWidth="53" preferredHeight="25">
+		    </TextInput>
+		        
+		    <TextInput bxml:id="prop_top"
+			    styles="{padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}"
+			    preferredWidth="54" preferredHeight="25">
+		   	</TextInput>
+		</BoxPane>
+		
+		<LinkButton bxml:id="button_pos_delete">
+			<content:ButtonData icon="@B_Delete30_0.png"/>
+		</LinkButton>
 	</BoxPane>
 	
-	<BoxPane orientation="horizontal" styles="{spacing:22, padding:'{left:21}'}">
-	    <TextInput bxml:id="prop_pivot_left"
-	    styles="{padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}"
-	    preferredWidth="53" preferredHeight="25">
-	    </TextInput>
-	        
-	    <TextInput bxml:id="prop_pivot_top"
-	    styles="{padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}"
-	    preferredWidth="54" preferredHeight="25">
-	   	</TextInput>
+	<BoxPane orientation="horizontal" styles="{spacing:20}">
+		<BoxPane orientation="horizontal" styles="{spacing:22, padding:'{left:21}'}">
+		    <TextInput bxml:id="prop_pivot_left"
+			    styles="{padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}"
+			    preferredWidth="53" preferredHeight="25">
+		    </TextInput>
+		        
+		    <TextInput bxml:id="prop_pivot_top"
+			    styles="{padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}"
+			    preferredWidth="54" preferredHeight="25">
+		   	</TextInput>
+		</BoxPane>
+		
+		<LinkButton bxml:id="button_pivot_delete">
+			<content:ButtonData icon="@B_Delete30_0.png"/>
+		</LinkButton>
 	</BoxPane>
    
-   	<BoxPane orientation="horizontal" styles="{padding:'{left:48}'}">
-	    <TextInput bxml:id="prop_direction"
-	    styles="{padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}"
-	    preferredWidth="53" preferredHeight="25">
-	    </TextInput>
+	<BoxPane orientation="horizontal" styles="{spacing:20}">
+	   	<BoxPane orientation="horizontal" styles="{padding:'{left:48}'}">
+		    <TextInput bxml:id="prop_direction"
+			    styles="{padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000'}"
+			    preferredWidth="102" preferredHeight="25">
+		    </TextInput>
+		</BoxPane>
+		
+		<LinkButton bxml:id="button_direction_delete">
+			<content:ButtonData icon="@B_Delete30_0.png"/>
+		</LinkButton>
 	</BoxPane>
 </BoxPane>
