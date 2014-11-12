@@ -28,10 +28,11 @@ import org.apache.pivot.wtk.Label;
 import org.apache.pivot.wtk.PushButton;
 import org.apache.pivot.wtk.TextInput;
 import org.apache.pivot.wtk.Keyboard.KeyLocation;
+
 import de.easemotion.fie.EditorApplication;
-import de.easemotion.fie.model.graphics.Instrument;
-import de.easemotion.fie.model.graphics.ImageLayer;
-import de.easemotion.fie.model.graphics.Layer;
+import de.easemotion.fie.model.ImageLayer;
+import de.easemotion.fie.model.Instrument;
+import de.easemotion.fie.model.Layer;
 import de.easemotion.fie.utils.Constants;
 import de.easemotion.fie.utils.IconLoader;
 import de.easemotion.fie.utils.IconLoader.Icon;
@@ -138,31 +139,35 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 						/*
 						 * Layer second label logic
 						 */
-						if(imageLayer.getImageDay() == null || 
-								imageLayer.getImageDay().getAbsolutePath().equals("")){
+						if(imageLayer.getImageDay() == null){
 							labelPath.setText("NO FILE ALLOC");
 							labelPath.setTooltipText("NO FILE ALLOC");
 							labelPath.getStyles().put("color", Constants.color.TEXT_DARK_GREY);
 						}
 						else {
-							labelPath.setText(imageLayer.getImageDay().getAbsolutePath());
-							labelPath.setTooltipText(imageLayer.getImageDay().getAbsolutePath());
-							labelPath.getStyles().put("color", Constants.color.TEXT_PRIMARY);
+							File dayFile = imageLayer.getImage().imageDay;
+							if(dayFile != null){
+								labelPath.setText(dayFile.getAbsolutePath());
+								labelPath.setTooltipText(dayFile.getAbsolutePath());
+								labelPath.getStyles().put("color", Constants.color.TEXT_PRIMARY);
+							} else {
+								
+							}
 						}
 						labelPath.getComponentMouseButtonListeners().add(activeClickListener);
 
-						if(imageLayer.getImageDay() != null && imageLayer.getImageDay().exists()){
+						if(imageLayer.getImageDay() != null && imageLayer.getImage().imageDay.exists()){
 							actionDay.setButtonData(IconLoader.icons.get(Icon.DAY)[IconLoader.LOADED]);
-						} else if(imageLayer.getImageDay() == null || !imageLayer.getImageDay().exists()){
+						} else if(imageLayer.getImageDay() == null){
 							actionDay.setButtonData(IconLoader.icons.get(Icon.DAY)[IconLoader.MISSING]);
 						}
 						else if(isActive){
 							actionDay.setButtonData(IconLoader.icons.get(Icon.DAY)[IconLoader.ACTIVE]);
 						}
 
-						if(imageLayer.getImageNight() != null && imageLayer.getImageNight().exists()){
+						if(imageLayer.getImageNight() != null && imageLayer.getImage().imageNight.exists()){
 							actionNight.setButtonData(IconLoader.icons.get(Icon.NIGHT)[IconLoader.LOADED]);
-						} else if(imageLayer.getImageNight() == null || !imageLayer.getImageDay().exists()){
+						} else if(imageLayer.getImageNight() == null){
 							actionNight.setButtonData(IconLoader.icons.get(Icon.NIGHT)[IconLoader.MISSING]);
 						}
 						else if(isActive){
@@ -253,7 +258,7 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		System.out.println("Layer Panel updated");
-
+		instrument = editor.getInstrument();
 		renderLayers();
 	}
 	

@@ -1,4 +1,4 @@
-package de.easemotion.fie.model.graphics;
+package de.easemotion.fie.model;
 
 import java.util.Observable;
 

@@ -1,4 +1,4 @@
-package de.easemotion.fie.model.graphics;
+package de.easemotion.fie.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -53,17 +53,8 @@ public class Instrument extends Observable {
 	
 	private String instrumentName = "";
 	
-	private static Instrument sInstance;
-	
-	private Instrument(){
-		// Implemented as Singleton
-	}
-	
-	public static Instrument getInstance(){
-		if(sInstance == null){
-			sInstance = new Instrument();
-		}
-		return sInstance;
+	public Instrument(){
+		
 	}
 	
 	/**

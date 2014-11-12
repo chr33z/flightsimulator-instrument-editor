@@ -1,44 +1,31 @@
 package de.easemotion.fie.view;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import javax.security.auth.callback.TextOutputCallback;
-
 import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.serialization.SerializationException;
-import org.apache.pivot.util.Vote;
 import org.apache.pivot.wtk.BoxPane;
 import org.apache.pivot.wtk.Button;
 import org.apache.pivot.wtk.ButtonPressListener;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.ComponentKeyListener;
 import org.apache.pivot.wtk.LinkButton;
-import org.apache.pivot.wtk.TextInputContentListener;
 import org.apache.pivot.wtk.Keyboard.KeyCode;
 import org.apache.pivot.wtk.TextInput;
 import org.apache.pivot.wtk.Keyboard.KeyLocation;
-import org.apache.pivot.wtk.validation.RegexTextValidator;
-
-import sun.font.TextLabel;
-import sun.org.mozilla.javascript.ast.CatchClause;
 import de.easemotion.fie.EditorApplication;
-import de.easemotion.fie.model.graphics.Instrument;
-import de.easemotion.fie.model.graphics.ImageLayer;
-import de.easemotion.fie.model.graphics.Layer;
-import de.easemotion.fie.model.graphics.TextLayer;
+import de.easemotion.fie.model.ImageLayer;
+import de.easemotion.fie.model.Instrument;
+import de.easemotion.fie.model.Layer;
+import de.easemotion.fie.model.TextLayer;
 import de.easemotion.fie.utils.Constants;
 
 public class PropertyPanel extends BoxPane implements Observer {
 
 	private static final String TAG = PropertyPanel.class.getSimpleName();
 
-	private Instrument surface;
+	private Instrument instrument;
 
 	public enum Attribute {
 		ID, INPUT_COMPONENT_1, INPUT_COMPONENT_2
@@ -60,7 +47,7 @@ public class PropertyPanel extends BoxPane implements Observer {
 
 	public PropertyPanel(EditorApplication editor, Instrument surface){
 		this.editor = editor;
-		this.surface = surface;
+		this.instrument = surface;
 
 		try {
 			BXMLSerializer s = new BXMLSerializer();
@@ -125,9 +112,10 @@ public class PropertyPanel extends BoxPane implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
+		instrument = editor.getInstrument();
 		System.out.println("Property updated");
 
-		Layer active = surface.getActiveLayer();
+		Layer active = instrument.getActiveLayer();
 		if(active != null){
 			propName.setText(active.getId()+"");
 			propLeft.setText(active.getLeft()+"");
@@ -166,9 +154,9 @@ public class PropertyPanel extends BoxPane implements Observer {
 		@Override
 		public void buttonPressed(Button button) {
 			try {
-				ImageLayer layer = (ImageLayer) surface.getActiveLayer();
+				ImageLayer layer = (ImageLayer) instrument.getActiveLayer();
 				layer.resetPosition();
-				surface.updateObservers();
+				instrument.updateObservers();
 			} catch(ClassCastException e){
 				// not an image layer
 			}
@@ -180,9 +168,9 @@ public class PropertyPanel extends BoxPane implements Observer {
 		@Override
 		public void buttonPressed(Button button) {
 			try {
-				ImageLayer layer = (ImageLayer) surface.getActiveLayer();
+				ImageLayer layer = (ImageLayer) instrument.getActiveLayer();
 				layer.resetPivot();
-				surface.updateObservers();
+				instrument.updateObservers();
 			} catch(ClassCastException e){
 				// not an image layer
 			}
@@ -199,7 +187,7 @@ public class PropertyPanel extends BoxPane implements Observer {
 	};
 
 	private void updateLayer(){
-		Layer layer = surface.getActiveLayer();
+		Layer layer = instrument.getActiveLayer();
 		if(layer != null){
 			try {
 				layer.setLeft(Integer.parseInt(propLeft.getText()));
@@ -216,7 +204,7 @@ public class PropertyPanel extends BoxPane implements Observer {
 			} catch (NumberFormatException e){
 
 			}
-			surface.updateObservers();
+			instrument.updateObservers();
 		}
 	}
 

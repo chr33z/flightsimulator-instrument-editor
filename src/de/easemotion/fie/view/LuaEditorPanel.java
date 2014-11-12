@@ -18,9 +18,9 @@ import org.apache.pivot.wtk.Keyboard.KeyLocation;
 
 import sun.java2d.Surface;
 import de.easemotion.fie.EditorApplication;
-import de.easemotion.fie.model.graphics.EditorStatus;
-import de.easemotion.fie.model.graphics.Instrument;
-import de.easemotion.fie.model.graphics.Layer;
+import de.easemotion.fie.model.EditorStatus;
+import de.easemotion.fie.model.Instrument;
+import de.easemotion.fie.model.Layer;
 import de.easemotion.fie.utils.Constants;
 
 public class LuaEditorPanel extends BoxPane implements Observer {
@@ -146,6 +146,7 @@ public class LuaEditorPanel extends BoxPane implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
+		instrument = editor.getInstrument();
 		encoderEditMode = false;
 		updateScript();
 	}

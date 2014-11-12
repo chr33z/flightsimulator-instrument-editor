@@ -16,8 +16,8 @@ import org.apache.pivot.wtk.FocusTraversalPolicy;
 import org.apache.pivot.wtk.TablePane;
 import org.apache.pivot.wtk.Window;
 
-import de.easemotion.fie.model.graphics.EditorStatus;
-import de.easemotion.fie.model.graphics.Instrument;
+import de.easemotion.fie.model.EditorStatus;
+import de.easemotion.fie.model.Instrument;
 import de.easemotion.fie.utils.IconLoader;
 import de.easemotion.fie.view.EncoderSetupPanel;
 import de.easemotion.fie.view.GraphicPanel;
@@ -59,7 +59,7 @@ public class EditorApplication implements Application {
 
 		IconLoader.loadIcons();
 		
-		instrument = Instrument.getInstance();
+		instrument = new Instrument();
 		 
 		BXMLSerializer bxmlSerializer = new BXMLSerializer();
         window = (Window) bxmlSerializer.readObject(EditorApplication.class, "window.bxml");
@@ -105,6 +105,24 @@ public class EditorApplication implements Application {
         editorMenu.add(menuPanel);
         
         window.open(display);
+	}
+	
+	public Instrument getInstrument(){
+		return instrument;
+	}
+	
+	public void setInstrument(Instrument instrument){
+		this.instrument = instrument;
+		
+		this.instrument.addObserver(instrumentNamePanel);
+		this.instrument.addObserver(layerPanel);
+		this.instrument.addObserver(luaPanel);
+		this.instrument.addObserver(propertyPanel);
+		this.instrument.addObserver(graphicPanelContainer);
+		this.instrument.addObserver(encoderSetupPanel);
+		this.instrument.addObserver(menuPanel);
+		
+		this.instrument.updateObservers();
 	}
 	
 	@Override

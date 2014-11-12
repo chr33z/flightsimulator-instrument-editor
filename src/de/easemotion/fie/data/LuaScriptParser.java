@@ -1,10 +1,10 @@
 package de.easemotion.fie.data;
 
 import sun.font.TextLabel;
-import de.easemotion.fie.model.graphics.Instrument;
-import de.easemotion.fie.model.graphics.ImageLayer;
-import de.easemotion.fie.model.graphics.Layer;
-import de.easemotion.fie.model.graphics.TextLayer;
+import de.easemotion.fie.model.ImageLayer;
+import de.easemotion.fie.model.Instrument;
+import de.easemotion.fie.model.Layer;
+import de.easemotion.fie.model.TextLayer;
 import de.easemotion.fie.utils.Utils;
 
 /**
@@ -17,7 +17,7 @@ import de.easemotion.fie.utils.Utils;
  * @project Flightsimulator-Instrument-Editor
  *
  */
-public class LuaParser {
+public class LuaScriptParser {
 	
 	private static final String LUA_SCRIPT_LAYOUT = ""
 			+ "%s\n" // layout
@@ -54,21 +54,21 @@ public class LuaParser {
 			+ "]]\n";
 	
 	private static final String ENCODER_LEFT_TEMPLATE = "function_encoder_left = function()\n"
-			+ "%s"
+			+ "%s\n"
 			+ "end\n";
 	
 	private static final String ENCODER_RIGHT_TEMPLATE = "function_encoder_right = function()\n"
-			+ "%s"
+			+ "%s\n"
 			+ "end\n";
 	
 	private static final String LAYER_FUNCTION_TEMPLATE = "function_%s = function()\n"
-			+ "%s"
+			+ "%s\n"
 			+ "end\n";
 	
 	private static final String LAYER_FUNCTION_CALL_TEMPLATE = "function_%s()\n";
 	
 	private static final String MAIN_FUNCTION_TEMPLATE = "API_MAIN = function()\n"
-			+ "%s"
+			+ "%s\n"
 			+ "end\n";
 
 	/**
@@ -94,18 +94,15 @@ public class LuaParser {
 				layout += "\t\ttype = \"image\",\n";
 				layout += "\t\twidth = " + imageLayer.getWidth() + ",\n";
 				layout += "\t\theight = " + imageLayer.getHeight() + ",\n";
-				
-				if(imageLayer.getImageDay() != null){
-					layout += "\t\timage_day = " + imageLayer.getImageDay().getPath() + "\n";
-				}
-				
-				if(imageLayer.getImageNight() != null){
-					layout += "\t\timage_night = " + imageLayer.getImageNight().getPath() + "\n";
-				}
+				layout += "\t\tpivot_left = " + imageLayer.getPivotX() + ",\n";
+				layout += "\t\tpivot_top = " + imageLayer.getPivotY() + ",\n";
+				layout += "\t\timage_day = \"" + imageLayer.getImage().imageDay.getPath() + "\",\n";
+				layout += "\t\timage_night = \"" + imageLayer.getImage().imageNight.getPath() + "\"\n";
 				
 			} else if(layer instanceof TextLayer){
 				TextLayer textLayer = (TextLayer) layer;
 				
+				layout += "\t\ttype = \"text\",\n";
 				layout += "\t\tfont_size = " + textLayer.getFontSize() + ",\n";
 				layout += "\t\tfont = " + textLayer.getFont() + ",\n";
 			}

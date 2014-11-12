@@ -22,9 +22,9 @@ import org.apache.pivot.wtk.Keyboard.KeyLocation;
 import org.apache.pivot.wtk.content.ButtonData;
 
 import de.easemotion.fie.EditorApplication;
-import de.easemotion.fie.model.graphics.Instrument;
-import de.easemotion.fie.model.graphics.Layer;
-import de.easemotion.fie.model.graphics.Instrument.ImageMode;
+import de.easemotion.fie.model.Instrument;
+import de.easemotion.fie.model.Layer;
+import de.easemotion.fie.model.Instrument.ImageMode;
 import de.easemotion.fie.utils.IconLoader;
 import de.easemotion.fie.utils.IconLoader.Icon;
 

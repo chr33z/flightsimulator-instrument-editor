@@ -43,12 +43,12 @@ import org.apache.pivot.wtk.Mouse.Button;
 import com.sun.org.apache.bcel.internal.generic.Type;
 
 import de.easemotion.fie.EditorApplication;
-import de.easemotion.fie.data.LuaParser;
-import de.easemotion.fie.model.graphics.Instrument;
-import de.easemotion.fie.model.graphics.ImageLayer;
-import de.easemotion.fie.model.graphics.Layer;
-import de.easemotion.fie.model.graphics.TextLayer;
-import de.easemotion.fie.model.graphics.Instrument.ImageMode;
+import de.easemotion.fie.data.LuaScriptParser;
+import de.easemotion.fie.model.ImageLayer;
+import de.easemotion.fie.model.Instrument;
+import de.easemotion.fie.model.Layer;
+import de.easemotion.fie.model.TextLayer;
+import de.easemotion.fie.model.Instrument.ImageMode;
 import de.easemotion.fie.utils.Constants;
 
 /**
@@ -63,9 +63,9 @@ import de.easemotion.fie.utils.Constants;
 public class GraphicPanel extends Panel implements Observer {
 
 	private static final String TAG = GraphicPanel.class.getSimpleName();
-	
+
 	private static final boolean DRAW_ACTIVE_BOARDER = false;
-	
+
 	private static final boolean LAYER_CLICKABLE = true;
 
 	private Instrument instrument;
@@ -74,13 +74,13 @@ public class GraphicPanel extends Panel implements Observer {
 
 	private Layer activeLayer = null;
 	private Layer pressedLayer = null;
-	
+
 	private boolean showInstrumentMask = true;
-	
+
 	private boolean showGrid = true;
 
 	private BufferedImage instrumentMask = null;
-	
+
 	private Button lastMouseButton;
 
 	private int currentX;
@@ -102,7 +102,7 @@ public class GraphicPanel extends Panel implements Observer {
 	@Override
 	public void paint(Graphics2D g) {
 		g.setClip(new Rectangle(0, 0, instrument.getWidth(), instrument.getHeight()));
-		
+
 		// print a background grid
 		paintBackgroundGrid(g);
 
@@ -112,36 +112,27 @@ public class GraphicPanel extends Panel implements Observer {
 			}
 			if(layer instanceof ImageLayer){
 				AffineTransform transform = g.getTransform();
-				
-				try {
-					BufferedImage image;
-					ImageLayer imageLayer = (ImageLayer) layer;
-					
-					File file = instrument.getMode() == 
-							ImageMode.DAY ? imageLayer.getImageDay():imageLayer.getImageNight();
-					
-					if(file != null && file.exists()){
-						System.out.println();
-						image = ImageIO.read(file);
 
-						int pivotX = imageLayer.getLeft() + imageLayer.getPivotX();
-						int pivotY = imageLayer.getTop() + imageLayer.getPivotY();
-						g.rotate(Math.toRadians(((ImageLayer) layer).getRotation()), pivotX, pivotY);
-						g.drawImage(image, imageLayer.getLeft(), imageLayer.getTop(), 
-								imageLayer.getWidth(), imageLayer.getHeight(), null);
-					}
+				ImageLayer imageLayer = (ImageLayer) layer;
+				BufferedImage image =  instrument.getMode() == 
+						ImageMode.DAY ? imageLayer.getImageDay():imageLayer.getImageNight();
 
-					if(DRAW_ACTIVE_BOARDER && imageLayer.isActive()){
-						Paint paint = g.getPaint();
-						g.setPaint(Constants.paint.LAYER_ACTIVE_BORDER);
-						g.setStroke(new BasicStroke(2));
-						g.drawRect(imageLayer.getLeft(), imageLayer.getTop(), imageLayer.getWidth(), imageLayer.getHeight());
-						g.setPaint(paint);
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
+				if(image != null){
+					int pivotX = imageLayer.getLeft() + imageLayer.getPivotX();
+					int pivotY = imageLayer.getTop() + imageLayer.getPivotY();
+					g.rotate(Math.toRadians(((ImageLayer) layer).getRotation()), pivotX, pivotY);
+					g.drawImage(image, imageLayer.getLeft(), imageLayer.getTop(), 
+							imageLayer.getWidth(), imageLayer.getHeight(), null);
 				}
-				
+
+				if(DRAW_ACTIVE_BOARDER && imageLayer.isActive()){
+					Paint paint = g.getPaint();
+					g.setPaint(Constants.paint.LAYER_ACTIVE_BORDER);
+					g.setStroke(new BasicStroke(2));
+					g.drawRect(imageLayer.getLeft(), imageLayer.getTop(), imageLayer.getWidth(), imageLayer.getHeight());
+					g.setPaint(paint);
+				}
+
 				g.setTransform(transform);
 			}
 			else if(layer instanceof TextLayer){
@@ -156,7 +147,7 @@ public class GraphicPanel extends Panel implements Observer {
 		if(showInstrumentMask){
 			paintInstrumentMask(g);
 		}
-		
+
 		if(showGrid){
 			paintAlignementGrid(g);
 		}
@@ -164,7 +155,7 @@ public class GraphicPanel extends Panel implements Observer {
 		Layer activeLayer = instrument.getActiveLayer();
 		if(activeLayer != null && activeLayer instanceof ImageLayer){
 			ImageLayer layer = (ImageLayer) activeLayer;
-			
+
 			Paint paint = g.getPaint();
 			g.setPaint(Constants.paint.LAYER_PIVOT);
 			g.fillOval(
@@ -173,7 +164,7 @@ public class GraphicPanel extends Panel implements Observer {
 					2, 2);
 			g.setPaint(paint);
 		}
-			
+
 		super.paint(g);
 	}
 
@@ -198,14 +189,14 @@ public class GraphicPanel extends Panel implements Observer {
 
 		g.setPaint(paint);
 	}
-	
+
 	/**
 	 * Paint an alignement grid
 	 * @param g
 	 */
 	private void paintAlignementGrid(Graphics2D g){
 		Paint paint = g.getPaint();
-		
+
 		g.setPaint(Constants.paint.GRID_ALIGNMENT);
 		int size = Constants.integer.GRID_SIZE * 2;
 		for (int i = 1; i < instrument.getWidth() / size; i++) {
@@ -216,10 +207,10 @@ public class GraphicPanel extends Panel implements Observer {
 
 		g.setPaint(paint);
 	}
-	
+
 	private void paintInstrumentMask(Graphics2D g){
 		Paint paint = g.getPaint();
-		
+
 		if(instrumentMask == null){
 			String dir = new File("").getAbsolutePath() + "/assets/images";
 			try {
@@ -250,7 +241,7 @@ public class GraphicPanel extends Panel implements Observer {
 				Layer newActive = getClickedLayer(x, y);
 				if (newActive != null) {
 					pressedLayer = newActive;
-	
+
 					// deactivate layer when clicked again
 					if(activeLayer != null && newActive.getId().equals(activeLayer.getId())){
 						instrument.setLayersInactive();
@@ -265,7 +256,7 @@ public class GraphicPanel extends Panel implements Observer {
 				} else {
 					instrument.setLayersInactive();
 				}
-	
+
 				repaint();
 				lastMouseButton = button;
 				currentX = x;
@@ -508,7 +499,7 @@ public class GraphicPanel extends Panel implements Observer {
 	private void createImageLayer(String id, String imagePath, int left, int top){
 		int width = 0;
 		int height = 0;
-		
+
 		File file = new File(imagePath);
 		if(file.exists()){
 			BufferedImage image;
@@ -520,7 +511,7 @@ public class GraphicPanel extends Panel implements Observer {
 				e.printStackTrace();
 			}
 		}
-		
+
 		ImageLayer layer = new ImageLayer();
 		layer
 		.setPivotX(width / 2)
@@ -533,7 +524,7 @@ public class GraphicPanel extends Panel implements Observer {
 			layer.setImageDay(file);
 		}
 		instrument.addLayer(layer);
-		System.out.println(LuaParser.instrumentToLua(instrument));
+		System.out.println(LuaScriptParser.instrumentToLua(instrument));
 
 		repaint();
 	}
@@ -550,7 +541,7 @@ public class GraphicPanel extends Panel implements Observer {
 		this.showGrid = show;
 		repaint();
 	}
-	
+
 	public boolean isShowInstrumentMask() {
 		return showInstrumentMask;
 	}
@@ -572,7 +563,7 @@ public class GraphicPanel extends Panel implements Observer {
 		layer.setTop(top);
 
 		instrument.addLayer(layer);
-		System.out.println(LuaParser.instrumentToLua(instrument));
+		System.out.println(LuaScriptParser.instrumentToLua(instrument));
 
 		repaint();
 	}
@@ -584,6 +575,7 @@ public class GraphicPanel extends Panel implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		System.out.println("Graphic updated");
+		instrument = editor.getInstrument();
 		repaint();
 	}
 }

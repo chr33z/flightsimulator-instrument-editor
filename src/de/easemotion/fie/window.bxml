@@ -30,9 +30,7 @@
 		            		info and help
 		            	-->
 		            	<TablePane.Row height="105">
-			            	<TablePane styles="{verticalSpacing:1, showHorizontalGridLines:true,
-			            		horizontalSpacing:1, showVerticalGridLines:true}">
-				            	
+			            	<TablePane>
 				            	<columns>
 						            <TablePane.Column width="370"/>
 						            <TablePane.Column width="240"/>
