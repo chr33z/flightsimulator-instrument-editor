@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import de.easemotion.fie.utils.Constants.extension;
+
 public class Utils {
 
 	/*******************
@@ -70,12 +72,12 @@ public class Utils {
 	 */
 	public static class zip {
 
-		public static void zipDirectory(File directoryToZip) throws IOException {
+		public static void zipDirectory(File directoryToZip, String extension) throws IOException {
 			List<File> fileList = new ArrayList<>();
 			System.out.println("---Getting references to all files in: " + directoryToZip.getCanonicalPath());
 			getAllFiles(directoryToZip, fileList);
 			System.out.println("---Creating zip file");
-			writeZipFile(directoryToZip, fileList);
+			writeZipFile(directoryToZip, fileList, extension);
 			System.out.println("---Done");
 		}
 
@@ -96,8 +98,8 @@ public class Utils {
 			}
 		}
 
-		public static void writeZipFile(File directoryToZip, List<File> fileList) {
-			File destination = new File(directoryToZip.getParentFile(), directoryToZip.getName() + ".zip");
+		public static void writeZipFile(File directoryToZip, List<File> fileList, String extenstion) {
+			File destination = new File(directoryToZip.getParentFile(), directoryToZip.getName() + extenstion);
 			
 			try {
 				FileOutputStream fos = new FileOutputStream(destination);

@@ -1,8 +1,11 @@
 package de.easemotion.fie.view;
 
+import java.awt.EventQueue;
+import java.awt.event.FocusListener;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
+
 import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.serialization.SerializationException;
 import org.apache.pivot.wtk.BoxPane;
@@ -14,6 +17,9 @@ import org.apache.pivot.wtk.LinkButton;
 import org.apache.pivot.wtk.Keyboard.KeyCode;
 import org.apache.pivot.wtk.TextInput;
 import org.apache.pivot.wtk.Keyboard.KeyLocation;
+
+import com.sun.awt.AWTUtilities;
+
 import de.easemotion.fie.EditorApplication;
 import de.easemotion.fie.model.ImageLayer;
 import de.easemotion.fie.model.Instrument;
@@ -187,33 +193,40 @@ public class PropertyPanel extends BoxPane implements Observer {
 	};
 
 	private void updateLayer(){
-		Layer layer = instrument.getActiveLayer();
-		if(layer != null){
-			try {
-				layer.setLeft(Integer.parseInt(propLeft.getText()));
-				layer.setTop(Integer.parseInt(propTop.getText()));
-				layer.setId(propName.getText());
+		EventQueue.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				Layer layer = instrument.getActiveLayer();
+				if(layer != null){
+					try {
+						layer.setLeft(Integer.parseInt(propLeft.getText()));
+						layer.setTop(Integer.parseInt(propTop.getText()));
+						layer.setId(propName.getText());
 
-				if(layer instanceof ImageLayer){
-					ImageLayer imageLayer = (ImageLayer) layer;
-					imageLayer.setPivotX(Integer.parseInt(propPivotLeft.getText()));
-					imageLayer.setPivotY(Integer.parseInt(propPivotTop.getText()));
-					imageLayer.setRotation(Integer.parseInt(propRotation.getText()));
+						if(layer instanceof ImageLayer){
+							ImageLayer imageLayer = (ImageLayer) layer;
+							imageLayer.setPivotX(Integer.parseInt(propPivotLeft.getText()));
+							imageLayer.setPivotY(Integer.parseInt(propPivotTop.getText()));
+							imageLayer.setRotation(Integer.parseInt(propRotation.getText()));
+						}
+
+					} catch (NumberFormatException e){
+
+					}
+					instrument.updateObservers();
 				}
-
-			} catch (NumberFormatException e){
-
 			}
-			instrument.updateObservers();
-		}
+		});
 	}
-
+	
 	ComponentKeyListener keyListener = new ComponentKeyListener() {
 
 		@Override
 		public boolean keyTyped(Component component, char character) {
 			if(component instanceof TextInput){
 				TextInput input = (TextInput) component;
+				Layer active = instrument.getActiveLayer();
 
 				String id = null;
 				try {
@@ -221,12 +234,17 @@ public class PropertyPanel extends BoxPane implements Observer {
 				} catch(NullPointerException | ClassCastException e){
 
 				}
-
+				
 				if(id != null && id.equals("prop_id")){
 					if(!String.valueOf(character).matches("([A-Za-z0-9\\_\b\n\r\\x00\\x08\\x0B\\x0C\\x0E-\\x1F]+)")){
 						String txt = input.getText();
 						input.setText(txt.substring(0, txt.length()-1));
 						return true;
+					} else {
+						if(active != null){
+							active.setId(input.getText());
+							updateLayer();
+						}
 					}
 				}
 				if(id != null && (id.equals("prop_left") || 

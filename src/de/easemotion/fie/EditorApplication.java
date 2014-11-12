@@ -6,6 +6,8 @@ import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.wtk.Application;
 import org.apache.pivot.wtk.BoxPane;
+import org.apache.pivot.wtk.Button;
+import org.apache.pivot.wtk.ButtonPressListener;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.Container;
 import org.apache.pivot.wtk.DesktopApplicationContext;
@@ -13,6 +15,7 @@ import org.apache.pivot.wtk.Display;
 import org.apache.pivot.wtk.FillPane;
 import org.apache.pivot.wtk.FocusTraversalDirection;
 import org.apache.pivot.wtk.FocusTraversalPolicy;
+import org.apache.pivot.wtk.LinkButton;
 import org.apache.pivot.wtk.TablePane;
 import org.apache.pivot.wtk.Window;
 
@@ -54,7 +57,12 @@ public class EditorApplication implements Application {
 	public void startup(Display display, Map<String, String> properties)
 			throws Exception {
 		
+		display.getStyles().put("resizable", false);
+		display.setMaximumHeight(800);
+		display.setMaximumWidth(1000);
+		
 		window = new Window();
+		window.setMaximized(true);
 		window.setPreferredSize(1000, 800);
 
 		IconLoader.loadIcons();
@@ -103,6 +111,25 @@ public class EditorApplication implements Application {
         menuPanel = new MenuPanel(this, instrument);
         instrument.addObserver(menuPanel);
         editorMenu.add(menuPanel);
+        
+        // info and help button
+        LinkButton infoButton = (LinkButton) bxmlSerializer.getNamespace().get("button_info");
+        infoButton.getButtonPressListeners().add(new ButtonPressListener() {
+			
+			@Override
+			public void buttonPressed(Button button) {
+				onInfoButton();
+			}
+		});
+        
+        LinkButton helpButton = (LinkButton) bxmlSerializer.getNamespace().get("button_help");
+        helpButton.getButtonPressListeners().add(new ButtonPressListener() {
+			
+			@Override
+			public void buttonPressed(Button button) {
+				onHelpButton();
+			}
+		});
         
         window.open(display);
 	}
@@ -153,5 +180,13 @@ public class EditorApplication implements Application {
 	 */
 	public void enableEncoderEdit(boolean encoderLeft){
 		luaPanel.enableEncoderEdit(encoderLeft);
+	}
+	
+	public void onInfoButton(){
+		System.out.println("Info button pressed");
+	}
+	
+	public void onHelpButton(){
+		System.out.println("Help button pressed");
 	}
 }

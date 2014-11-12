@@ -51,7 +51,13 @@ public class InstrumentNamePanel extends BoxPane implements Observer {
 				
 				@Override
 				public boolean keyTyped(Component component, char character) {
-					instrument.setInstrumentName(nameInput.getText());
+					if(!String.valueOf(character).matches("([A-Za-z0-9\\_ \b\n\r\\x00\\x08\\x0B\\x0C\\x0E-\\x1F]+)")){
+						String txt = nameInput.getText();
+						nameInput.setText(txt.substring(0, txt.length()-1));
+						return true;
+					} else {
+						instrument.setInstrumentName(nameInput.getText());
+					}
 					return false;
 				}
 				

@@ -8,7 +8,7 @@
     <Label bxml:id="layer_label" preferredWidth="150" preferredHeight="25" 
     	styles="{backgroundColor:'0xff000000', color:'#ff0000', font:'monospace normal 14', verticalAlignment:'center', padding:5}"/>
     <Label bxml:id="layer_content" preferredWidth="110" preferredHeight="25" 
-    	styles="{backgroundColor:'0xff000000', color:'#ff0000', font:'monospace normal 14', verticalAlignment:'center'}" />
+    	styles="{backgroundColor:'0xff000000', color:'#ff0000', font:'monospace normal 14', verticalAlignment:'center', padding:5}" />
 
 	<!-- layer buttons -->
     <BoxPane orientation="horizontal" styles="{spacing:0}">

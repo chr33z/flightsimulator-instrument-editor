@@ -83,6 +83,8 @@ public class LuaScriptParser {
 		 */
 		String layout = INSTRUMENT_LAYOUT_HEADER;
 		layout += "instrument = {\n";
+		layout += "\tname = \""+ instrument.getInstrumentName() +"\",\n";
+		
 		for (Layer layer : instrument.getLayers()) {
 			layout += "\t" + layer.getId() + " = {\n";
 			layout += "\t\tleft = " + layer.getLeft() + ",\n";
@@ -104,7 +106,7 @@ public class LuaScriptParser {
 				
 				layout += "\t\ttype = \"text\",\n";
 				layout += "\t\tfont_size = " + textLayer.getFontSize() + ",\n";
-				layout += "\t\tfont = " + textLayer.getFont() + ",\n";
+				layout += "\t\tfont = \"" + textLayer.getFont() + "\"\n";
 			}
 
 			layout += "\t},\n";

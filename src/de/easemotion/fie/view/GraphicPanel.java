@@ -2,6 +2,8 @@ package de.easemotion.fie.view;
 
 import java.awt.BasicStroke;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Rectangle;
@@ -140,7 +142,22 @@ public class GraphicPanel extends Panel implements Observer {
 
 				// TODO implement
 				Paint paint = g.getPaint();
-				g.drawString("test", textLayer.getLeft(), textLayer.getTop());
+				
+				g.setPaint(Constants.paint.TEXT_STANDARD);
+				
+				/*
+				 * NOTE:
+				 * Font size on the PI-Client is rendered in Pixels, so a font size of 25 pixels should
+				 * here also correspond to a font size of 25 pixels.
+				 * Font metrics in java graphics work a little different so we introduce a correcting factor
+				 * of now 1.5 to scale the text so it font size matches the pixel height.
+				 * 
+				 * This factor was found by trying different values and has no formula what so ever.
+				 * For other fonts than FONT_GLASS it most likely has to be determined separately
+				 */
+				g.setFont(Constants.font.FONT_GLASS.deriveFont((float)textLayer.getFontSize() * 1.5f));
+				
+				g.drawString(textLayer.getText(), textLayer.getLeft(), textLayer.getTop());
 				g.setPaint(paint);
 			}
 		}

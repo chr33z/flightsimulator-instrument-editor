@@ -235,7 +235,7 @@ public class Instrument extends Observable {
 		}
 		
 		for (Layer l : layers) {
-			if(l.getId().equals(layer.getId())){
+			if(l.getSerial() == layer.getSerial()){
 				l.setActive(true);
 			} else {
 				l.setActive(false);
@@ -260,9 +260,14 @@ public class Instrument extends Observable {
 		return null;
 	}
 	
-	public Layer find(String id){
+	/**
+	 * find a layer with its serial (get serial with getSerial())
+	 * @param serial
+	 * @return
+	 */
+	public Layer find(long serial){
 		for (Layer layer : layers) {
-			if(layer.getId().equals(id)){
+			if(layer.getSerial() == serial){
 				return layer;
 			}
 		}

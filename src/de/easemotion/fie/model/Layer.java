@@ -1,8 +1,5 @@
 package de.easemotion.fie.model;
 
-import java.util.Observable;
-
-
 /**
  * One layer that builds up the instrument. Each layer can hold one image. Each layer has
  * a fixed order in the list that indicates drawing order. Layers at the top are drawn last
@@ -22,6 +19,9 @@ public abstract class Layer {
 	
 	/** human readable id for this layer (like "hour-dial") */
 	protected String id = "";
+	
+	/** unique id for this layer */
+	protected long serial = System.currentTimeMillis();
 	
 	protected int left = 0;
 	protected int top = 0;
@@ -101,5 +101,9 @@ public abstract class Layer {
 		this.visible = visible;
 	}
 	
+	public long getSerial() {
+		return serial;
+	}
+
 	public abstract Layer copy(Instrument instrument);
 }

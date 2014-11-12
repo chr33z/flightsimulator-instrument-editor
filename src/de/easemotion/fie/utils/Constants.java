@@ -16,6 +16,11 @@ public class Constants {
 		public static final File IMAGE_ASSETS = new File(BASE + "/assets/images/");
 		public static final File FONT_ASSETS = new File(BASE + "/assets/fonts/");
 	}
+	
+	public static class extension {
+		public static final String EMI_ZIP = ".emi";
+		public static final String PNG = ".png";
+	}
 
 	public static class string {
 		public static final String APP_NAME = "Instrument Editor";
@@ -76,6 +81,8 @@ public class Constants {
 		
 		public static final Paint LAYER_ACTIVE_BORDER = new Color(1.0f, 0.0f, 0.0f);
 		public static final Paint LAYER_PIVOT = new Color(1.0f, 0.0f, 0.0f);
+		
+		public static final Paint TEXT_STANDARD = new Color(1.0f, 1.0f, 1.0f);
 	}
 	
 	public static class color {
