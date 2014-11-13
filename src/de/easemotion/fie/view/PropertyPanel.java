@@ -138,11 +138,22 @@ public class PropertyPanel extends BoxPane implements Observer {
 			}
 		} else {
 			propName.setText("");
+			propName.setEditable(false);
+			
 			propLeft.setText("");
+			propLeft.setEditable(false);
+			
 			propTop.setText("");
+			propTop.setEditable(false);
+			
 			propPivotLeft.setText("");
+			propPivotLeft.setEditable(false);
+			
 			propPivotTop.setText("");
+			propPivotTop.setEditable(false);
+			
 			propRotation.setText("");
+			propRotation.setEditable(false);
 		}
 	}
 	
