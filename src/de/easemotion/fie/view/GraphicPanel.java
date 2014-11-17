@@ -109,6 +109,10 @@ public class GraphicPanel extends Panel implements Observer {
 		paintBackgroundGrid(g);
 
 		for (Layer layer : instrument.getLayers()) {
+			if(layer == null){
+				continue;
+			}
+			
 			if(!layer.isVisible()){
 				continue;
 			}

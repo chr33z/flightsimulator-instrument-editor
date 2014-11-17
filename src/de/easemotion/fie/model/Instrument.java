@@ -43,7 +43,7 @@ public class Instrument extends Observable {
 	
 	private ImageMode mode = ImageMode.DAY;
 	
-	private List<Layer> layers = new ArrayList<Layer>();
+	private List<Layer> layers = new ArrayList<Layer>(Constants.integer.MAX_LAYER_COUNT);
 	
 	/** Code for left encoder */
 	private String codeEncoderLeft = "";
@@ -54,7 +54,9 @@ public class Instrument extends Observable {
 	private String instrumentName = "";
 	
 	public Instrument(){
-		
+		for (int i = 0; i < Constants.integer.MAX_LAYER_COUNT; i++) {
+			layers.add(null);
+		}
 	}
 	
 	/**
@@ -107,7 +109,7 @@ public class Instrument extends Observable {
 	
 	public void addLayer(int index, Layer layer) {
 		layer.setParent(this);
-		layers.add(index, layer);
+		layers.set(index, layer);
 		updateObservers();
 	}
 	
@@ -169,16 +171,21 @@ public class Instrument extends Observable {
 			Iterator<Layer> iterator = getLayers().iterator();
 			while (iterator.hasNext()) {
 				// find layer
-				if(layer.getId().equals(iterator.next().getId())){
-					iterator.remove();
+				Layer next = iterator.next();
+				if(layer != null && next != null && layer.getSerial() == next.getSerial()){
 					break;
 				}
 				index++;
 			}
 			try {
-				addLayer(index + 1, layer);
+				if(index < layers.size()-1){
+					Layer next = layers.get(index + 1);
+					Layer current = layers.get(index);
+					
+					layers.set(index, next);
+					layers.set(index+1, current);
+				}
 			} catch (IndexOutOfBoundsException e){
-				addLayer(layer);
 			}
 		}
 		updateObservers();
@@ -190,16 +197,21 @@ public class Instrument extends Observable {
 			Iterator<Layer> iterator = getLayers().iterator();
 			while (iterator.hasNext()) {
 				// find layer
-				if(layer.getId().equals(iterator.next().getId())){
-					iterator.remove();
+				Layer next = iterator.next();
+				if(layer != null && next != null && layer.getSerial() == next.getSerial()){
 					break;
 				}
 				index++;
 			}
 			try {
-				addLayer(index - 1, layer);
+				if(index > 0){
+					Layer next = layers.get(index - 1);
+					Layer current = layers.get(index);
+					
+					layers.set(index, next);
+					layers.set(index-1, current);
+				}
 			} catch (IndexOutOfBoundsException e){
-				addLayer(0, layer);
 			}
 		}
 		updateObservers();
@@ -235,9 +247,9 @@ public class Instrument extends Observable {
 		}
 		
 		for (Layer l : layers) {
-			if(l.getSerial() == layer.getSerial()){
+			if(l != null && l.getSerial() == layer.getSerial()){
 				l.setActive(true);
-			} else {
+			} else if(l != null) {
 				l.setActive(false);
 			}
 		}
@@ -253,7 +265,7 @@ public class Instrument extends Observable {
 	
 	public Layer getActiveLayer(){
 		for (Layer layer : layers) {
-			if(layer.isActive()){
+			if(layer != null && layer.isActive()){
 				return layer;
 			}
 		}
@@ -275,7 +287,9 @@ public class Instrument extends Observable {
 	}
 	
 	public void reset(){
-		layers = new ArrayList<>();
+		for (Layer layer : layers) {
+			layer = null;
+		}
 		codeEncoderLeft = "";
 		codeEncoderRight = "";
 		mode = ImageMode.DAY;

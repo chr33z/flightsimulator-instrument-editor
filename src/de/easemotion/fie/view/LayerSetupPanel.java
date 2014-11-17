@@ -52,7 +52,7 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 	private List<Component> layerItems = new ArrayList<Component>(Constants.integer.MAX_LAYER_COUNT);
 
 	private enum Attribute {
-		LAYER, NEW_LAYER
+		LAYER, NEW_LAYER, LAYER_ID
 	}
 
 	public LayerSetupPanel(EditorApplication editor, Instrument surface){
@@ -97,9 +97,9 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 				/*
 				 * If there is a corresponding layer, read the data and fill the row
 				 */
-				if(i < instrument.getLayers().size()){
-					final Layer layer = layerList.get(i);
-
+				final Layer layer = layerList.get(i);
+				
+				if(layer != null && i < instrument.getLayers().size()){
 					boolean isActive = layer.isActive();
 
 					/*
@@ -136,10 +136,12 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 
 						actionDay.setEnabled(true);
 						actionDay.setAttribute(Attribute.LAYER, layer);
+						actionDay.setAttribute(Attribute.LAYER_ID, i);
 						actionDay.getButtonPressListeners().add(actionSelectDayImage);
 						
 						actionNight.setEnabled(true);
 						actionNight.setAttribute(Attribute.LAYER, layer);
+						actionNight.setAttribute(Attribute.LAYER_ID, i);
 						actionNight.getButtonPressListeners().add(actionSelectNightImage);
 						
 						/*
@@ -186,6 +188,7 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 						actionText.setEnabled(true);
 						actionText.setButtonData(IconLoader.icons.get(Icon.TEXT)[IconLoader.LOADED]);
 						actionText.setAttribute(Attribute.LAYER, layer);
+						actionText.setAttribute(Attribute.LAYER_ID, i);
 						actionText.getButtonPressListeners().add(actioncreateTextLayer);
 						
 						labelPath.setText("TEXT LAYER");
@@ -195,14 +198,17 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 
 					actionUp.setEnabled(true);
 					actionUp.setAttribute(Attribute.LAYER, layer);
+					actionUp.setAttribute(Attribute.LAYER_ID, i);
 					actionUp.getButtonPressListeners().add(actionUpListener);
 
 					actionDown.setEnabled(true);
 					actionDown.setAttribute(Attribute.LAYER, layer);
+					actionDown.setAttribute(Attribute.LAYER_ID, i);
 					actionDown.getButtonPressListeners().add(actionDownListener);
 
 					actionEdit.setEnabled(true);
 					actionEdit.setAttribute(Attribute.LAYER, layer);
+					actionEdit.setAttribute(Attribute.LAYER_ID, i);
 					actionEdit.getButtonPressListeners().add(actionEditListener);
 					if(isActive){
 						actionEdit.setButtonData(IconLoader.icons.get(Icon.EDIT)[IconLoader.ACTIVE]);
@@ -221,22 +227,27 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 
 					actionDelete.setEnabled(true);
 					actionDelete.setAttribute(Attribute.LAYER, layer);
+					actionDelete.setAttribute(Attribute.LAYER_ID, i);
 					actionDelete.getButtonPressListeners().add(actionDeleteListener);
 				}
-				else if(i == instrument.getLayers().size()){
+//				else if(i == instrument.getLayers().size()){
+				else {
 					/*
 					 * the first layout row after existing rows is to create a new layer
 					 */
 					actionDay.setEnabled(true);
 					actionDay.setAttribute(Attribute.NEW_LAYER, true);
+					actionDay.setAttribute(Attribute.LAYER_ID, i);
 					actionDay.getButtonPressListeners().add(actionSelectDayImage);
 
 					actionNight.setEnabled(true);
 					actionNight.setAttribute(Attribute.NEW_LAYER, true);
+					actionNight.setAttribute(Attribute.LAYER_ID, i);
 					actionNight.getButtonPressListeners().add(actionSelectNightImage);
 
 					actionText.setEnabled(true);
 					actionText.setAttribute(Attribute.NEW_LAYER, true);
+					actionText.setAttribute(Attribute.LAYER_ID, i);
 					actionText.getButtonPressListeners().add(actioncreateTextLayer);
 				}
 
@@ -317,11 +328,12 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 		public void buttonPressed(Button button) {
 			System.out.println("Select day image");
 			Layer layer = (Layer) button.getAttribute(Attribute.LAYER);
+			int order = (int) button.getAttribute(Attribute.LAYER_ID);
 
 			// create new layer
 			if(button.getAttribute(Attribute.NEW_LAYER) != null){
 				layer = new ImageLayer();
-				instrument.addLayer(0, layer);
+				instrument.addLayer(Constants.integer.MAX_LAYER_COUNT - (order+1), layer);
 			}
 
 			if(layer != null){
@@ -339,11 +351,12 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 		public void buttonPressed(Button button) {
 			System.out.println("Select night image");
 			Layer layer = (Layer) button.getAttribute(Attribute.LAYER);
+			int order = (int) button.getAttribute(Attribute.LAYER_ID);
 
 			// create new layer
 			if(button.getAttribute(Attribute.NEW_LAYER) != null){
 				layer = new ImageLayer();
-				instrument.addLayer(0, layer);
+				instrument.addLayer(Constants.integer.MAX_LAYER_COUNT - (order+1), layer);
 			}
 
 			if(layer != null){
