@@ -31,19 +31,21 @@ public class InstrumentValidator {
 
 		for (int i = 0; i < instrument.getLayers().size(); i++) {
 			Layer layer = instrument.getLayers().get(i);
-			
-			if(layer.getId().equals("")){
-				errors.add("Ebene "+(i+1)+": Geben Sie einen Namen für die Ebene ein");
-			}
-			if(layer instanceof ImageLayer){
-				ImageLayer imageLayer = (ImageLayer) layer;
-				String layerName = !layer.getId().equals("") ? layer.getId() : "Ebene "+(i+1);
-				
-				if(!imageLayer.getImage().imageDay.exists()){
-					errors.add(layerName+": Fügen Sie ein Tag-Bild für die Ebene hinzu");
+
+			if(layer != null){
+				if(layer.getId().equals("")){
+					errors.add("Ebene "+(i+1)+": Geben Sie einen Namen für die Ebene ein");
 				}
-				if(!imageLayer.getImage().imageNight.exists()){
-					errors.add(layerName+": Fügen Sie ein Nacht-Bild für die Ebene hinzu");
+				if(layer instanceof ImageLayer){
+					ImageLayer imageLayer = (ImageLayer) layer;
+					String layerName = !layer.getId().equals("") ? layer.getId() : "Ebene "+(i+1);
+
+					if(!imageLayer.getImage().imageDay.exists()){
+						errors.add(layerName+": Fügen Sie ein Tag-Bild für die Ebene hinzu");
+					}
+					//				if(!imageLayer.getImage().imageNight.exists()){
+					//					errors.add(layerName+": Fügen Sie ein Nacht-Bild für die Ebene hinzu");
+					//				}
 				}
 			}
 		}

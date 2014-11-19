@@ -121,13 +121,15 @@ public class Instrument extends Observable {
 			return;
 		}
 		
-		Iterator<Layer> iterator = layers.iterator();
-		while (iterator.hasNext()) {
-			if(layer.getId().equals(iterator.next().getId())){
-				iterator.remove();
+		for (int i = 0; i < layers.size(); i++) {
+			Layer l = layers.get(i);
+			
+			if(l != null && l.getSerial() == layer.getSerial()){
+				layers.set(i, null);
 				break;
 			}
 		}
+		
 		updateObservers();
 	}
 	
@@ -138,7 +140,8 @@ public class Instrument extends Observable {
 		
 		Iterator<Layer> iterator = layers.iterator();
 		while (iterator.hasNext()) {
-			if(layer.getId().equals(iterator.next().getId())){
+			Layer next = iterator.next();
+			if(next != null && layer.getSerial() == next.getSerial()){
 				layer.setVisible(visible);
 				break;
 			}
@@ -153,7 +156,8 @@ public class Instrument extends Observable {
 		
 		Iterator<Layer> iterator = layers.iterator();
 		while (iterator.hasNext()) {
-			if(layer.getId().equals(iterator.next().getId())){
+			Layer next = iterator.next();
+			if(next != null && layer.getSerial() == next.getSerial()){
 				layer.setVisible(!layer.isVisible());
 				break;
 			}
