@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.DirectoryNotEmptyException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -147,6 +148,16 @@ public class FileHandler {
 		 * 4. Step
 		 */
 		LuaValue layer = LuaValue.NIL;
+		
+		/**
+		 * If everything works fine we can extract the layer order from
+		 * the layout file in the lua script. If not we provide a 
+		 * backup order that starts to kick in when we detect that the
+		 * layout order is read wrong from the script
+		 */
+		int orderBackup = Constants.integer.MAX_LAYER_COUNT-1;
+		int firstOrder = -1;
+		
 		while ( true ) {
 			Varargs n = instrumentTable.next(layer);
 			if ( (layer = n.arg1()).isnil() ){
@@ -155,12 +166,25 @@ public class FileHandler {
 			LuaValue parameter = n.arg(2);
 
 			if(parameter.istable()){
+				
+				// order in editor layer panel
+				int order = parameter.get("order").toint();
+				
+				if(firstOrder == -1){
+					firstOrder = order;
+				}
+				
+				if(firstOrder != -1 && order == 0){
+					order = orderBackup;
+				}
+				
 				Layer newLayer = parseLayer(layer, (LuaTable) parameter, outputDirectory);
 				if(newLayer != null){
-					instrument.addLayer(newLayer);
+					instrument.addLayer(order, newLayer);
 				}
 
 			}
+			orderBackup--;
 		}
 
 		// Read script line by line
@@ -174,7 +198,9 @@ public class FileHandler {
 			}
 			br.close();
 		} catch (IOException e) {
-			// TODO errorhandling
+			/*
+			 * TODO errorhandling: show user dialog "script is bad"
+			 */
 			e.printStackTrace();
 		}
 
@@ -183,7 +209,10 @@ public class FileHandler {
 		 */
 		String[] functionNames = new String[instrument.getLayers().size()];
 		for (int i = 0; i < instrument.getLayers().size(); i++) {
-			functionNames[i] = "function_" + instrument.getLayers().get(i).getId();
+			Layer l = instrument.getLayers().get(i);
+			
+			String layerName = l != null ? l.getId() : "~";
+			functionNames[i] = "function_" + layerName;
 		}
 
 		Iterator<String> iter = scriptLines.iterator();
@@ -204,7 +233,11 @@ public class FileHandler {
 					}
 					System.out.println("Function: "+f);
 					System.out.println(content);
-					instrument.getLayers().get(i).setLuaScript(content);
+					
+					Layer l = instrument.getLayers().get(i);
+					if(l != null){
+						l.setLuaScript(content);
+					}
 				}
 			}
 		}
@@ -365,10 +398,6 @@ public class FileHandler {
 				return;
 			}
 		}
-		// TODO specify valid characters
-		//		if(!fileName.matches("([A-Za-z0-9\\_\b\n\r\\x00\\x08\\x0B\\x0C\\x0E-\\x1F]+)")){
-		//			
-		//		}
 
 		// Step 2
 		File tmpDir = new File(directory, fileName+"/");
@@ -379,7 +408,7 @@ public class FileHandler {
 
 		// Step 3
 		for (Layer layer : instrument.getLayers()) {
-			if(layer instanceof ImageLayer){
+			if(layer != null && layer instanceof ImageLayer){
 				// copy day image
 				try {
 					File dayImageCopy = new File(tmpImageDir, (((ImageLayer) layer).getImage().imageDay.getName()));
@@ -405,7 +434,7 @@ public class FileHandler {
 		// Step 4
 		Instrument instrumentCopy = instrument.copy();
 		for (Layer l : instrumentCopy.getLayers()) {
-			if(l instanceof ImageLayer){
+			if(l != null && l instanceof ImageLayer){
 				ImageLayer layer = (ImageLayer) l;
 
 				try {
@@ -448,5 +477,18 @@ public class FileHandler {
 			listener.onError(Error.ZIP_FAILED);
 			return;
 		}
+		
+		/*
+		 * Try deleting old files to copy
+		 */
+		try {
+			Utils.file.delete(tmpDir);
+		} catch (IOException e) {
+			/*
+			 * TODO tell user that files remain
+			 */
+			e.printStackTrace();
+		}
+		
 	}
 }

@@ -41,7 +41,7 @@ public class Utils {
 			}
 		}
 
-		public static boolean copy(File source, File target){
+		public static boolean copy(File source, File target) {
 			return copy(source.getAbsolutePath(), target.getAbsolutePath());
 		}
 
@@ -56,6 +56,15 @@ public class Utils {
 			} else {
 				return false;
 			}
+		}
+
+		public static void delete(File f) throws IOException {
+			if (f.isDirectory()) {
+				for (File c : f.listFiles())
+					delete(c);
+			}
+			if (!f.delete())
+				throw new FileNotFoundException("Failed to delete file: " + f);
 		}
 	}
 
@@ -100,7 +109,7 @@ public class Utils {
 
 		public static void writeZipFile(File directoryToZip, List<File> fileList, String extenstion) {
 			File destination = new File(directoryToZip.getParentFile(), directoryToZip.getName() + extenstion);
-			
+
 			try {
 				FileOutputStream fos = new FileOutputStream(destination);
 				ZipOutputStream zos = new ZipOutputStream(fos);

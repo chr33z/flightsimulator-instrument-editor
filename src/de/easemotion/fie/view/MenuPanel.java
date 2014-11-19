@@ -10,6 +10,7 @@ import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.collections.ArrayList;
 import org.apache.pivot.collections.Sequence;
 import org.apache.pivot.serialization.SerializationException;
+import org.apache.pivot.util.Filter;
 import org.apache.pivot.wtk.Alert;
 import org.apache.pivot.wtk.BoxPane;
 import org.apache.pivot.wtk.Button;
@@ -38,6 +39,7 @@ import de.easemotion.fie.data.LuaScriptParser;
 import de.easemotion.fie.data.FileHandler.Error;
 import de.easemotion.fie.model.Instrument;
 import de.easemotion.fie.model.Layer;
+import de.easemotion.fie.utils.Constants;
 import de.easemotion.fie.utils.IconLoader;
 import de.easemotion.fie.utils.IconLoader.Icon;
 
@@ -131,9 +133,21 @@ public class MenuPanel extends BoxPane implements Observer {
 				name = name.replace(" ", "_");
 				
 				final FileBrowserSheet fileBrowserSheet = new FileBrowserSheet();
-				fileBrowserSheet.setSelectedFile(new File(fileBrowserSheet.getRootDirectory(), name));
- 
                 fileBrowserSheet.setMode(Mode.SAVE_AS);
+                fileBrowserSheet.getStyles().put("hideDisabledFiles", true);
+        		
+                File root = EditorApplication.lastFileBrowserPath;
+        		if(root != null && root.exists()){
+        			fileBrowserSheet.setRootDirectory(root);
+        		}
+        		fileBrowserSheet.setDisabledFileFilter(new Filter<File>() {
+        			
+        			@Override
+        			public boolean include(File item) {
+        				return (item.isFile() && !item.getName().endsWith(Constants.extension.EMI_ZIP));
+        			}
+        		});
+                
                 fileBrowserSheet.open(editor.window, new SheetCloseListener() {
                     @Override
                     public void sheetClosed(Sheet sheet) {

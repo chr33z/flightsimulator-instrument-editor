@@ -108,7 +108,9 @@ public class Instrument extends Observable {
 	}
 	
 	public void addLayer(int index, Layer layer) {
-		layer.setParent(this);
+		if(layer != null){
+			layer.setParent(this);
+		}
 		layers.set(index, layer);
 		updateObservers();
 	}
@@ -291,8 +293,8 @@ public class Instrument extends Observable {
 	}
 	
 	public void reset(){
-		for (Layer layer : layers) {
-			layer = null;
+		for (int i = 0; i < layers.size(); i++) {
+			layers.set(i, null);
 		}
 		codeEncoderLeft = "";
 		codeEncoderRight = "";
@@ -347,8 +349,15 @@ public class Instrument extends Observable {
 		instrument.codeEncoderRight = this.codeEncoderRight;
 		instrument.instrumentName = this.instrumentName;
 		
-		for (Layer layer : this.layers) {
-			instrument.addLayer(layer.copy(this));
+		for (int i = 0; i < this.layers.size(); i++) {
+			Layer copy = layers.get(i);
+			
+			if(copy != null){
+				instrument.addLayer(i, copy.copy(this));
+			} else {
+				instrument.addLayer(i, null);
+			}
+			
 		}
 		
 		return instrument;
