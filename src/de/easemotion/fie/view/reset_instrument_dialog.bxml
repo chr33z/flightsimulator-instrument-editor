@@ -1,0 +1,10 @@
+<BoxPane orientation="vertical"
+    xmlns:bxml="http://pivot.apache.org/bxml"
+    xmlns:content="org.apache.pivot.wtk.content"
+    xmlns="org.apache.pivot.wtk">
+
+    <BoxPane orientation="horizontal" styles="{padding:6, spacing:16, fill:true}">
+    	<PushButton bxml:id="delete" buttonData="instrument zurücksetzen"/>
+    	<PushButton bxml:id="cancel" buttonData="Abbrechen"/>
+    </BoxPane>
+</BoxPane>

@@ -1,0 +1,11 @@
+<BoxPane xmlns:bxml="http://pivot.apache.org/bxml"
+    xmlns:content="org.apache.pivot.wtk.content"
+    xmlns="org.apache.pivot.wtk"
+    orientation="horizontal"
+    styles="{horizontalAlignment:'right', spacing:0}">
+    
+    <LinkButton bxml:id="button_menu_load"/>
+    <LinkButton bxml:id="button_menu_save"/>
+    <LinkButton bxml:id="button_menu_reset"/>
+    
+</BoxPane>

@@ -1,0 +1,8 @@
+<BoxPane xmlns:bxml="http://pivot.apache.org/bxml"
+    xmlns:content="org.apache.pivot.wtk.content"
+    xmlns="org.apache.pivot.wtk" orientation="vertical" styles="{padding:6, spacing:16, fill:true}">
+    
+    <BoxPane bxml:id="content"/>
+    
+	<PushButton bxml:id="confirm" buttonData="Ok"/>
+</BoxPane>
