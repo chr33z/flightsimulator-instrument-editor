@@ -12,6 +12,8 @@ import org.apache.pivot.wtk.ComponentKeyListener;
 import org.apache.pivot.wtk.Container;
 import org.apache.pivot.wtk.FocusTraversalDirection;
 import org.apache.pivot.wtk.FocusTraversalPolicy;
+import org.apache.pivot.wtk.ImageView;
+import org.apache.pivot.wtk.StackPane;
 import org.apache.pivot.wtk.TextArea;
 import org.apache.pivot.wtk.Keyboard.KeyCode;
 import org.apache.pivot.wtk.Keyboard.KeyLocation;
@@ -32,9 +34,17 @@ public class LuaEditorPanel extends BoxPane implements Observer {
 	private EditorApplication editor;
 
 	private TextArea textArea;
+	
+	private ImageView splashScreen;
+	
+	private StackPane simModeContainer;
+	
+	private boolean splashScreenVisible = false;
 
 	boolean encoderEditMode = false;
 	boolean encoderLeft = true;
+	
+	boolean simulationActive = false;
 
 	public LuaEditorPanel(EditorApplication editor, final Instrument surface){
 		this.editor = editor;
@@ -43,6 +53,12 @@ public class LuaEditorPanel extends BoxPane implements Observer {
 		try {
 			BXMLSerializer s = new BXMLSerializer();
 			Component component = (Component) s.readObject(LuaEditorPanel.class, "lua_pane.bxml");
+			
+			splashScreen = (ImageView) s.getNamespace().get("splashscreen");
+			splashScreen.setVisible(false);
+			
+			simModeContainer = (StackPane) s.getNamespace().get("sim_panel");
+			simModeContainer.setVisible(false);
 
 			textArea = (TextArea) s.getNamespace().get("lua_text_area");
 			textArea.getStyles().put("color", Constants.color.TEXT_PRIMARY);
@@ -142,6 +158,47 @@ public class LuaEditorPanel extends BoxPane implements Observer {
 			textArea.setEnabled(false);
 			textArea.setText("");
 		}
+	}
+	
+	public void setSplashScreenVisible(final boolean visible){
+		System.out.println("set visible "+visible);
+		splashScreen.setVisible(visible);
+		
+		/**
+		 * Set visibility delayed because the mouseclick on
+		 * the button triggers also that the splashscreen vanishes
+		 * again
+		 */
+		Thread delay = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				splashScreenVisible = visible;
+			}
+		});
+		delay.start();
+		
+		repaint(true);
+	}
+	
+	public boolean isSplashScreenVisible(){
+		return splashScreenVisible;
+	}
+	
+	public void toggleSimulation(){
+		simulationActive = !simulationActive;
+		
+		// TODO more
+		simModeContainer.setVisible(simulationActive);
+	}
+	
+	public boolean isSimulationActive(){
+		return simulationActive;
 	}
 
 	@Override

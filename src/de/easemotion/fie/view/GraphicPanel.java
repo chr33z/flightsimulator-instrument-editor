@@ -66,9 +66,11 @@ public class GraphicPanel extends Panel implements Observer {
 
 	private static final String TAG = GraphicPanel.class.getSimpleName();
 
+	/** draw a red border around an active layer */
 	private static final boolean DRAW_ACTIVE_BOARDER = false;
 
-	private static final boolean LAYER_CLICKABLE = true;
+	/** set layer clickable (draggable) */
+	private static final boolean LAYER_CLICKABLE = false;
 
 	private Instrument instrument;
 
@@ -81,7 +83,9 @@ public class GraphicPanel extends Panel implements Observer {
 
 	private boolean showGrid = true;
 
-	private BufferedImage instrumentMask = null;
+	private BufferedImage previewMask = null;
+	
+	private BufferedImage previewGrid = null;
 
 	private Button lastMouseButton;
 
@@ -126,8 +130,11 @@ public class GraphicPanel extends Panel implements Observer {
 				if(image != null){
 					int pivotX = imageLayer.getLeft() + imageLayer.getPivotX();
 					int pivotY = imageLayer.getTop() + imageLayer.getPivotY();
-					g.rotate(Math.toRadians(((ImageLayer) layer).getRotation()), pivotX, pivotY);
-					g.drawImage(image, imageLayer.getLeft(), imageLayer.getTop(), 
+					g.rotate(Math.toRadians(((ImageLayer) layer).getRotation()), 
+							imageLayer.getLeft(), imageLayer.getTop());
+					g.drawImage(image, 
+							imageLayer.getLeft() - imageLayer.getPivotX(), 
+							imageLayer.getTop() - imageLayer.getPivotY(), 
 							imageLayer.getWidth(), imageLayer.getHeight(), null);
 				}
 
@@ -165,24 +172,33 @@ public class GraphicPanel extends Panel implements Observer {
 				g.setPaint(paint);
 			}
 		}
-		if(showInstrumentMask){
-			paintInstrumentMask(g);
-		}
-
 		if(showGrid){
 			paintAlignementGrid(g);
 		}
 
+		if(showInstrumentMask){
+			paintInstrumentMask(g);
+		}
+
+		/*
+		 * Draw pivot of the active layer
+		 */
 		Layer activeLayer = instrument.getActiveLayer();
 		if(activeLayer != null && activeLayer instanceof ImageLayer){
 			ImageLayer layer = (ImageLayer) activeLayer;
 
 			Paint paint = g.getPaint();
 			g.setPaint(Constants.paint.LAYER_PIVOT);
-			g.fillOval(
-					layer.getLeft() + layer.getPivotX() - 1,
-					layer.getTop() + layer.getPivotY() - 1, 
-					2, 2);
+			// horizontal
+			g.fillRect(
+					layer.getLeft() - 10, 
+					layer.getTop() - 1, 
+					20, 2);
+			// vertical
+			g.fillRect(
+					layer.getLeft() - 1, 
+					layer.getTop() - 10, 
+					2, 20);
 			g.setPaint(paint);
 		}
 
@@ -216,31 +232,47 @@ public class GraphicPanel extends Panel implements Observer {
 	 * @param g
 	 */
 	private void paintAlignementGrid(Graphics2D g){
+		// Draw Image instead of points because Windows some how doesnt show the
+		// points
 		Paint paint = g.getPaint();
 
-		g.setPaint(Constants.paint.GRID_ALIGNMENT);
-		int size = Constants.integer.GRID_SIZE * 2;
-		for (int i = 1; i < instrument.getWidth() / size; i++) {
-			for (int j = 1; j < instrument.getHeight() / size; j++) {
-				g.fillOval(size * i, size * j, 1, 1);
+		if(previewGrid == null){
+			String dir = new File("").getAbsolutePath() + "/assets/images";
+			try {
+				previewGrid = ImageIO.read(new File(new File(dir), "PreviewGrid.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
-
+		g.drawImage(previewGrid, 0, 0, 
+				instrument.getWidth(), instrument.getHeight(), null);
 		g.setPaint(paint);
+		
+//		Paint paint = g.getPaint();
+//
+//		g.setPaint(Constants.paint.GRID_ALIGNMENT);
+//		int size = Constants.integer.GRID_SIZE * 2;
+//		for (int i = 1; i < instrument.getWidth() / size; i++) {
+//			for (int j = 1; j < instrument.getHeight() / size; j++) {
+//				g.fillOval(size * i, size * j, 1, 1);
+//			}
+//		}
+//
+//		g.setPaint(paint);
 	}
 
 	private void paintInstrumentMask(Graphics2D g){
 		Paint paint = g.getPaint();
 
-		if(instrumentMask == null){
+		if(previewMask == null){
 			String dir = new File("").getAbsolutePath() + "/assets/images";
 			try {
-				instrumentMask = ImageIO.read(new File(new File(dir), "shadow_general.png"));
+				previewMask = ImageIO.read(new File(new File(dir), "PreviewMask.png"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		g.drawImage(instrumentMask, 0, 0, 
+		g.drawImage(previewMask, 0, 0, 
 				instrument.getWidth(), instrument.getHeight(), null);
 		g.setPaint(paint);
 	}

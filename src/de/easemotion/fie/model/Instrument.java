@@ -264,7 +264,9 @@ public class Instrument extends Observable {
 	
 	public void setLayersInactive(){
 		for (Layer layer : layers) {
-			layer.setActive(false);
+			if(layer != null){
+				layer.setActive(false);
+			}
 		}
 		updateObservers();
 	}

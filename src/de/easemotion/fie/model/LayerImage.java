@@ -6,6 +6,16 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+/**
+ * Stores the day and night image for an ImageLayer. It automatically
+ * loads a buffered image from the provided file if possible and returns it
+ * when {@link #getImageDay()} or {@link #getImageNight()} is called.
+ * 
+ * @author Christopher Gebhardt
+ * @date Nov 20, 2014
+ * @project Flightsimulator-Instrument-Editor
+ *
+ */
 public class LayerImage {
 
 	/** image file name for day images with file ending */
@@ -23,6 +33,10 @@ public class LayerImage {
 	private void loadImageDay(File file){
 		try {
 			bufferedDay = ImageIO.read(file);
+			
+			if(bufferedNight != null){
+				System.out.println("[info] Image day successfully loaded: "+file.getAbsolutePath());
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -31,6 +45,10 @@ public class LayerImage {
 	private void loadImageNight(File file){
 		try {
 			bufferedNight = ImageIO.read(file);
+			
+			if(bufferedNight != null){
+				System.out.println("[info] Image night successfully loaded: "+file.getAbsolutePath());
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

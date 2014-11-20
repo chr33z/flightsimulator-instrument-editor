@@ -1,5 +1,6 @@
 package de.easemotion.fie;
 
+import java.awt.Dimension;
 import java.io.File;
 
 import org.apache.pivot.beans.BXMLSerializer;
@@ -9,21 +10,17 @@ import org.apache.pivot.wtk.BoxPane;
 import org.apache.pivot.wtk.Button;
 import org.apache.pivot.wtk.ButtonPressListener;
 import org.apache.pivot.wtk.Component;
-import org.apache.pivot.wtk.Container;
+import org.apache.pivot.wtk.ComponentMouseButtonListener;
 import org.apache.pivot.wtk.DesktopApplicationContext;
 import org.apache.pivot.wtk.Display;
-import org.apache.pivot.wtk.FillPane;
-import org.apache.pivot.wtk.FocusTraversalDirection;
-import org.apache.pivot.wtk.FocusTraversalPolicy;
 import org.apache.pivot.wtk.LinkButton;
 import org.apache.pivot.wtk.TablePane;
 import org.apache.pivot.wtk.Window;
 
-import de.easemotion.fie.model.EditorStatus;
 import de.easemotion.fie.model.Instrument;
 import de.easemotion.fie.utils.IconLoader;
+import de.easemotion.fie.utils.IconLoader.Icon;
 import de.easemotion.fie.view.EncoderSetupPanel;
-import de.easemotion.fie.view.GraphicPanel;
 import de.easemotion.fie.view.GraphicPanelContainer;
 import de.easemotion.fie.view.InstrumentNamePanel;
 import de.easemotion.fie.view.LayerSetupPanel;
@@ -49,6 +46,8 @@ public class EditorApplication implements Application {
 	EncoderSetupPanel encoderSetupPanel;
 	MenuPanel menuPanel;
 	
+	LinkButton simulationButton;
+	
 	public static void main(String[] args) {
 	    DesktopApplicationContext.main(EditorApplication.class, args);
 	}
@@ -57,12 +56,13 @@ public class EditorApplication implements Application {
 	public void startup(Display display, Map<String, String> properties)
 			throws Exception {
 		
+		display.getHostWindow().setMaximumSize(new Dimension(1000, 800));
+		display.getHostWindow().setPreferredSize(new Dimension(1000, 800));
 		display.getStyles().put("resizable", false);
-		display.setMaximumHeight(800);
-		display.setMaximumWidth(1000);
 		
 		window = new Window();
 		window.setMaximized(true);
+		window.setSize(1000, 800);
 		window.setPreferredSize(1000, 800);
 
 		IconLoader.loadIcons();
@@ -131,6 +131,50 @@ public class EditorApplication implements Application {
 			}
 		});
         
+        // Simulation Button
+        simulationButton = (LinkButton) bxmlSerializer.getNamespace().get("button_simulation");
+        simulationButton.setButtonData(IconLoader
+				.icons.get(Icon.SIM)[IconLoader.DEACTIVE]);
+        simulationButton.getButtonPressListeners().add(new ButtonPressListener() {
+			
+			@Override
+			public void buttonPressed(Button button) {
+				onHelpButton();
+				onToggleSimulation();
+			}
+		});
+        
+        /**
+         * Add mouse button listener to the overall window to remove the splashscreen
+         * when
+         */
+        window.getComponentMouseButtonListeners().add(new ComponentMouseButtonListener() {
+			
+			@Override
+			public boolean mouseUp(Component component,
+					org.apache.pivot.wtk.Mouse.Button button, int x, int y) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public boolean mouseDown(Component component,
+					org.apache.pivot.wtk.Mouse.Button button, int x, int y) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public boolean mouseClick(Component component,
+					org.apache.pivot.wtk.Mouse.Button button, int x, int y, int count) {
+				
+				if(luaPanel != null && luaPanel.isSplashScreenVisible()){
+					luaPanel.setSplashScreenVisible(false);
+				}
+				return false;
+			}
+		});
+        
         window.open(display);
 	}
 	
@@ -183,10 +227,24 @@ public class EditorApplication implements Application {
 	}
 	
 	public void onInfoButton(){
-		System.out.println("Info button pressed");
+		if(luaPanel != null){
+			luaPanel.setSplashScreenVisible(true);
+		}
 	}
 	
 	public void onHelpButton(){
 		System.out.println("Help button pressed");
+	}
+	
+	public void onToggleSimulation(){
+		luaPanel.toggleSimulation();
+		
+		if(luaPanel.isSimulationActive()){
+			simulationButton.setButtonData(IconLoader
+					.icons.get(Icon.SIM)[IconLoader.ACTIVE]);
+		} else {
+			simulationButton.setButtonData(IconLoader
+					.icons.get(Icon.SIM)[IconLoader.DEACTIVE]);
+		}
 	}
 }

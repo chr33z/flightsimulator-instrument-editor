@@ -44,12 +44,16 @@
 						        		Buttons for info and help
 						        	-->
 						        	<BoxPane preferredHeight="14" orientation="horizontal"
-						        		styles="{padding:'{left:48, top:25}', spacing:7}">
+						        		styles="{padding:'{left:48, top:25}', spacing:9}">
 						        		<LinkButton bxml:id="button_info" preferredWidth="14" preferredHeight="14">
 						        			<content:ButtonData text=""/>
 						        		</LinkButton>
 						        		
         								<LinkButton bxml:id="button_help" preferredWidth="14" preferredHeight="14">
+        									<content:ButtonData text=""/>
+						        		</LinkButton>
+						        		
+						        		<LinkButton bxml:id="button_website" preferredWidth="14" preferredHeight="14">
         									<content:ButtonData text=""/>
 						        		</LinkButton>
 						        	</BoxPane>
@@ -68,7 +72,13 @@
 		            		Add padding of 70 to sub container
 		            	-->	
 		            	<TablePane.Row height="78">
-		            		<TablePane.Filler/>
+		            		<BoxPane preferredHeight="78" orientation="horizontal"
+						        		styles="{padding:'{left:226, top:52}'}">
+						        		
+			            		<LinkButton bxml:id="button_simulation" preferredWidth="14" preferredHeight="14">
+	        							<content:ButtonData/>
+							    </LinkButton>
+							</BoxPane>
 		            	</TablePane.Row>
 		            	
 			            <TablePane.Row height="240" bxml:id="editor_lua_editor" />

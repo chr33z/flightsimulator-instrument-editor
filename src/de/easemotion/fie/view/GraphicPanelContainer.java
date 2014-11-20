@@ -20,8 +20,10 @@ import org.apache.pivot.wtk.TextInput;
 import org.apache.pivot.wtk.Keyboard.KeyCode;
 import org.apache.pivot.wtk.Keyboard.KeyLocation;
 import org.apache.pivot.wtk.content.ButtonData;
+import org.apache.pivot.wtk.media.Image;
 
 import de.easemotion.fie.EditorApplication;
+import de.easemotion.fie.model.ImageLayer;
 import de.easemotion.fie.model.Instrument;
 import de.easemotion.fie.model.Layer;
 import de.easemotion.fie.model.Instrument.ImageMode;
@@ -92,24 +94,45 @@ public class GraphicPanelContainer extends BoxPane implements Observer {
 	}
 	
 	private void updateView(){
-		if(instrument.getMode() == ImageMode.DAY){
-			buttonModeDay.setButtonData(new ButtonData(IconLoader.icons.get(Icon.DAY_L)[IconLoader.LOADED]));
-			buttonModeNight.setButtonData(new ButtonData(IconLoader.icons.get(Icon.NICHT_L)[IconLoader.ACTIVE]));
-		} else {
-			buttonModeDay.setButtonData(new ButtonData(IconLoader.icons.get(Icon.DAY_L)[IconLoader.ACTIVE]));
-			buttonModeNight.setButtonData(new ButtonData(IconLoader.icons.get(Icon.NICHT_L)[IconLoader.LOADED]));
+		boolean dayImagesPresent = false;
+		boolean nightImagesPresent = false;
+		
+		for (Layer layer : instrument.getLayers()) {
+			if(layer != null && layer instanceof ImageLayer){
+				dayImagesPresent |= (((ImageLayer) layer).getImageDay() != null);
+				nightImagesPresent |= (((ImageLayer) layer).getImageNight() != null);
+			}
 		}
 		
-		if(graphicPanel.isShowGrid()){
-			buttonAlignementGrid.setButtonData(new ButtonData(IconLoader.icons.get(Icon.GRID_L)[IconLoader.LOADED]));
+		/*
+		 * Select Icon based on state and presents of images.
+		 * If there are no night images for example the night
+		 * mode is shown as deactive when not selected, otherwise
+		 * as loaded
+		 */
+		int iconModeDay = IconLoader.DEACTIVE;
+		int iconModeNight = IconLoader.DEACTIVE;
+		
+		if(instrument.getMode() == ImageMode.DAY){
+			iconModeDay = IconLoader.ACTIVE;
+			iconModeNight = nightImagesPresent ? IconLoader.LOADED : IconLoader.DEACTIVE;
 		} else {
+			iconModeNight = IconLoader.ACTIVE;
+			iconModeDay = dayImagesPresent ? IconLoader.LOADED : IconLoader.DEACTIVE;
+		}
+		buttonModeDay.setButtonData(new ButtonData(IconLoader.icons.get(Icon.DAY_L)[iconModeDay]));
+		buttonModeNight.setButtonData(new ButtonData(IconLoader.icons.get(Icon.NICHT_L)[iconModeNight]));
+		
+		if(graphicPanel.isShowGrid()){
 			buttonAlignementGrid.setButtonData(new ButtonData(IconLoader.icons.get(Icon.GRID_L)[IconLoader.ACTIVE]));
+		} else {
+			buttonAlignementGrid.setButtonData(new ButtonData(IconLoader.icons.get(Icon.GRID_L)[IconLoader.DEACTIVE]));
 		}
 		
 		if(graphicPanel.isShowInstrumentMask()){
-			buttonInstrumentMask.setButtonData(new ButtonData(IconLoader.icons.get(Icon.MASK_L)[IconLoader.LOADED]));
-		} else {
 			buttonInstrumentMask.setButtonData(new ButtonData(IconLoader.icons.get(Icon.MASK_L)[IconLoader.ACTIVE]));
+		} else {
+			buttonInstrumentMask.setButtonData(new ButtonData(IconLoader.icons.get(Icon.MASK_L)[IconLoader.DEACTIVE]));
 		}
 	}
 	

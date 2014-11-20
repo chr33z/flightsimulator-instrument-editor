@@ -164,7 +164,7 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 						}
 						labelPath.getComponentMouseButtonListeners().add(activeClickListener);
 
-						if(imageLayer.getImageDay() != null && imageLayer.getImage().imageDay.exists()){
+						if(imageLayer.getImageDay() != null && imageLayer.getImageDay() != null){
 							actionDay.setButtonData(IconLoader.icons.get(Icon.DAY)[IconLoader.LOADED]);
 						} else if(imageLayer.getImageDay() == null){
 							actionDay.setButtonData(IconLoader.icons.get(Icon.DAY)[IconLoader.MISSING]);
@@ -173,7 +173,7 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 							actionDay.setButtonData(IconLoader.icons.get(Icon.DAY)[IconLoader.ACTIVE]);
 						}
 
-						if(imageLayer.getImageNight() != null && imageLayer.getImage().imageNight.exists()){
+						if(imageLayer.getImageNight() != null && imageLayer.getImageNight() != null){
 							actionNight.setButtonData(IconLoader.icons.get(Icon.NIGHT)[IconLoader.LOADED]);
 						} else if(imageLayer.getImageNight() == null){
 							actionNight.setButtonData(IconLoader.icons.get(Icon.NIGHT)[IconLoader.MISSING]);

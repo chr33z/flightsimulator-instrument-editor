@@ -237,6 +237,8 @@ public class PropertyPanel extends BoxPane implements Observer {
 				
 				if(id != null && id.equals("prop_id")){
 					if(!String.valueOf(character).matches("([A-Za-z0-9\\_\b\n\r\\x00\\x08\\x0B\\x0C\\x0E-\\x1F]+)")){
+						System.out.println("Character is:"+character);
+						
 						String txt = input.getText();
 						input.setText(txt.substring(0, txt.length()-1));
 						return true;
@@ -247,16 +249,39 @@ public class PropertyPanel extends BoxPane implements Observer {
 						}
 					}
 				}
+//				if(id != null && (id.equals("prop_left") || 
+//						id.equals("prop_top") || 
+//						id.equals("prop_pivot_left") || 
+//						id.equals("prop_pivot_top") ||
+//						id.equals("prop_direction"))){
+//					
+//					if(String.valueOf(character).matches("([0-9\b\n\r\\x00\\x08\\x0B\\x0C\\x0E-\\x1F]+)")){
+//						System.out.println("Character is:"+character);
+//						
+//						String txt = input.getText();
+//						input.setText(txt.substring(0, txt.length()-1));
+//						return true;
+//					}
+//				}
 				if(id != null && (id.equals("prop_left") || 
 						id.equals("prop_top") || 
 						id.equals("prop_pivot_left") || 
 						id.equals("prop_pivot_top") ||
 						id.equals("prop_direction"))){
 					
-					if(!String.valueOf(character).matches("([0-9\b\n\r\\x00\\x08\\x0B\\x0C\\x0E-\\x1F]+)")){
-						String txt = input.getText();
+					String txt = input.getText();
+					if(!String.valueOf(character).matches("([0-9\t\b\n\r\\x00\\x08\\x0B\\x0C\\x0E-\\x1F]+)")){
+						/*
+						 * Filter any unwanted characters out of the typed keys. 
+						 */
 						input.setText(txt.substring(0, txt.length()-1));
 						return true;
+					}
+					else if (String.valueOf(character).matches("([\t]+)")){
+						/*
+						 * Save all input fields on Tab key
+						 */
+						updateLayer();
 					}
 				}
 			}

@@ -142,22 +142,20 @@ public class ImageLayer extends Layer {
 	 */
 	public void resetPosition(){
 		if(parent != null){
-			left = pivotX - parent.getWidth() / 2;
-			top = pivotY - parent.getHeight() / 2;
+			left = pivotX;
+			top = pivotY;
 		}
 	}
 	
 	private void updateDimension(){
-		BufferedImage day = image.getImageDay();
-		BufferedImage night = image.getImageNight();
+		BufferedImage day = getImageDay();
+		BufferedImage night = getImageNight();
 		
 		int widthDay = 0;
 		int heightDay = 0;
 		
 		int widthNight = 0;
 		int heightNight = 0;
-		
-		
 		
 		if(day != null){
 			widthDay = day.getWidth();
@@ -189,8 +187,8 @@ public class ImageLayer extends Layer {
 		ImageLayer layer = new ImageLayer();
 		layer.width = this.width;
 		layer.height = this.height;
-		layer.pivotX = this.pivotX;
 		layer.pivotY = this.pivotY;
+		layer.pivotX = this.pivotX;
 		layer.image = this.image.copy();
 		layer.rotationDelay = this.rotationDelay;
 		layer.rotation = this.rotation;

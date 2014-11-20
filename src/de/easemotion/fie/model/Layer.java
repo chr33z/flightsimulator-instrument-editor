@@ -1,5 +1,7 @@
 package de.easemotion.fie.model;
 
+import de.easemotion.fie.utils.Constants;
+
 /**
  * One layer that builds up the instrument. Each layer can hold one image. Each layer has
  * a fixed order in the list that indicates drawing order. Layers at the top are drawn last
@@ -23,8 +25,8 @@ public abstract class Layer {
 	/** unique id for this layer */
 	protected long serial = System.currentTimeMillis();
 	
-	protected int left = 0;
-	protected int top = 0;
+	protected int left = Constants.integer.INSTRUMENT_WIDTH / 2;
+	protected int top = Constants.integer.INSTRUMENT_HEIGHT / 2 ;
 	
 	/** The part of the lua script, responsible for this layer */
 	protected String luaScript = "";

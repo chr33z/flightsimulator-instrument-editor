@@ -35,15 +35,6 @@ import de.easemotion.fie.utils.Utils;
 /**
  * This class saves the current state of the instument designer and stores all needed files in a *.zip file
  * 
- * There are several steps to save a configuration
- * 1. Check if user provided directory exists and file name is valid
- * 2. Create a temporary directory with name [name] and subdirectory "images". This is the directory we are going to pack
- * 3. Read instrument configuration and copy all used images to "[name]/images/"
- * 4. Change all image paths in instrument to "images/[image name]" (copy instrument to keep original file)
- * 5. Generate script from the instrument
- * 6. zip directory [name]
- * 7. when zip package is generated without errors, delete directory [name] 
- * 
  * @author Christopher Gebhardt
  * @date Nov 6, 2014
  * @project Flightsimulator-Instrument-Editor
@@ -103,7 +94,7 @@ public class FileHandler {
 		 */
 		File outputDirectory = new File(file.getParentFile(), 
 				file.getName().substring(0, file.getName().lastIndexOf(".")));
-		unzipDirectory(file, outputDirectory);
+		Utils.zip.unzipDirectory(file, outputDirectory);
 
 		/*
 		 * 3. Step
@@ -123,6 +114,11 @@ public class FileHandler {
 		}
 
 		if(script.equals("")){
+			try {
+				Utils.file.delete(outputDirectory);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 			listener.onError(Error.FILE_MISSING);
 			return;
 		}
@@ -135,6 +131,13 @@ public class FileHandler {
 			globals.load(new FileReader(script), "script").call();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+			
+			try {
+				Utils.file.delete(outputDirectory);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			listener.onError(Error.FILE_MISSING);
 		}
 
 		// get instrument table and iterate over layers
@@ -201,6 +204,11 @@ public class FileHandler {
 			/*
 			 * TODO errorhandling: show user dialog "script is bad"
 			 */
+			try {
+				Utils.file.delete(outputDirectory);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 			e.printStackTrace();
 		}
 
@@ -273,6 +281,11 @@ public class FileHandler {
 			}
 		}
 
+		try {
+			Utils.file.delete(outputDirectory);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		listener.onSuccess(instrument);
 	}
 
@@ -314,60 +327,6 @@ public class FileHandler {
 
 		return null;
 	}
-
-	/**
-	 * Unzip it
-	 * @param zipFile input zip file
-	 * @param output zip file output folder
-	 */
-	public static void unzipDirectory(File zipFile, File outputDirectory){
-
-		byte[] buffer = new byte[1024];
-
-		try{
-			//create output directory is not exists
-			if(!outputDirectory.exists()){
-				outputDirectory.mkdir();
-			}
-
-			//get the zip file content
-			ZipInputStream zis = 
-					new ZipInputStream(new FileInputStream(zipFile));
-
-			//get the zipped file list entry
-			ZipEntry ze = zis.getNextEntry();
-
-			while(ze != null){
-
-				String fileName = ze.getName();
-				File newFile = new File(outputDirectory.getAbsolutePath() + File.separator + fileName);
-
-				System.out.println("file unzip : "+ newFile.getAbsoluteFile());
-
-				//create all non exists folders
-				//else you will hit FileNotFoundException for compressed folder
-				new File(newFile.getParent()).mkdirs();
-
-				FileOutputStream fos = new FileOutputStream(newFile);             
-
-				int len;
-				while ((len = zis.read(buffer)) > 0) {
-					fos.write(buffer, 0, len);
-				}
-
-				fos.close();   
-				ze = zis.getNextEntry();
-			}
-
-			zis.closeEntry();
-			zis.close();
-
-			System.out.println("Done");
-
-		}catch(IOException ex){
-			ex.printStackTrace(); 
-		}
-	}    
 
 	/**
 	 * Save a instrument configuration in a zip file
@@ -437,6 +396,13 @@ public class FileHandler {
 			if(l != null && l instanceof ImageLayer){
 				ImageLayer layer = (ImageLayer) l;
 
+				/**
+				 * When setting an image the pivot is automatically reset.
+				 * We have to store the pivots and reset them after image is loaded
+				 */
+				int pivX = layer.getPivotX();
+				int pivY = layer.getPivotY();
+				
 				try {
 					layer.setImageDay(new File("images/"+ layer.getImage().imageDay.getName()));
 				} catch(NullPointerException e){
@@ -450,6 +416,9 @@ public class FileHandler {
 					e.printStackTrace();
 					// has no night image
 				}
+				
+				layer.setPivotX(pivX);
+				layer.setPivotY(pivY);
 			}
 		}
 

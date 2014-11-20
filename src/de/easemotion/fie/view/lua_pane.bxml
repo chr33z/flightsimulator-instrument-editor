@@ -2,12 +2,23 @@
 	xmlns:content="org.apache.pivot.wtk.content"
 	xmlns="org.apache.pivot.wtk"
 	styles="{padding:'{left:70}'}">
+	
+	<StackPane>
+		<ScrollPane 
+			horizontalScrollBarPolicy="fill_to_capacity" verticalScrollBarPolicy="fill_to_capacity" preferredHeight="240" preferredWidth="540"
+			styles="{backgroundColor:'0x00000000'}">
+			
+			<TextArea bxml:id="lua_text_area" width="240" height="540" styles="{backgroundColor:'0x00000000'}"/>
+		</ScrollPane>
 
-	<ScrollPane 
-		horizontalScrollBarPolicy="fill_to_capacity" verticalScrollBarPolicy="fill_to_capacity" preferredHeight="240" preferredWidth="540"
-		styles="{backgroundColor:'0x00000000'}">
+		<StackPane bxml:id="sim_panel">
+			<ImageView image="/de/easemotion/fie/view/background_checkmode.png"/>
+			
+			<BoxPane>
 		
-		<TextArea bxml:id="lua_text_area" width="240" height="540" styles="{backgroundColor:'0x00000000'}"/>
-	</ScrollPane>
-
+			</BoxPane>
+		</StackPane>
+			
+		<ImageView bxml:id="splashscreen" image="/de/easemotion/fie/view/LE_SplashScreen.png"/>
+	</StackPane>
 </BoxPane>
