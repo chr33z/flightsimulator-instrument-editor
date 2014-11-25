@@ -34,10 +34,13 @@ public abstract class Layer {
 	protected Instrument parent;
 	
 	/** whether this layer is active in graphic panel */
-	boolean active = false;
+	protected boolean active = false;
 	
 	/** True if this layer is visible in the graphic editor */
 	protected boolean visible = true;
+	
+	/** delay of motion in a function from 0.0 to 10.0 */
+	protected double delay = 0;
 	
 	public Layer(){
 		// FIXME implement
@@ -85,6 +88,16 @@ public abstract class Layer {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+	
+	public double getDelay() {
+		return delay;
+	}
+
+	public void setDelay(double rotationDelay) {
+		rotationDelay = rotationDelay < 0.1 ? 0.1 : rotationDelay;
+		rotationDelay = rotationDelay > 10.0 ? 10.0 : rotationDelay;
+		this.delay = rotationDelay;
 	}
 
 	public String getLuaScript() {

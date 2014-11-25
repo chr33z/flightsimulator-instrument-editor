@@ -28,11 +28,11 @@ public class ImageLayer extends Layer {
 	/** the image associated with this layer */
 	private LayerImage image = new LayerImage();
 	
-	/** delay of rotation in degree per seconds */
-	private int rotationDelay = 0;
-	
 	/** rotation */
 	private int rotation = 0;
+	
+	/** bias (predefined rotation) */
+	private int bias = 0;
 	
 	public int getWidth() {
 		return width;
@@ -111,14 +111,6 @@ public class ImageLayer extends Layer {
 		this.pivotY = pivotY;
 		return this;
 	}
-	
-	public int getRotationDelay() {
-		return rotationDelay;
-	}
-
-	public void setRotationDelay(int rotationDelay) {
-		this.rotationDelay = rotationDelay;
-	}
 
 	public int getRotation() {
 		return rotation;
@@ -126,6 +118,14 @@ public class ImageLayer extends Layer {
 
 	public void setRotation(int rotation) {
 		this.rotation = rotation;
+	}
+	
+	public int getBias() {
+		return bias;
+	}
+
+	public void setBias(int bias) {
+		this.bias = bias;
 	}
 	
 	public LayerImage getImage(){
@@ -190,8 +190,9 @@ public class ImageLayer extends Layer {
 		layer.pivotY = this.pivotY;
 		layer.pivotX = this.pivotX;
 		layer.image = this.image.copy();
-		layer.rotationDelay = this.rotationDelay;
+		layer.delay = this.delay;
 		layer.rotation = this.rotation;
+		layer.bias = this.bias;
 		
 		layer.id = this.id;
 		layer.left = this.left;

@@ -14,9 +14,7 @@
 		<StackPane bxml:id="sim_panel">
 			<ImageView image="/de/easemotion/fie/view/background_checkmode.png"/>
 			
-			<BoxPane>
-		
-			</BoxPane>
+			<BoxPane bxml:id="sim_panel_rows" orientation="vertical" styles="{spacing:2, padding:'{left:133, top:72}'}"/>
 		</StackPane>
 			
 		<ImageView bxml:id="splashscreen" image="/de/easemotion/fie/view/LE_SplashScreen.png"/>

@@ -114,11 +114,11 @@ public class FileHandler {
 		}
 
 		if(script.equals("")){
-			try {
-				Utils.file.delete(outputDirectory);
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+//			try {
+//				Utils.file.delete(outputDirectory);
+//			} catch (IOException e1) {
+//				e1.printStackTrace();
+//			}
 			listener.onError(Error.FILE_MISSING);
 			return;
 		}
@@ -132,11 +132,11 @@ public class FileHandler {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			
-			try {
-				Utils.file.delete(outputDirectory);
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+//			try {
+//				Utils.file.delete(outputDirectory);
+//			} catch (IOException e1) {
+//				e1.printStackTrace();
+//			}
 			listener.onError(Error.FILE_MISSING);
 		}
 
@@ -204,11 +204,11 @@ public class FileHandler {
 			/*
 			 * TODO errorhandling: show user dialog "script is bad"
 			 */
-			try {
-				Utils.file.delete(outputDirectory);
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+//			try {
+//				Utils.file.delete(outputDirectory);
+//			} catch (IOException e1) {
+//				e1.printStackTrace();
+//			}
 			e.printStackTrace();
 		}
 
@@ -281,11 +281,11 @@ public class FileHandler {
 			}
 		}
 
-		try {
-			Utils.file.delete(outputDirectory);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+//		try {
+//			Utils.file.delete(outputDirectory);
+//		} catch (IOException e1) {
+//			e1.printStackTrace();
+//		}
 		listener.onSuccess(instrument);
 	}
 

@@ -119,7 +119,6 @@ public class PropertyPanel extends BoxPane implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		instrument = editor.getInstrument();
-		System.out.println("Property updated");
 
 		Layer active = instrument.getActiveLayer();
 		if(active != null){
@@ -129,7 +128,7 @@ public class PropertyPanel extends BoxPane implements Observer {
 
 			if(active instanceof ImageLayer){
 				ImageLayer imageLayer = (ImageLayer) active;
-				propRotation.setText(imageLayer.getRotation()+"");
+				propRotation.setText(imageLayer.getBias()+"");
 				propPivotLeft.setText(imageLayer.getPivotX()+"");
 				propPivotTop.setText(imageLayer.getPivotY()+"");
 			}
@@ -208,7 +207,7 @@ public class PropertyPanel extends BoxPane implements Observer {
 							ImageLayer imageLayer = (ImageLayer) layer;
 							imageLayer.setPivotX(Integer.parseInt(propPivotLeft.getText()));
 							imageLayer.setPivotY(Integer.parseInt(propPivotTop.getText()));
-							imageLayer.setRotation(Integer.parseInt(propRotation.getText()));
+							imageLayer.setBias(Integer.parseInt(propRotation.getText()));
 						}
 
 					} catch (NumberFormatException e){

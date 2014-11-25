@@ -27,6 +27,8 @@ import de.easemotion.fie.model.ImageLayer;
 import de.easemotion.fie.model.Instrument;
 import de.easemotion.fie.model.Layer;
 import de.easemotion.fie.model.Instrument.ImageMode;
+import de.easemotion.fie.simulation.SimulationData;
+import de.easemotion.fie.simulation.SimulationInstrument;
 import de.easemotion.fie.utils.IconLoader;
 import de.easemotion.fie.utils.IconLoader.Icon;
 
@@ -41,7 +43,8 @@ public class GraphicPanelContainer extends BoxPane implements Observer {
 	LinkButton buttonAlignementGrid;
 	LinkButton buttonInstrumentMask;
 	
-	public GraphicPanelContainer(EditorApplication editor, final Instrument instrument){
+	public GraphicPanelContainer(EditorApplication editor, final Instrument instrument, 
+			SimulationInstrument simInstrument, SimulationData simData){
 		this.instrument = instrument;
 		
 		try {
@@ -82,7 +85,7 @@ public class GraphicPanelContainer extends BoxPane implements Observer {
 			});
 			
 			FillPane panel = (FillPane) s.getNamespace().get("graphic_panel");
-			graphicPanel = new GraphicPanel(editor, instrument);
+			graphicPanel = new GraphicPanel(editor, instrument, simInstrument, simData);
 			panel.add(graphicPanel);
 			
 			this.add(component);

@@ -33,6 +33,9 @@ public class IconLoader {
 		TEXT("B_Text30_"),
 		OFF_L("B_Off60_"),
 		OFF("B_Off30_"),
+		PLUS("B_Plus30_"),
+		MINUS("B_Minus30_"),
+		X10("B_X1030_"),
 		SIM("B_CM15_");
 		
 		private final String icon;

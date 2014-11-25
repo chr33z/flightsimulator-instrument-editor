@@ -51,6 +51,8 @@ import de.easemotion.fie.model.Instrument;
 import de.easemotion.fie.model.Layer;
 import de.easemotion.fie.model.TextLayer;
 import de.easemotion.fie.model.Instrument.ImageMode;
+import de.easemotion.fie.simulation.SimulationData;
+import de.easemotion.fie.simulation.SimulationInstrument;
 import de.easemotion.fie.utils.Constants;
 
 /**
@@ -73,6 +75,10 @@ public class GraphicPanel extends Panel implements Observer {
 	private static final boolean LAYER_CLICKABLE = false;
 
 	private Instrument instrument;
+	
+	private SimulationInstrument simInstrument;
+	
+	private SimulationData simData;
 
 	private EditorApplication editor;
 
@@ -92,8 +98,11 @@ public class GraphicPanel extends Panel implements Observer {
 	private int currentX;
 	private int currentY;
 
-	public GraphicPanel(EditorApplication editor, Instrument instrument){
+	public GraphicPanel(EditorApplication editor, Instrument instrument, 
+			SimulationInstrument simInstrument, SimulationData simData){
 		this.instrument = instrument;
+		this.simInstrument = simInstrument;
+		this.simData = simData;
 		this.editor = editor;
 
 		this.setSize(Constants.integer.INSTRUMENT_WIDTH, Constants.integer.INSTRUMENT_HEIGHT);
@@ -108,11 +117,22 @@ public class GraphicPanel extends Panel implements Observer {
 	@Override
 	public void paint(Graphics2D g) {
 		g.setClip(new Rectangle(0, 0, instrument.getWidth(), instrument.getHeight()));
+		
+		/**
+		 * Switch instrument based on whether simulation is active or not
+		 */
+		Instrument paintInstrument;
+		if(simData.isSimulationActive()){
+			System.out.println("simulation painting active");
+			paintInstrument = simInstrument.getInstrument();
+		} else {
+			paintInstrument = instrument;
+		}
 
 		// print a background grid
 		paintBackgroundGrid(g);
 
-		for (Layer layer : instrument.getLayers()) {
+		for (Layer layer : paintInstrument.getLayers()) {
 			if(layer == null){
 				continue;
 			}
@@ -124,13 +144,16 @@ public class GraphicPanel extends Panel implements Observer {
 				AffineTransform transform = g.getTransform();
 
 				ImageLayer imageLayer = (ImageLayer) layer;
-				BufferedImage image =  instrument.getMode() == 
+				BufferedImage image =  paintInstrument.getMode() == 
 						ImageMode.DAY ? imageLayer.getImageDay():imageLayer.getImageNight();
 
 				if(image != null){
 					int pivotX = imageLayer.getLeft() + imageLayer.getPivotX();
 					int pivotY = imageLayer.getTop() + imageLayer.getPivotY();
-					g.rotate(Math.toRadians(((ImageLayer) layer).getRotation()), 
+					double totalRotation = Math.toRadians(((ImageLayer) layer).getRotation()) +
+							Math.toRadians(((ImageLayer) layer).getBias());
+					
+					g.rotate(totalRotation, 
 							imageLayer.getLeft(), imageLayer.getTop());
 					g.drawImage(image, 
 							imageLayer.getLeft() - imageLayer.getPivotX(), 
@@ -247,18 +270,6 @@ public class GraphicPanel extends Panel implements Observer {
 		g.drawImage(previewGrid, 0, 0, 
 				instrument.getWidth(), instrument.getHeight(), null);
 		g.setPaint(paint);
-		
-//		Paint paint = g.getPaint();
-//
-//		g.setPaint(Constants.paint.GRID_ALIGNMENT);
-//		int size = Constants.integer.GRID_SIZE * 2;
-//		for (int i = 1; i < instrument.getWidth() / size; i++) {
-//			for (int j = 1; j < instrument.getHeight() / size; j++) {
-//				g.fillOval(size * i, size * j, 1, 1);
-//			}
-//		}
-//
-//		g.setPaint(paint);
 	}
 
 	private void paintInstrumentMask(Graphics2D g){
@@ -627,8 +638,12 @@ public class GraphicPanel extends Panel implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		System.out.println("Graphic updated");
-		instrument = editor.getInstrument();
+		if(o instanceof Instrument){
+			instrument = editor.getInstrument();
+		}
+		else if(o instanceof SimulationInstrument){
+			this.simInstrument = (SimulationInstrument) o;
+		}
 		repaint();
 	}
 }

@@ -23,6 +23,8 @@ import de.easemotion.fie.utils.Utils;
  *
  */
 public class LuaScriptParser {
+	
+	public static final String MAIN_FUNCTION_NAME = "API_MAIN";
 
 	private static final String LUA_SCRIPT_LAYOUT = ""
 			+ "%s\n" // layout
@@ -69,20 +71,43 @@ public class LuaScriptParser {
 	private static final String LAYER_FUNCTION_TEMPLATE = "function_%s = function()\n"
 			+ "%s\n"
 			+ "end\n";
+	
+	private static final String LAYER_FUNCTION_TEMPLATE_SIMULATION = "function_%s = function(sim_instrument)\n"
+			+ "%s\n"
+			+ "end\n";
 
 	private static final String LAYER_FUNCTION_CALL_TEMPLATE = "function_%s()\n";
+	
+	private static final String LAYER_FUNCTION_CALL_TEMPLATE_SIMULATION = "function_%s(sim_instrument)\n";
 
-	private static final String MAIN_FUNCTION_TEMPLATE = "API_MAIN = function()\n"
+	private static final String MAIN_FUNCTION_TEMPLATE = MAIN_FUNCTION_NAME +" = function()\n"
+			+ "%s\n"
+			+ "end\n";
+	
+	private static final String MAIN_FUNCTION_TEMPLATE_SIMULATION = MAIN_FUNCTION_NAME +" = function(sim_instrument)\n"
 			+ "%s\n"
 			+ "end\n";
 
 	/**
-	 * Parse an instrument to a lua script
+	 * Parse an instrument to lua script
+	 * 
+	 * @param instrument
+	 * @return lua script
+	 */
+	public static String instrumentToLua(Instrument instrument){
+		return instrumentToLua(instrument, false);
+	}
+	
+	/**
+	 * Parse an instrument to a lua script with the option to set an simulation mode
+	 * In this mode the functions of each layer get an additional parameter "instrument"
+	 * that is a java object of Instrument. Each api call regarding instrument is then 
+	 * diverted to be called on the instrument object directly
 	 * 
 	 * @param instrument
 	 * @return instrument as a string describing the lua script
 	 */
-	public static String instrumentToLua(Instrument instrument){
+	public static String instrumentToLua(Instrument instrument, boolean simulation){
 		/*
 		 * First part: Lua layout file with all layers
 		 */
@@ -136,19 +161,37 @@ public class LuaScriptParser {
 		for (Layer layer : instrument.getLayers()) {
 			if(layer != null){
 				layerFunctions += String.format(LAYER_FUNCTION_HEADER, layer.getId());
-				layerFunctions += String.format(LAYER_FUNCTION_TEMPLATE, layer.getId(), layer.getLuaScript()) + "\n";
+				
+				if(!simulation){
+					layerFunctions += String.format(LAYER_FUNCTION_TEMPLATE, layer.getId(), 
+							layer.getLuaScript()) + "\n";
+				} else {
+					layerFunctions += String.format(LAYER_FUNCTION_TEMPLATE_SIMULATION, layer.getId(), 
+							layer.getLuaScript()) + "\n";
+				}
 			}
 		}
 
 		String mainFunctionContent = "";
 		for (Layer layer : instrument.getLayers()) {
 			if(layer != null){
-				mainFunctionContent += "\t" + String.format(LAYER_FUNCTION_CALL_TEMPLATE, layer.getId()) + "\n";
+				
+				if(!simulation){
+					mainFunctionContent += "\t" + String.format(LAYER_FUNCTION_CALL_TEMPLATE, 
+							layer.getId()) + "\n";
+				} else {
+					mainFunctionContent += "\t" + String.format(LAYER_FUNCTION_CALL_TEMPLATE_SIMULATION, 
+							layer.getId()) + "\n";
+				}
 			}
 		}
 
 		String mainFunction = MAIN_FUNCTION_HEADER;
-		mainFunction += String.format(MAIN_FUNCTION_TEMPLATE, mainFunctionContent);
+		if(!simulation){
+			mainFunction += String.format(MAIN_FUNCTION_TEMPLATE, mainFunctionContent);
+		} else {
+			mainFunction += String.format(MAIN_FUNCTION_TEMPLATE_SIMULATION, mainFunctionContent);
+		}
 
 		String encoderLeft = ENCODER_LEFT_HEADER;
 		encoderLeft += String.format(ENCODER_LEFT_TEMPLATE, instrument.getCodeEncoderLeft() + "\n");

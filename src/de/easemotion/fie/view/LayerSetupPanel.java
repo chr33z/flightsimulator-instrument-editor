@@ -264,7 +264,6 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		System.out.println("Layer Panel updated");
 		instrument = editor.getInstrument();
 		renderLayers();
 	}

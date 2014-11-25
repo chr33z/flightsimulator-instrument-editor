@@ -22,7 +22,7 @@ import de.easemotion.fie.utils.Constants;
 public class Instrument extends Observable {
 
 	private static final String TAG = Instrument.class.getSimpleName();
-	
+
 	/**
 	 * Mode describes whether he night or day images are shown in editor
 	 * 
@@ -34,31 +34,31 @@ public class Instrument extends Observable {
 	public enum ImageMode {
 		DAY, NIGHT
 	}
-	
-	private int width = Constants.integer.INSTRUMENT_WIDTH;
-	
-	private int height = Constants.integer.INSTRUMENT_HEIGHT;
-	
-	private float scale = 1.0f;
-	
-	private ImageMode mode = ImageMode.DAY;
-	
-	private List<Layer> layers = new ArrayList<Layer>(Constants.integer.MAX_LAYER_COUNT);
-	
+
+	protected int width = Constants.integer.INSTRUMENT_WIDTH;
+
+	protected int height = Constants.integer.INSTRUMENT_HEIGHT;
+
+	protected float scale = 1.0f;
+
+	protected ImageMode mode = ImageMode.DAY;
+
+	protected List<Layer> layers = new ArrayList<Layer>(Constants.integer.MAX_LAYER_COUNT);
+
 	/** Code for left encoder */
-	private String codeEncoderLeft = "";
-	
+	protected String codeEncoderLeft = "";
+
 	/** Code for right encoder */
-	private String codeEncoderRight = "";
-	
-	private String instrumentName = "";
-	
+	protected String codeEncoderRight = "";
+
+	protected String instrumentName = "";
+
 	public Instrument(){
 		for (int i = 0; i < Constants.integer.MAX_LAYER_COUNT; i++) {
 			layers.add(null);
 		}
 	}
-	
+
 	/**
 	 * @return get scale factor to which all layers are scaled in the
 	 * editor
@@ -83,7 +83,7 @@ public class Instrument extends Observable {
 	public List<Layer> getLayers() {
 		return layers;
 	}
-	
+
 	/**
 	 * Get a layer by its id
 	 * @param id
@@ -91,8 +91,9 @@ public class Instrument extends Observable {
 	 */
 	public Layer getLayer(String id){
 		for (Layer layer : layers) {
-			// FIXME implement
-			return layer;
+			if(layer != null && layer.id.equals(id)){
+				return layer;
+			}
 		}
 		return null;
 	}
@@ -106,7 +107,7 @@ public class Instrument extends Observable {
 		layers.add(layer);
 		updateObservers();
 	}
-	
+
 	public void addLayer(int index, Layer layer) {
 		if(layer != null){
 			layer.setParent(this);
@@ -114,7 +115,7 @@ public class Instrument extends Observable {
 		layers.set(index, layer);
 		updateObservers();
 	}
-	
+
 	/*
 	 * Delete a layer
 	 */
@@ -122,24 +123,24 @@ public class Instrument extends Observable {
 		if(layer == null){
 			return;
 		}
-		
+
 		for (int i = 0; i < layers.size(); i++) {
 			Layer l = layers.get(i);
-			
+
 			if(l != null && l.getSerial() == layer.getSerial()){
 				layers.set(i, null);
 				break;
 			}
 		}
-		
+
 		updateObservers();
 	}
-	
+
 	public void setVisibility(Layer layer, boolean visible){
 		if(layer == null){
 			return;
 		}
-		
+
 		Iterator<Layer> iterator = layers.iterator();
 		while (iterator.hasNext()) {
 			Layer next = iterator.next();
@@ -150,12 +151,12 @@ public class Instrument extends Observable {
 		}
 		updateObservers();
 	}
-	
+
 	public void toggleVisibility(Layer layer){
 		if(layer == null){
 			return;
 		}
-		
+
 		Iterator<Layer> iterator = layers.iterator();
 		while (iterator.hasNext()) {
 			Layer next = iterator.next();
@@ -166,7 +167,7 @@ public class Instrument extends Observable {
 		}
 		updateObservers();
 	}
-	
+
 	/**
 	 * Move a layer forward in the drawing position
 	 * @param layer
@@ -187,7 +188,7 @@ public class Instrument extends Observable {
 				if(index < layers.size()-1){
 					Layer next = layers.get(index + 1);
 					Layer current = layers.get(index);
-					
+
 					layers.set(index, next);
 					layers.set(index+1, current);
 				}
@@ -196,7 +197,7 @@ public class Instrument extends Observable {
 		}
 		updateObservers();
 	}
-	
+
 	public void moveLayerBackwards(Layer layer){
 		if(layer != null){
 			int index = 0;
@@ -213,7 +214,7 @@ public class Instrument extends Observable {
 				if(index > 0){
 					Layer next = layers.get(index - 1);
 					Layer current = layers.get(index);
-					
+
 					layers.set(index, next);
 					layers.set(index-1, current);
 				}
@@ -222,7 +223,7 @@ public class Instrument extends Observable {
 		}
 		updateObservers();
 	}
-	
+
 	public void setWidth(int width){
 		this.width = width;
 		updateObservers();
@@ -234,7 +235,7 @@ public class Instrument extends Observable {
 	public int getWidth() {
 		return width;
 	}
-	
+
 	public void setHeight(int height){
 		this.height = height;
 		updateObservers();
@@ -246,12 +247,12 @@ public class Instrument extends Observable {
 	public int getHeight() {
 		return height;
 	}
-	
+
 	public void setLayerActive(Layer layer){
 		if(layer == null) {
 			return;
 		}
-		
+
 		for (Layer l : layers) {
 			if(l != null && l.getSerial() == layer.getSerial()){
 				l.setActive(true);
@@ -261,7 +262,7 @@ public class Instrument extends Observable {
 		}
 		updateObservers();
 	}
-	
+
 	public void setLayersInactive(){
 		for (Layer layer : layers) {
 			if(layer != null){
@@ -270,7 +271,7 @@ public class Instrument extends Observable {
 		}
 		updateObservers();
 	}
-	
+
 	public Layer getActiveLayer(){
 		for (Layer layer : layers) {
 			if(layer != null && layer.isActive()){
@@ -279,7 +280,7 @@ public class Instrument extends Observable {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * find a layer with its serial (get serial with getSerial())
 	 * @param serial
@@ -293,7 +294,7 @@ public class Instrument extends Observable {
 		}
 		return null;
 	}
-	
+
 	public void reset(){
 		for (int i = 0; i < layers.size(); i++) {
 			layers.set(i, null);
@@ -301,10 +302,10 @@ public class Instrument extends Observable {
 		codeEncoderLeft = "";
 		codeEncoderRight = "";
 		mode = ImageMode.DAY;
-		
+
 		updateObservers();
 	}
-	
+
 	public ImageMode getMode() {
 		return mode;
 	}
@@ -342,7 +343,7 @@ public class Instrument extends Observable {
 		setChanged();
 		notifyObservers();
 	}
-	
+
 	public Instrument copy(){
 		Instrument instrument = new Instrument();
 		instrument.width = this.width;
@@ -350,18 +351,74 @@ public class Instrument extends Observable {
 		instrument.codeEncoderLeft = this.codeEncoderLeft;
 		instrument.codeEncoderRight = this.codeEncoderRight;
 		instrument.instrumentName = this.instrumentName;
-		
+
 		for (int i = 0; i < this.layers.size(); i++) {
 			Layer copy = layers.get(i);
-			
+
 			if(copy != null){
 				instrument.addLayer(i, copy.copy(this));
 			} else {
 				instrument.addLayer(i, null);
 			}
-			
+
 		}
-		
+
 		return instrument;
+	}
+
+	/*************************
+	 * Functions used for simulation api
+	 */
+
+	/**
+	 * Set absolute rotation of a layer in degree
+	 * 
+	 * @param id
+	 * @param degree
+	 */
+	public void rotateLayerAbs(String id, double degree, double delay){
+		Layer layer = getLayer(id);
+
+		if(layer != null && layer instanceof ImageLayer){
+			ImageLayer imageLayer = (ImageLayer) layer;
+			imageLayer.setRotation((int)degree);
+			imageLayer.setDelay(delay);
+		}
+	}
+
+	/**
+	 * Add rotation to current rotation of layer in regree
+	 * 
+	 * @param id
+	 * @param degree
+	 */
+	public void rotateLayerRel(String id, double degree, double delay){
+		Layer layer = getLayer(id);
+
+		if(layer != null && layer instanceof ImageLayer){
+			ImageLayer imageLayer = (ImageLayer) layer;
+			imageLayer.setRotation(imageLayer.getRotation() + (int)degree);
+			imageLayer.setDelay(delay);
+		}
+	}
+
+	public void translateLayerAbs(String id, double x, double y, double delay){
+		Layer layer = getLayer(id);
+
+		if(layer != null){
+			layer.setLeft((int)x);
+			layer.setTop((int)y);
+			layer.setDelay(delay);
+		}
+	}
+
+	public void translateLayerRel(String id, double x, double y, double delay){
+		Layer layer = getLayer(id);
+
+		if(layer != null){
+			layer.setLeft(layer.getLeft() + (int)x);
+			layer.setTop(layer.getTop() + (int)y);
+			layer.setDelay(delay);
+		}
 	}
 }

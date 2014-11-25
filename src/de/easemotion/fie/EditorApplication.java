@@ -18,6 +18,8 @@ import org.apache.pivot.wtk.TablePane;
 import org.apache.pivot.wtk.Window;
 
 import de.easemotion.fie.model.Instrument;
+import de.easemotion.fie.simulation.SimulationData;
+import de.easemotion.fie.simulation.SimulationInstrument;
 import de.easemotion.fie.utils.IconLoader;
 import de.easemotion.fie.utils.IconLoader.Icon;
 import de.easemotion.fie.view.EncoderSetupPanel;
@@ -34,7 +36,24 @@ public class EditorApplication implements Application {
 	
 	public Window window = null;
 	
+	/**
+	 * Instrument used to build the view in edit mode
+	 */
 	public Instrument instrument;
+	
+	/**
+	 * Instrument class used to simulate the preview.
+	 * This class automatically produces the lua code
+	 * that is used to maipulate the gauge
+	 */
+	public SimulationInstrument simulationInstrument = new SimulationInstrument();
+	
+	/**
+	 * Global data storage for simulation data. luaPane and
+	 * graphicPanelContainer listen for changes in this class
+	 * to start or stop a simulation with data
+	 */
+	public SimulationData simulationData = new SimulationData();
 	
 	public static File lastFileBrowserPath = null;
 	
@@ -86,8 +105,9 @@ public class EditorApplication implements Application {
         instrument.addObserver(layerPanel);
         editorLayerSetup.add(layerPanel);
         
-        luaPanel = new LuaEditorPanel(this, instrument);
+        luaPanel = new LuaEditorPanel(this, instrument, simulationData);
         instrument.addObserver(luaPanel);
+        simulationData.addObserver(luaPanel);
         editorLuaEditor.add(luaPanel);
         
         // Add all components for right colum
@@ -100,8 +120,10 @@ public class EditorApplication implements Application {
         instrument.addObserver(propertyPanel);
         editorLayerProperties.add(propertyPanel);
         
-        graphicPanelContainer = new GraphicPanelContainer(this, instrument);
+        graphicPanelContainer = new GraphicPanelContainer(this, instrument, 
+        		simulationInstrument, simulationData);
         instrument.addObserver(graphicPanelContainer);
+        simulationInstrument.addObserver(graphicPanelContainer);
         editorInstrumentPreview.add(graphicPanelContainer);
         
         encoderSetupPanel = new EncoderSetupPanel(this, instrument);
@@ -139,7 +161,6 @@ public class EditorApplication implements Application {
 			
 			@Override
 			public void buttonPressed(Button button) {
-				onHelpButton();
 				onToggleSimulation();
 			}
 		});
@@ -237,14 +258,34 @@ public class EditorApplication implements Application {
 	}
 	
 	public void onToggleSimulation(){
-		luaPanel.toggleSimulation();
+		simulationData.toggleSimulationActive();
 		
-		if(luaPanel.isSimulationActive()){
+		if(simulationData.isSimulationActive()){
 			simulationButton.setButtonData(IconLoader
 					.icons.get(Icon.SIM)[IconLoader.ACTIVE]);
 		} else {
 			simulationButton.setButtonData(IconLoader
 					.icons.get(Icon.SIM)[IconLoader.DEACTIVE]);
 		}
+		
+		/*
+		 * If the simulation is toggled to running, update
+		 * simulationInstrument with the current instrument
+		 * and simulationData so that our graphic panel has the
+		 * most recent configuration 
+		 */
+		if(simulationData.isSimulationActive()){
+			updateSimulationInstrument();
+		}
+	}
+	
+	public void updateSimulationInstrument(){
+		simulationInstrument.init(instrument, simulationData);
+	}
+	
+	public void updateSimulationData(){
+		simulationInstrument.update(simulationData);
+		
+		simulationInstrument.run();
 	}
 }
