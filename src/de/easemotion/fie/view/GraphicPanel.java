@@ -148,8 +148,6 @@ public class GraphicPanel extends Panel implements Observer {
 						ImageMode.DAY ? imageLayer.getImageDay():imageLayer.getImageNight();
 
 				if(image != null){
-					int pivotX = imageLayer.getLeft() + imageLayer.getPivotX();
-					int pivotY = imageLayer.getTop() + imageLayer.getPivotY();
 					double totalRotation = Math.toRadians(((ImageLayer) layer).getRotation()) +
 							Math.toRadians(((ImageLayer) layer).getBias());
 					

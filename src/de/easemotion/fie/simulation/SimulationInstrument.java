@@ -182,6 +182,7 @@ public class SimulationInstrument extends Observable {
 	 */
 	private String prepareScriptForSimulation(String script){
 		script = script.replace("api.rotate", "sim_instrument:rotate");
+		script = script.replace("api.translate", "sim_instrument:translate");
 
 		return script;
 	}

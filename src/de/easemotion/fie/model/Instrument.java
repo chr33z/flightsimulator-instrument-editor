@@ -405,20 +405,22 @@ public class Instrument extends Observable {
 	public void translateLayerAbs(String id, double x, double y, double delay){
 		Layer layer = getLayer(id);
 
-		if(layer != null){
-			layer.setLeft((int)x);
-			layer.setTop((int)y);
-			layer.setDelay(delay);
+		if(layer != null && layer instanceof ImageLayer){
+			ImageLayer imageLayer = (ImageLayer) layer;
+			imageLayer.setLeft((int)x + imageLayer.getPivotX());
+			imageLayer.setTop((int)y + imageLayer.getPivotY());
+			imageLayer.setDelay(delay);
 		}
 	}
 
 	public void translateLayerRel(String id, double x, double y, double delay){
 		Layer layer = getLayer(id);
 
-		if(layer != null){
-			layer.setLeft(layer.getLeft() + (int)x);
-			layer.setTop(layer.getTop() + (int)y);
-			layer.setDelay(delay);
+		if(layer != null && layer instanceof ImageLayer){
+			ImageLayer imageLayer = (ImageLayer) layer;
+			imageLayer.setLeft(layer.getLeft() + (int)x);
+			imageLayer.setTop(layer.getTop() + (int)y);
+			imageLayer.setDelay(delay);
 		}
 	}
 }
