@@ -1,0 +1,35 @@
+<BoxPane xmlns:bxml="http://pivot.apache.org/bxml"
+	xmlns:content="org.apache.pivot.wtk.content"
+	xmlns="org.apache.pivot.wtk"
+	orientation="horizontal"
+	styles="{backgroundColor:'0xff000000', spacing:20}">
+
+	<BoxPane styles="{spacing:73}">
+		<TextInput bxml:id="sim_connect_variable"
+			    styles="{padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000',
+			    font:'monospace normal 14'}"
+			    preferredWidth="137" preferredHeight="25">
+		   	</TextInput>
+		   	
+		<TextInput bxml:id="sim_connect_value"
+			    styles="{padding:5, backgroundColor:'0x00000000', color:'#dddddd', borderColor:'0x00000000',
+			    font:'monospace normal 14'}"
+			    preferredWidth="75" preferredHeight="25">
+		   	</TextInput>
+    </BoxPane>
+
+	<!-- layer buttons -->
+    <BoxPane orientation="horizontal" preferredWidth="90" preferredHeight="25"  styles="{spacing:0}">
+        <LinkButton bxml:id="button_sim_increase">
+            <content:ButtonData icon="/de/easemotion/fie/images/B_Edit30_0.png"/>
+        </LinkButton>
+        
+        <LinkButton bxml:id="button_sim_decrease">
+            <content:ButtonData icon="/de/easemotion/fie/images/B_View30_0.png"/>
+        </LinkButton>
+        
+        <LinkButton bxml:id="button_sim_multiply">
+            <content:ButtonData icon="/de/easemotion/fie/images/B_Delete30_0.png"/>
+        </LinkButton>
+    </BoxPane>
+</BoxPane>
