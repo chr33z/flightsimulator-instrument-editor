@@ -26,28 +26,34 @@ public class InstrumentValidator {
 		List<String> errors = new ArrayList<>();
 
 		if(instrument.getInstrumentName().equals("")){
-			errors.add("Geben Sie einen Namen fÃ¼r das Instrument ein");
+			errors.add("Geben Sie einen Namen für das Instrument ein");
 		}
-
+		
+		int count = 0;
 		for (int i = 0; i < instrument.getLayers().size(); i++) {
 			Layer layer = instrument.getLayers().get(i);
 
 			if(layer != null){
 				if(layer.getId().equals("")){
-					errors.add("Ebene "+(i+1)+": Geben Sie einen Namen fÃ¼r die Ebene ein");
+					errors.add("Ebene "+(i+1)+": Geben Sie einen Namen für die Ebene ein");
 				}
 				if(layer instanceof ImageLayer){
 					ImageLayer imageLayer = (ImageLayer) layer;
 					String layerName = !layer.getId().equals("") ? layer.getId() : "Ebene "+(i+1);
 
 					if(!imageLayer.getImage().imageDay.exists()){
-						errors.add(layerName+": FÃ¼gen Sie ein Tag-Bild fÃ¼r die Ebene hinzu");
+						errors.add(layerName+": Fügen Sie ein Tag-Bild für die Ebene hinzu");
 					}
 					//				if(!imageLayer.getImage().imageNight.exists()){
 					//					errors.add(layerName+": FÃ¼gen Sie ein Nacht-Bild fÃ¼r die Ebene hinzu");
 					//				}
 				}
+				count++;
 			}
+		}
+		
+		if(count == 0){
+			errors.add("Sie müssen Ebenen hinzufügen um ein Instrument speichern zu können.");
 		}
 
 		return errors;

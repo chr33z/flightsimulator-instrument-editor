@@ -115,14 +115,21 @@ public class SimulationInstrument extends Observable {
 
 		// load lua script
 		if(script != null && !script.equals("")){
-			globals.load(new StringReader(script), "script").call();
+//			try {
+				globals.load(new StringReader(script), "script").call();
+//			} catch(LuaError e){
+//				e.get
+//			}
+				
+				// FIXME show dialog with code lines
+			
+			// convert instrument to lua code
+			luaInstrument = CoerceJavaToLua.coerce(instrument);
+			
+			// get main function from script
+			main = globals.get(LuaScriptParser.MAIN_FUNCTION_NAME);
 		}
 		
-		// convert instrument to lua code
-		luaInstrument = CoerceJavaToLua.coerce(instrument);
-
-		// get main function from script
-		main = globals.get(LuaScriptParser.MAIN_FUNCTION_NAME);
 	}
 
 	/**

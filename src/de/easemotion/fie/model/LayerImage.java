@@ -34,11 +34,11 @@ public class LayerImage {
 		try {
 			bufferedDay = ImageIO.read(file);
 			
-			if(bufferedNight != null){
+			if(bufferedDay != null){
 				System.out.println("[info] Image day successfully loaded: "+file.getAbsolutePath());
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("[warning] Image day missing: "+file.getAbsolutePath());
 		}
 	}
 	
@@ -50,7 +50,7 @@ public class LayerImage {
 				System.out.println("[info] Image night successfully loaded: "+file.getAbsolutePath());
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("[warning] Image night missing: "+file.getAbsolutePath());
 		}
 	}
 	

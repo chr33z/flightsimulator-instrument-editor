@@ -62,19 +62,23 @@ public class LuaScriptParser {
 
 	private static final String ENCODER_LEFT_TEMPLATE = "function_encoder_left = function()\n"
 			+ "%s\n"
-			+ "end\n";
+			+ "end\n"
+			+ "-- END\n";
 
 	private static final String ENCODER_RIGHT_TEMPLATE = "function_encoder_right = function()\n"
 			+ "%s\n"
-			+ "end\n";
+			+ "end\n"
+			+ "-- END\n";
 
 	private static final String LAYER_FUNCTION_TEMPLATE = "function_%s = function()\n"
 			+ "%s\n"
-			+ "end\n";
+			+ "end\n"
+			+ "-- END\n";
 	
 	private static final String LAYER_FUNCTION_TEMPLATE_SIMULATION = "function_%s = function(sim_instrument)\n"
 			+ "%s\n"
-			+ "end\n";
+			+ "end\n"
+			+ "-- END\n";
 
 	private static final String LAYER_FUNCTION_CALL_TEMPLATE = "function_%s()\n";
 	
@@ -82,11 +86,13 @@ public class LuaScriptParser {
 
 	private static final String MAIN_FUNCTION_TEMPLATE = MAIN_FUNCTION_NAME +" = function()\n"
 			+ "%s\n"
-			+ "end\n";
+			+ "end\n"
+			+ "-- END\n";
 	
 	private static final String MAIN_FUNCTION_TEMPLATE_SIMULATION = MAIN_FUNCTION_NAME +" = function(sim_instrument)\n"
 			+ "%s\n"
-			+ "end\n";
+			+ "end\n"
+			+ "-- END\n";
 
 	/**
 	 * Parse an instrument to lua script
@@ -137,6 +143,7 @@ public class LuaScriptParser {
 					layout += "\t\theight = " + imageLayer.getHeight() + ",\n";
 					layout += "\t\tpivot_left = " + imageLayer.getPivotX() + ",\n";
 					layout += "\t\tpivot_top = " + imageLayer.getPivotY() + ",\n";
+					layout += "\t\tbias = " + imageLayer.getBias() + ",\n";
 					layout += "\t\timage_day = \"" + imageLayer.getImage().imageDay.getPath() + "\",\n";
 					layout += "\t\timage_night = \"" + imageLayer.getImage().imageNight.getPath() + "\"\n";
 

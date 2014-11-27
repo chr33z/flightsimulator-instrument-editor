@@ -78,9 +78,18 @@ public class MenuPanel extends BoxPane implements Observer {
 
 			final FileBrowserSheet fileBrowserSheet = new FileBrowserSheet();
 			fileBrowserSheet.setMode(Mode.OPEN);
+			fileBrowserSheet.getStyles().put("hideDisabledFiles", true);
+			
 			if(root != null && root.exists()){
 				fileBrowserSheet.setRootDirectory(root);
 			}
+			fileBrowserSheet.setDisabledFileFilter(new Filter<File>() {
+				
+				@Override
+				public boolean include(File item) {
+					return (item.isFile() && !item.getName().endsWith(Constants.extension.EMI_ZIP));
+				}
+			});
 			fileBrowserSheet.open(editor.window, new SheetCloseListener() {
 				@Override
 				public void sheetClosed(Sheet sheet) {
@@ -129,6 +138,7 @@ public class MenuPanel extends BoxPane implements Observer {
         		if(root != null && root.exists()){
         			fileBrowserSheet.setRootDirectory(root);
         		}
+        		fileBrowserSheet.setSelectedFile(new File(root, name));
         		fileBrowserSheet.setDisabledFileFilter(new Filter<File>() {
         			
         			@Override

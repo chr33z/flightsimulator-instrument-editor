@@ -13,6 +13,7 @@ import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.ComponentMouseButtonListener;
 import org.apache.pivot.wtk.DesktopApplicationContext;
 import org.apache.pivot.wtk.Display;
+import org.apache.pivot.wtk.Frame;
 import org.apache.pivot.wtk.LinkButton;
 import org.apache.pivot.wtk.TablePane;
 import org.apache.pivot.wtk.Window;
@@ -103,6 +104,7 @@ public class EditorApplication implements Application {
         
         layerPanel = new LayerSetupPanel(this, instrument);
         instrument.addObserver(layerPanel);
+        simulationData.addObserver(layerPanel);
         editorLayerSetup.add(layerPanel);
         
         luaPanel = new LuaEditorPanel(this, instrument, simulationData);
@@ -118,6 +120,7 @@ public class EditorApplication implements Application {
         
         propertyPanel = new PropertyPanel(this, instrument);
         instrument.addObserver(propertyPanel);
+        simulationData.addObserver(propertyPanel);
         editorLayerProperties.add(propertyPanel);
         
         graphicPanelContainer = new GraphicPanelContainer(this, instrument, 

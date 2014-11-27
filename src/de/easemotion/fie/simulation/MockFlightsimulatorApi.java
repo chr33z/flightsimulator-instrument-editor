@@ -68,6 +68,7 @@ public class MockFlightsimulatorApi extends TwoArgFunction {
 	public LuaValue call(LuaValue modname, LuaValue env) {
 		LuaValue library = tableOf();
 		library.set( "getSimConnectVariable", new getSimConnectVariable() );
+		library.set( "getSimConnectFailure", new getSimConnectFailure() );
 		library.set( "radian2Degree", new radian2Degree() );
 		library.set( "degree2Radian", new degree2Radian() );
 		library.set( "celsius2Fahrenheit", new celsius2Fahrenheit() );
@@ -91,6 +92,20 @@ public class MockFlightsimulatorApi extends TwoArgFunction {
 				}
 			}
 			return valueOf(0.0);
+		}
+	}
+	
+	static class getSimConnectFailure extends OneArgFunction {
+		@Override
+		public LuaValue call(LuaValue simConnectString) {
+			String scs = simConnectString.tojstring();
+			if(scs != null){
+				Double value = values.get(scs);
+				if(value != null){
+					return LuaValue.valueOf(value);
+				}
+			}
+			return valueOf(0);
 		}
 	}
 	

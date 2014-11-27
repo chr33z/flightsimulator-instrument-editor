@@ -7,6 +7,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -116,6 +117,11 @@ public class GraphicPanel extends Panel implements Observer {
 
 	@Override
 	public void paint(Graphics2D g) {
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+		RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+		RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		
 		g.setClip(new Rectangle(0, 0, instrument.getWidth(), instrument.getHeight()));
 		
 		/**

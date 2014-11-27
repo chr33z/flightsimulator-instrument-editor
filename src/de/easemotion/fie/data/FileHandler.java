@@ -9,20 +9,24 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.DirectoryNotEmptyException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
+import com.google.common.io.Files;
 import com.sun.org.apache.bcel.internal.generic.LUSHR;
 
 import de.easemotion.fie.model.ImageLayer;
@@ -81,6 +85,7 @@ public class FileHandler {
 		if(listener == null){
 			throw new IllegalArgumentException("LoadInstrumentListener must not be null!");
 		}
+		
 		/*
 		 * 1. Step
 		 */
@@ -92,8 +97,8 @@ public class FileHandler {
 		/*
 		 * 2. Step
 		 */
-		File outputDirectory = new File(file.getParentFile(), 
-				file.getName().substring(0, file.getName().lastIndexOf(".")));
+		File outputDirectory = Files.createTempDir();
+		System.out.println(outputDirectory);
 		Utils.zip.unzipDirectory(file, outputDirectory);
 
 		/*
@@ -157,6 +162,8 @@ public class FileHandler {
 		 * the layout file in the lua script. If not we provide a 
 		 * backup order that starts to kick in when we detect that the
 		 * layout order is read wrong from the script
+		 * 
+		 * NOTE: Does not work as expected... deactivated for now
 		 */
 		int orderBackup = Constants.integer.MAX_LAYER_COUNT-1;
 		int firstOrder = -1;
@@ -178,7 +185,7 @@ public class FileHandler {
 				}
 				
 				if(firstOrder != -1 && order == 0){
-					order = orderBackup;
+//					order = orderBackup;
 				}
 				
 				Layer newLayer = parseLayer(layer, (LuaTable) parameter, outputDirectory);
@@ -214,6 +221,11 @@ public class FileHandler {
 
 		/*
 		 * 5. Step
+		 * 
+		 * IMPORTANT NOTE:
+		 * Read script line by line and extract function content
+		 * To do this a function must end with "-- END" after the last
+		 * end TAG!
 		 */
 		String[] functionNames = new String[instrument.getLayers().size()];
 		for (int i = 0; i < instrument.getLayers().size(); i++) {
@@ -232,19 +244,25 @@ public class FileHandler {
 
 				// when function start is found, store all lines until we reach "end"
 				if(line.startsWith(f)){
-					String content = "";
+					List<String> content = new ArrayList<String>();
 					String end = iter.next();
 
-					while(iter.hasNext() && !end.equals("end")){
-						content += end + "\n";
+					while(iter.hasNext() && !end.equals("-- END")){
+						content.add(end + "\n");
 						end = iter.next();
 					}
-					System.out.println("Function: "+f);
-					System.out.println(content);
 					
 					Layer l = instrument.getLayers().get(i);
 					if(l != null){
-						l.setLuaScript(content);
+						String appended = "";
+						/*
+						 * Append all but the last line, which is the end tag of our function.
+						 * We dont need that
+						 */
+						for (int j = 0; j < content.size()-1; j++) {
+							appended += content.get(j);
+						}
+						l.setLuaScript(appended);
 					}
 				}
 			}
@@ -306,10 +324,18 @@ public class FileHandler {
 			layer.setLeft(parameter.get("left").toint());
 			layer.setPivotX(parameter.get("pivot_left").toint());
 			layer.setPivotY(parameter.get("pivot_top").toint());
+			layer.setBias(parameter.get("bias").toint());
 
 			String day = !parameter.get("image_day").isnil() ? parameter.get("image_day").tojstring() : "";
+			if(day.startsWith("images") && !day.startsWith("images\\")){
+				day = "images\\" + day.substring(6);
+			}
 			layer.setImageDay(new File(scriptDirectory, day));
+			
 			String night = !parameter.get("image_night").isnil() ? parameter.get("image_night").tojstring() : "";
+			if(night.startsWith("images") && !night.startsWith("images\\")){
+				night = "images\\" + night.substring(6);
+			}
 			layer.setImageNight(new File(scriptDirectory, night));
 
 			return layer;
@@ -332,6 +358,7 @@ public class FileHandler {
 	 * Save a instrument configuration in a zip file
 	 * 
 	 * There are several steps to save a configuration
+	 * 1. Check if Lua-Script is valid
 	 * 1. Check if user provided directory exists and file name is valid
 	 * 2. Create a temporary directory with name [name] and subdirectory "images". This is the directory we are going to pack
 	 * 3. Read instrument configuration and copy all used images to "[name]/images/"
@@ -348,6 +375,19 @@ public class FileHandler {
 	public static void saveAndPack(File directory, String fileName, Instrument instrument, LoadInstrumentListener listener){
 		if(listener == null){
 			throw new IllegalArgumentException("LoadInstrumentListener must not be null!");
+		}
+		
+		String scriptToCheck = LuaScriptParser.instrumentToLua(instrument);
+		
+		/*
+		 * Step 1
+		 */
+		Globals globals = JsePlatform.standardGlobals();
+		try {
+			globals.load(new StringReader(scriptToCheck), "script").call();
+		} catch(LuaError e){
+			listener.onError(Error.LUA_PARSE_ERROR);
+			return;
 		}
 
 		// Step 1
@@ -383,7 +423,7 @@ public class FileHandler {
 					File nightImageCopy = new File(tmpImageDir, (((ImageLayer) layer).getImage().imageNight.getName()));
 					nightImageCopy.mkdirs();
 					nightImageCopy.createNewFile();
-					Utils.file.copy( ((ImageLayer) layer).getImage().imageDay, nightImageCopy);
+					Utils.file.copy( ((ImageLayer) layer).getImage().imageNight, nightImageCopy);
 				} catch (IOException | NullPointerException e) {
 					e.printStackTrace();
 				}
