@@ -60,12 +60,12 @@ public class LuaScriptParser {
 			+ "\tDefinition layer function \"%s\" \n"
 			+ "]]\n";
 
-	private static final String ENCODER_LEFT_TEMPLATE = "function_encoder_left = function()\n"
+	private static final String ENCODER_LEFT_TEMPLATE = "function_encoder_left = function(clockwise)\n"
 			+ "%s\n"
 			+ "end\n"
 			+ "-- END\n";
 
-	private static final String ENCODER_RIGHT_TEMPLATE = "function_encoder_right = function()\n"
+	private static final String ENCODER_RIGHT_TEMPLATE = "function_encoder_right = function(clockwise)\n"
 			+ "%s\n"
 			+ "end\n"
 			+ "-- END\n";

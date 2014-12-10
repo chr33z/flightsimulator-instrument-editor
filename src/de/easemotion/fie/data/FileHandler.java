@@ -24,6 +24,7 @@ import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
 import com.google.common.io.Files;
@@ -383,12 +384,14 @@ public class FileHandler {
 		 * Step 1
 		 */
 		Globals globals = JsePlatform.standardGlobals();
-		try {
+//		try {
 			globals.load(new StringReader(scriptToCheck), "script").call();
-		} catch(LuaError e){
-			listener.onError(Error.LUA_PARSE_ERROR);
-			return;
-		}
+			globals.get(LuaScriptParser.MAIN_FUNCTION_NAME).call(CoerceJavaToLua.coerce(instrument));
+//		} catch(LuaError e){
+//			listener.onError(Error.LUA_PARSE_ERROR);
+//			throw e;
+//		}
+		
 
 		// Step 1
 		if(!directory.exists()){
