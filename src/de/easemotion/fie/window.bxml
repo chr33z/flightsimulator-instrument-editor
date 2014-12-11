@@ -1,8 +1,9 @@
-<Window title="eDesigner"
-    xmlns:bxml="http://pivot.apache.org/bxml"
+<Window icon="/de/easemotion/fie/favicon.png"
+	xmlns:bxml="http://pivot.apache.org/bxml"
     xmlns:content="org.apache.pivot.wtk.content"
     xmlns="org.apache.pivot.wtk"
-    preferredWidth="1000" preferredHeight="800" >
+    title="eDesigner"
+    preferredWidth="1000" preferredHeight="800">
     
     <StackPane>
 	    <ImageView image="/de/easemotion/fie/background.png"/>

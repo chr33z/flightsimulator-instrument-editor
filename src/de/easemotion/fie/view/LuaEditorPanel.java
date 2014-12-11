@@ -59,9 +59,9 @@ public class LuaEditorPanel extends BoxPane implements Observer {
 	boolean encoderEditMode = false;
 	boolean encoderLeft = true;
 	
-	public LuaEditorPanel(EditorApplication editor, final Instrument surface, SimulationData simulationData){
+	public LuaEditorPanel(EditorApplication editor, final Instrument instrument, SimulationData simulationData){
 		this.editor = editor;
-		this.instrument = surface;
+		this.instrument = instrument;
 		this.simulationData = simulationData;
 
 		try {
@@ -102,56 +102,58 @@ public class LuaEditorPanel extends BoxPane implements Observer {
 				}
 			});
 
-			textArea.getComponentKeyListeners().add(new ComponentKeyListener() {
-
-				@Override
-				public boolean keyTyped(Component component, char character) {
-
-					if(encoderEditMode){
-						// save content from textArea to encoder
-						if(encoderLeft){
-							instrument.setCodeEncoderLeft(textArea.getText());
-						} else {
-							instrument.setCodeEncoderRight(textArea.getText());
-						}
-					} else {
-						// save content from textArea to layer
-						Layer layer = surface.getActiveLayer();
-						if(layer != null){
-							layer.setLuaScript(textArea.getText());
-						}
-					}
-					return false;
-				}
-
-				@Override
-				public boolean keyReleased(Component component, int keyCode,
-						KeyLocation keyLocation) {
-					// TODO Auto-generated method stub
-					return false;
-				}
-
-				@Override
-				public boolean keyPressed(Component component, int keyCode,
-						KeyLocation keyLocation) {
-
-					switch (keyCode) {
-					case KeyCode.TAB:
-						textArea.setText(textArea.getText() + "    ");
-						break;
-					default:
-						break;
-					}
-
-					return true;
-				}
-			});
+			textArea.getComponentKeyListeners().add(keyListener);
 
 			this.add(component);
 		} catch (IOException | SerializationException e) {
 			e.printStackTrace();
 		}
 	}
+	
+	private ComponentKeyListener keyListener = new ComponentKeyListener() {
+
+		@Override
+		public boolean keyTyped(Component component, char character) {
+
+			if(encoderEditMode){
+				// save content from textArea to encoder
+				if(encoderLeft){
+					instrument.setCodeEncoderLeft(textArea.getText());
+				} else {
+					instrument.setCodeEncoderRight(textArea.getText());
+				}
+			} else {
+				// save content from textArea to layer
+				Layer layer = instrument.getActiveLayer();
+				if(layer != null){
+					layer.setLuaScript(textArea.getText());
+				}
+			}
+			return false;
+		}
+
+		@Override
+		public boolean keyReleased(Component component, int keyCode,
+				KeyLocation keyLocation) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean keyPressed(Component component, int keyCode,
+				KeyLocation keyLocation) {
+
+			switch (keyCode) {
+			case KeyCode.TAB:
+				textArea.setText(textArea.getText() + "    ");
+				break;
+			default:
+				break;
+			}
+
+			return true;
+		}
+	};
 	
 	public void enableEncoderEdit(boolean encoderLeft){
 		this.encoderLeft = encoderLeft;

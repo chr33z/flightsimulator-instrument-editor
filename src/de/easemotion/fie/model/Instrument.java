@@ -302,6 +302,7 @@ public class Instrument extends Observable {
 		codeEncoderLeft = "";
 		codeEncoderRight = "";
 		mode = ImageMode.DAY;
+		instrumentName = "";
 
 		updateObservers();
 	}

@@ -12,6 +12,7 @@ import org.apache.pivot.wtk.ButtonListener;
 import org.apache.pivot.wtk.ButtonPressListener;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.ComponentKeyListener;
+import org.apache.pivot.wtk.Editor;
 import org.apache.pivot.wtk.FillPane;
 import org.apache.pivot.wtk.LinkButton;
 import org.apache.pivot.wtk.PushButton;
@@ -36,6 +37,8 @@ public class GraphicPanelContainer extends BoxPane implements Observer {
 	
 	private GraphicPanel graphicPanel;
 	
+	private EditorApplication editor;
+	
 	private Instrument instrument;
 
 	LinkButton buttonModeDay;
@@ -46,6 +49,7 @@ public class GraphicPanelContainer extends BoxPane implements Observer {
 	public GraphicPanelContainer(EditorApplication editor, final Instrument instrument, 
 			SimulationInstrument simInstrument, SimulationData simData){
 		this.instrument = instrument;
+		this.editor = editor;
 		
 		try {
 			BXMLSerializer s = new BXMLSerializer();
@@ -96,7 +100,7 @@ public class GraphicPanelContainer extends BoxPane implements Observer {
 		}
 	}
 	
-	private void updateView(){
+	public void updateView(){
 		boolean dayImagesPresent = false;
 		boolean nightImagesPresent = false;
 		
@@ -160,6 +164,9 @@ public class GraphicPanelContainer extends BoxPane implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
+		if(o instanceof Instrument){
+			instrument = editor.getInstrument();
+		}
 		graphicPanel.update(o, arg);
 		updateView();
 	}

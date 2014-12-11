@@ -16,5 +16,6 @@
 	<classpathentry kind="lib" path="libs/pivot-wtk-terra-2.0.4.jar"/>
 	<classpathentry kind="lib" path="libs/luaj-jse-3.0.jar"/>
 	<classpathentry kind="lib" path="libs/luaj-sources-3.0.jar"/>
+	<classpathentry kind="lib" path="libs/guava-18.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

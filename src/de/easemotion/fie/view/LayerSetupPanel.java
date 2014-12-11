@@ -35,6 +35,7 @@ import de.easemotion.fie.model.ImageLayer;
 import de.easemotion.fie.model.Instrument;
 import de.easemotion.fie.model.Layer;
 import de.easemotion.fie.model.TextLayer;
+import de.easemotion.fie.simulation.SimulationData;
 import de.easemotion.fie.utils.Constants;
 import de.easemotion.fie.utils.IconLoader;
 import de.easemotion.fie.utils.IconLoader.Icon;
@@ -44,6 +45,8 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 	private static final String TAG = LayerSetupPanel.class.getSimpleName();
 
 	private Instrument instrument;
+	
+	private SimulationData simData;
 
 	private EditorApplication editor;
 
@@ -76,6 +79,8 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 	private void renderLayers(){
 		layerListContainer.removeAll();
 		layerItems.clear();
+		
+		boolean buttonIsActive = simData != null ? !simData.isSimulationActive() : true;
 
 		try {
 			List<Layer> layerList = new ArrayList<Layer>(instrument.getLayers());
@@ -134,12 +139,12 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 					if(layer instanceof ImageLayer){
 						ImageLayer imageLayer = (ImageLayer) layer;
 
-						actionDay.setEnabled(true);
+						actionDay.setEnabled(buttonIsActive);
 						actionDay.setAttribute(Attribute.LAYER, layer);
 						actionDay.setAttribute(Attribute.LAYER_ID, i);
 						actionDay.getButtonPressListeners().add(actionSelectDayImage);
 						
-						actionNight.setEnabled(true);
+						actionNight.setEnabled(buttonIsActive);
 						actionNight.setAttribute(Attribute.LAYER, layer);
 						actionNight.setAttribute(Attribute.LAYER_ID, i);
 						actionNight.getButtonPressListeners().add(actionSelectNightImage);
@@ -185,7 +190,7 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 						actionDay.setButtonData(IconLoader.icons.get(Icon.DAY)[IconLoader.DEACTIVE]);
 						actionNight.setButtonData(IconLoader.icons.get(Icon.NIGHT)[IconLoader.DEACTIVE]);
 						
-						actionText.setEnabled(true);
+						actionText.setEnabled(simData.isSimulationActive());
 						actionText.setButtonData(IconLoader.icons.get(Icon.TEXT)[IconLoader.LOADED]);
 						actionText.setAttribute(Attribute.LAYER, layer);
 						actionText.setAttribute(Attribute.LAYER_ID, i);
@@ -196,17 +201,17 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 						labelPath.getStyles().put("color", Constants.color.TEXT_PRIMARY);
 					}
 
-					actionUp.setEnabled(true);
+					actionUp.setEnabled(buttonIsActive);
 					actionUp.setAttribute(Attribute.LAYER, layer);
 					actionUp.setAttribute(Attribute.LAYER_ID, i);
 					actionUp.getButtonPressListeners().add(actionUpListener);
 
-					actionDown.setEnabled(true);
+					actionDown.setEnabled(buttonIsActive);
 					actionDown.setAttribute(Attribute.LAYER, layer);
 					actionDown.setAttribute(Attribute.LAYER_ID, i);
 					actionDown.getButtonPressListeners().add(actionDownListener);
 
-					actionEdit.setEnabled(true);
+					actionEdit.setEnabled(buttonIsActive);
 					actionEdit.setAttribute(Attribute.LAYER, layer);
 					actionEdit.setAttribute(Attribute.LAYER_ID, i);
 					actionEdit.getButtonPressListeners().add(actionEditListener);
@@ -216,7 +221,7 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 						actionEdit.setButtonData(IconLoader.icons.get(Icon.EDIT)[IconLoader.DEACTIVE]);
 					}
 
-					actionVisibility.setEnabled(true);
+					actionVisibility.setEnabled(buttonIsActive);
 					actionVisibility.setAttribute(Attribute.LAYER, layer);
 					actionVisibility.getButtonPressListeners().add(actionToggleVisibilityListener);
 					if(layer.isVisible()){
@@ -225,7 +230,7 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 						actionVisibility.setButtonData(IconLoader.icons.get(Icon.VIEW)[IconLoader.DEACTIVE]);
 					}
 
-					actionDelete.setEnabled(true);
+					actionDelete.setEnabled(buttonIsActive);
 					actionDelete.setAttribute(Attribute.LAYER, layer);
 					actionDelete.setAttribute(Attribute.LAYER_ID, i);
 					actionDelete.getButtonPressListeners().add(actionDeleteListener);
@@ -235,17 +240,17 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 					/*
 					 * the first layout row after existing rows is to create a new layer
 					 */
-					actionDay.setEnabled(true);
+					actionDay.setEnabled(buttonIsActive);
 					actionDay.setAttribute(Attribute.NEW_LAYER, true);
 					actionDay.setAttribute(Attribute.LAYER_ID, i);
 					actionDay.getButtonPressListeners().add(actionSelectDayImage);
 
-					actionNight.setEnabled(true);
+					actionNight.setEnabled(buttonIsActive);
 					actionNight.setAttribute(Attribute.NEW_LAYER, true);
 					actionNight.setAttribute(Attribute.LAYER_ID, i);
 					actionNight.getButtonPressListeners().add(actionSelectNightImage);
 
-					actionText.setEnabled(true);
+					actionText.setEnabled(buttonIsActive);
 					actionText.setAttribute(Attribute.NEW_LAYER, true);
 					actionText.setAttribute(Attribute.LAYER_ID, i);
 					actionText.getButtonPressListeners().add(actioncreateTextLayer);
@@ -265,6 +270,11 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		instrument = editor.getInstrument();
+		
+		if(o instanceof SimulationData){
+			simData = (SimulationData) o;
+		}
+		
 		renderLayers();
 	}
 	
@@ -483,6 +493,15 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 					}
 
 					EditorApplication.lastFileBrowserPath = fileBrowserSheet.getSelectedFile().getParentFile();
+				} else {
+					if(layer instanceof ImageLayer){
+						// if there are no images in the layer -> delete it
+						if( ((ImageLayer)layer).getImageDay() == null &&
+							((ImageLayer)layer).getImageNight() == null){
+							
+							instrument.deleteLayer(layer);
+						}
+					}
 				}
 			}
 		});

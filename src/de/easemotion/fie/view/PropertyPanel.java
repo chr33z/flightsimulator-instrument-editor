@@ -25,6 +25,7 @@ import de.easemotion.fie.model.ImageLayer;
 import de.easemotion.fie.model.Instrument;
 import de.easemotion.fie.model.Layer;
 import de.easemotion.fie.model.TextLayer;
+import de.easemotion.fie.simulation.SimulationData;
 import de.easemotion.fie.utils.Constants;
 
 public class PropertyPanel extends BoxPane implements Observer {
@@ -50,6 +51,8 @@ public class PropertyPanel extends BoxPane implements Observer {
 	private LinkButton buttonPosition;
 	private LinkButton buttonPivot;
 	private LinkButton buttonDirection;
+	
+	boolean interfaceActive = true;
 
 	public PropertyPanel(EditorApplication editor, Instrument surface){
 		this.editor = editor;
@@ -119,6 +122,22 @@ public class PropertyPanel extends BoxPane implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		instrument = editor.getInstrument();
+		
+		if(o instanceof SimulationData){
+			interfaceActive = !((SimulationData) o).isSimulationActive();
+			
+			propName.setEditable(interfaceActive);
+			propLeft.setEditable(interfaceActive);
+			propTop.setEditable(interfaceActive);
+			propPivotLeft.setEditable(interfaceActive);
+			propPivotTop.setEditable(interfaceActive);
+			propRotation.setEditable(interfaceActive);
+			
+			buttonName.setEnabled(interfaceActive);
+			buttonPosition.setEnabled(interfaceActive);
+			buttonPivot.setEnabled(interfaceActive);
+			buttonDirection.setEnabled(interfaceActive);
+		}
 
 		Layer active = instrument.getActiveLayer();
 		if(active != null){
@@ -224,6 +243,10 @@ public class PropertyPanel extends BoxPane implements Observer {
 		@Override
 		public boolean keyTyped(Component component, char character) {
 			if(component instanceof TextInput){
+				if(!interfaceActive){
+					return false;
+				}
+				
 				TextInput input = (TextInput) component;
 				Layer active = instrument.getActiveLayer();
 
@@ -296,6 +319,10 @@ public class PropertyPanel extends BoxPane implements Observer {
 		@Override
 		public boolean keyPressed(Component component, int keyCode,
 				KeyLocation keyLocation) {
+			if(!interfaceActive){
+				return false;
+			}
+			
 			if(component instanceof TextInput){
 				switch (keyCode) {
 				case KeyCode.ENTER:

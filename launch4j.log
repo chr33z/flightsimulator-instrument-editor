@@ -1,0 +1,22 @@
+
+
+Version:	3.5
+CmdLine:	C:\Users\Chris\Documents\GitHub\flightsim-editor\designer.exe --l4j-debug
+WOW64:		yes
+Working dir:	C:\Users\Chris\Documents\GitHub\flightsim-editor\.
+64-bit search:	SOFTWARE\JavaSoft\Java Runtime Environment...
+Check:		SOFTWARE\JavaSoft\Java Runtime Environment\1.7
+Check launcher:	C:\Program Files\Java\jre7\bin\javaw.exe (OK)
+Match:		1.7
+Check:		SOFTWARE\JavaSoft\Java Runtime Environment\1.7.0_25
+Ignore:		1.7.0_25
+64-bit search:	SOFTWARE\JavaSoft\Java Development Kit...
+Check:		SOFTWARE\JavaSoft\Java Development Kit\1.7
+Ignore:		1.7
+Check:		SOFTWARE\JavaSoft\Java Development Kit\1.7.0_25
+Ignore:		1.7.0_25
+Runtime used:	1.7 (64-bit)
+Launcher:	C:\Program Files\Java\jre7\bin\javaw.exe
+Launcher args:	-jar "C:\Users\Chris\Documents\GitHub\flightsim-editor\designer.exe"
+Args length:	68/32768 chars
+Exit code:	0
