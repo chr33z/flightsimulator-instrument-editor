@@ -366,9 +366,9 @@ public class Instrument extends Observable {
 		return instrument;
 	}
 
-	/*************************
+	/************************************
 	 * Functions used for simulation api
-	 */
+	 ************************************/
 
 	/**
 	 * Set absolute rotation of a layer in degree
@@ -421,6 +421,24 @@ public class Instrument extends Observable {
 			imageLayer.setLeft(layer.getLeft() + (int)x);
 			imageLayer.setTop(layer.getTop() + (int)y);
 			imageLayer.setDelay(delay);
+		}
+	}
+	
+	public void setVisible(String id, boolean visible){
+		Layer layer = getLayer(id);
+		
+		if(layer != null){
+			layer.visible = visible;
+		}
+	}
+	
+	public boolean isVisible(String id){
+		Layer layer = getLayer(id);
+		
+		if(layer != null){
+			return layer.visible;
+		} else {
+			return false;
 		}
 	}
 }

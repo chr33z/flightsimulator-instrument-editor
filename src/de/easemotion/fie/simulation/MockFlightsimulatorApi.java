@@ -68,10 +68,13 @@ public class MockFlightsimulatorApi extends TwoArgFunction {
 	public LuaValue call(LuaValue modname, LuaValue env) {
 		LuaValue library = tableOf();
 		library.set( "getSimConnectVariable", new getSimConnectVariable() );
+		library.set( "setKey", new setKey() );
+		
 		library.set( "radian2Degree", new radian2Degree() );
 		library.set( "degree2Radian", new degree2Radian() );
 		library.set( "celsius2Fahrenheit", new celsius2Fahrenheit() );
 		library.set( "fahrenheit2Celsius", new fahrenheit2Celsius() );
+		
 		env.set( "api", library );
 		return library;
 	}
@@ -93,6 +96,22 @@ public class MockFlightsimulatorApi extends TwoArgFunction {
 			return valueOf(0.0);
 		}
 	}
+	
+	/**********************
+	 * Function to trigger a SimConnect Event
+	 */
+	static class setKey extends OneArgFunction {
+		@Override
+		public LuaValue call(LuaValue eventId) {
+			String evid = eventId.tojstring();
+			
+			// In this implementation the function
+			// does not do anything
+			
+			return valueOf(0.0);
+		}
+	}
+	
 	
 	/**********************
 	 * Conversion functions
