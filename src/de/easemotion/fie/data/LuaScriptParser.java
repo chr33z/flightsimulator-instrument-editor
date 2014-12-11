@@ -144,8 +144,15 @@ public class LuaScriptParser {
 					layout += "\t\tpivot_left = " + imageLayer.getPivotX() + ",\n";
 					layout += "\t\tpivot_top = " + imageLayer.getPivotY() + ",\n";
 					layout += "\t\tbias = " + imageLayer.getBias() + ",\n";
-					layout += "\t\timage_day = \"" + imageLayer.getImage().imageDay.getPath() + "\",\n";
-					layout += "\t\timage_night = \"" + imageLayer.getImage().imageNight.getPath() + "\"\n";
+					
+					// replace backslashes on windows machines with / because escape characters
+					String pathDay = imageLayer.getImage().imageDay.getPath();
+//					pathDay = pathDay.replaceAll("\\\\", "/");
+					layout += "\t\timage_day = \"" + pathDay + "\",\n";
+					
+					String pathNight = imageLayer.getImage().imageNight.getPath();
+//					pathNight = pathNight.replaceAll("\\\\", "/");
+					layout += "\t\timage_night = \"" + pathNight + "\"\n";
 
 				} else if(layer instanceof TextLayer){
 					TextLayer textLayer = (TextLayer) layer;

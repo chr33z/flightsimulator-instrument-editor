@@ -2,6 +2,7 @@ package de.easemotion.fie;
 
 import java.awt.Dimension;
 import java.io.File;
+import java.util.Properties;
 
 import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.collections.Map;
@@ -69,6 +70,11 @@ public class EditorApplication implements Application {
 	LinkButton simulationButton;
 	
 	public static void main(String[] args) {
+		Properties props = System.getProperties();
+		props.setProperty("file.separator", "/");
+		
+		System.out.println(System.getProperty("file.separator"));
+		
 	    DesktopApplicationContext.main(EditorApplication.class, args);
 	}
 

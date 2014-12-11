@@ -27,6 +27,7 @@ import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
+import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.sun.org.apache.bcel.internal.generic.LUSHR;
 
@@ -34,6 +35,8 @@ import de.easemotion.fie.model.ImageLayer;
 import de.easemotion.fie.model.Instrument;
 import de.easemotion.fie.model.Layer;
 import de.easemotion.fie.model.TextLayer;
+import de.easemotion.fie.simulation.MockFlightsimulatorApi;
+import de.easemotion.fie.simulation.SimulationData;
 import de.easemotion.fie.utils.Constants;
 import de.easemotion.fie.utils.Utils;
 
@@ -86,7 +89,7 @@ public class FileHandler {
 		if(listener == null){
 			throw new IllegalArgumentException("LoadInstrumentListener must not be null!");
 		}
-		
+
 		/*
 		 * 1. Step
 		 */
@@ -120,44 +123,42 @@ public class FileHandler {
 		}
 
 		if(script.equals("")){
-//			try {
-//				Utils.file.delete(outputDirectory);
-//			} catch (IOException e1) {
-//				e1.printStackTrace();
-//			}
+			//			try {
+			//				Utils.file.delete(outputDirectory);
+			//			} catch (IOException e1) {
+			//				e1.printStackTrace();
+			//			}
 			listener.onError(Error.FILE_MISSING);
 			return;
+		}
+		
+		// Read file as string
+		String scriptContent = null;
+		try {
+			scriptContent = Files.toString(new File(script), Charsets.UTF_8);
+			
+			// replace all \ with / because of escape characters in luascript
+			scriptContent = scriptContent.replaceAll("\\\\", "/");
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
 
 		// create standard global lua variables
 		Globals globals = JsePlatform.standardGlobals();
-
-		// load lua script
-		try {
-			globals.load(new FileReader(script), "script").call();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			
-//			try {
-//				Utils.file.delete(outputDirectory);
-//			} catch (IOException e1) {
-//				e1.printStackTrace();
-//			}
-			listener.onError(Error.FILE_MISSING);
-		}
+		globals.load(new StringReader(scriptContent), "script").call();
 
 		// get instrument table and iterate over layers
 		LuaTable instrumentTable = (LuaTable) globals.get("instrument");
-		
+
 		// create new instrument to load the layers into
 		Instrument instrument = new Instrument();
 		instrument.setInstrumentName(instrumentTable.get("name").tojstring());
-		
+
 		/*
 		 * 4. Step
 		 */
 		LuaValue layer = LuaValue.NIL;
-		
+
 		/**
 		 * If everything works fine we can extract the layer order from
 		 * the layout file in the lua script. If not we provide a 
@@ -168,7 +169,7 @@ public class FileHandler {
 		 */
 		int orderBackup = Constants.integer.MAX_LAYER_COUNT-1;
 		int firstOrder = -1;
-		
+
 		while ( true ) {
 			Varargs n = instrumentTable.next(layer);
 			if ( (layer = n.arg1()).isnil() ){
@@ -177,18 +178,18 @@ public class FileHandler {
 			LuaValue parameter = n.arg(2);
 
 			if(parameter.istable()){
-				
+
 				// order in editor layer panel
 				int order = parameter.get("order").toint();
-				
+
 				if(firstOrder == -1){
 					firstOrder = order;
 				}
-				
+
 				if(firstOrder != -1 && order == 0){
-//					order = orderBackup;
+					//					order = orderBackup;
 				}
-				
+
 				Layer newLayer = parseLayer(layer, (LuaTable) parameter, outputDirectory);
 				if(newLayer != null){
 					instrument.addLayer(order, newLayer);
@@ -212,11 +213,11 @@ public class FileHandler {
 			/*
 			 * TODO errorhandling: show user dialog "script is bad"
 			 */
-//			try {
-//				Utils.file.delete(outputDirectory);
-//			} catch (IOException e1) {
-//				e1.printStackTrace();
-//			}
+			//			try {
+			//				Utils.file.delete(outputDirectory);
+			//			} catch (IOException e1) {
+			//				e1.printStackTrace();
+			//			}
 			e.printStackTrace();
 		}
 
@@ -231,7 +232,7 @@ public class FileHandler {
 		String[] functionNames = new String[instrument.getLayers().size()];
 		for (int i = 0; i < instrument.getLayers().size(); i++) {
 			Layer l = instrument.getLayers().get(i);
-			
+
 			String layerName = l != null ? l.getId() : "~";
 			functionNames[i] = "function_" + layerName;
 		}
@@ -252,7 +253,7 @@ public class FileHandler {
 						content.add(end + "\n");
 						end = iter.next();
 					}
-					
+
 					Layer l = instrument.getLayers().get(i);
 					if(l != null){
 						String appended = "";
@@ -276,7 +277,7 @@ public class FileHandler {
 		iter = scriptLines.iterator();
 		while(iter.hasNext()){
 			String line = iter.next();
-			
+
 			for (int i = 0; i < encoderNames.length; i++) {
 				String f = encoderNames[i];
 
@@ -300,11 +301,13 @@ public class FileHandler {
 			}
 		}
 
-//		try {
-//			Utils.file.delete(outputDirectory);
-//		} catch (IOException e1) {
-//			e1.printStackTrace();
-//		}
+		//		try {
+		//			Utils.file.delete(outputDirectory);
+		//		} catch (IOException e1) {
+		//			e1.printStackTrace();
+		//		}
+		
+		System.out.println(System.getProperty("file.separator"));
 		listener.onSuccess(instrument);
 	}
 
@@ -328,15 +331,9 @@ public class FileHandler {
 			layer.setBias(parameter.get("bias").toint());
 
 			String day = !parameter.get("image_day").isnil() ? parameter.get("image_day").tojstring() : "";
-			if(day.startsWith("images") && !day.startsWith("images\\")){
-				day = "images\\" + day.substring(6);
-			}
 			layer.setImageDay(new File(scriptDirectory, day));
-			
+
 			String night = !parameter.get("image_night").isnil() ? parameter.get("image_night").tojstring() : "";
-			if(night.startsWith("images") && !night.startsWith("images\\")){
-				night = "images\\" + night.substring(6);
-			}
 			layer.setImageNight(new File(scriptDirectory, night));
 
 			return layer;
@@ -348,7 +345,7 @@ public class FileHandler {
 			layer.setLeft(parameter.get("left").toint());
 			layer.setFont(parameter.get("font").tojstring());
 			layer.setFontSize(parameter.get("font_size").toint());
-			
+
 			return layer;
 		}
 
@@ -377,21 +374,48 @@ public class FileHandler {
 		if(listener == null){
 			throw new IllegalArgumentException("LoadInstrumentListener must not be null!");
 		}
-		
-		String scriptToCheck = LuaScriptParser.instrumentToLua(instrument);
-		
+
+
 		/*
 		 * Step 1
+		 * 
+		 * Check against Simulation api first. Then parse lua script without simulation
+		 * properties and proceed
 		 */
+		String scriptToCheck = LuaScriptParser.instrumentToLua(instrument, true);
+
+		MockFlightsimulatorApi api = new MockFlightsimulatorApi(instrument, new SimulationData());
 		Globals globals = JsePlatform.standardGlobals();
-//		try {
-			globals.load(new StringReader(scriptToCheck), "script").call();
-			globals.get(LuaScriptParser.MAIN_FUNCTION_NAME).call(CoerceJavaToLua.coerce(instrument));
-//		} catch(LuaError e){
-//			listener.onError(Error.LUA_PARSE_ERROR);
-//			throw e;
-//		}
+		globals.load(api);
 		
+		/*
+		 * To check the script we replace the api calls (like for the simulation)
+		 * and check against our mock api
+		 */
+		scriptToCheck = scriptToCheck.replace("api.rotate", "sim_instrument:rotate");
+		scriptToCheck = scriptToCheck.replace("api.translate", "sim_instrument:translate");
+		
+		// Print for debugging
+		String[] codeLines = scriptToCheck.split("\n");
+		int index = 1;
+		for (String string : codeLines) {
+			System.out.println(index+": "+string);
+			index++;
+		}
+
+		globals.load(new StringReader(scriptToCheck), "script").call();
+
+		LuaValue luaInstrument = CoerceJavaToLua.coerce(instrument);
+		if(luaInstrument.isnil()){
+			System.out.println("[error] Lua instrument is nil");  
+		}
+
+		LuaValue main = globals.get(LuaScriptParser.MAIN_FUNCTION_NAME);
+		if (!main.isnil()) {  
+			main.call(luaInstrument);  
+		} else {  
+			System.out.println("[error] Main function not found");  
+		}
 
 		// Step 1
 		if(!directory.exists()){
@@ -445,7 +469,7 @@ public class FileHandler {
 				 */
 				int pivX = layer.getPivotX();
 				int pivY = layer.getPivotY();
-				
+
 				try {
 					layer.setImageDay(new File("images/"+ layer.getImage().imageDay.getName()));
 				} catch(NullPointerException e){
@@ -459,7 +483,7 @@ public class FileHandler {
 					e.printStackTrace();
 					// has no night image
 				}
-				
+
 				layer.setPivotX(pivX);
 				layer.setPivotY(pivY);
 			}
@@ -467,6 +491,7 @@ public class FileHandler {
 
 		// Step 5
 		String script = LuaScriptParser.instrumentToLua(instrumentCopy);
+		
 		if(script != null && !script.equals("")){
 
 			try {
@@ -489,7 +514,7 @@ public class FileHandler {
 			listener.onError(Error.ZIP_FAILED);
 			return;
 		}
-		
+
 		/*
 		 * Try deleting old files to copy
 		 */
@@ -501,6 +526,6 @@ public class FileHandler {
 			 */
 			e.printStackTrace();
 		}
-		
+
 	}
 }

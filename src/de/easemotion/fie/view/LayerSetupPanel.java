@@ -402,7 +402,6 @@ public class LayerSetupPanel extends BoxPane implements Observer {
 			System.out.println("Toggle visibility");
 
 			Layer layer = (Layer) button.getAttribute(Attribute.LAYER);
-			instrument.setLayerActive(layer);
 			instrument.toggleVisibility(layer);
 		}
 	};

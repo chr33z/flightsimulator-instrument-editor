@@ -179,7 +179,21 @@ public class Utils {
 				while(ze != null){
 
 					String fileName = ze.getName();
-					File newFile = new File(outputDirectory.getAbsolutePath() + File.separator + fileName);
+					
+					/*
+					 * NOTE: 
+					 * Some EMI files can contain Windows style separator (WES) characters
+					 * that act as escape character in lua code. We want to replace
+					 * them with unix style separators "/"
+					 * 
+					 * Unfortunately emi-files that have been stored with WES can't be recognized
+					 * as an image in a subfolder.
+					 */
+					if(fileName.startsWith("images\\")){
+						fileName = fileName.replace("\\", "/");
+					}
+					
+					File newFile = new File(outputDirectory.getAbsolutePath() + "/" + fileName);
 
 					System.out.println("file unzip : "+ newFile.getAbsoluteFile());
 

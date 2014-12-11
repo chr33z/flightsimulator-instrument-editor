@@ -84,6 +84,7 @@ public class MockFlightsimulatorApi extends TwoArgFunction {
 	 */
 
 	static class getSimConnectVariable extends OneArgFunction {
+		
 		@Override
 		public LuaValue call(LuaValue simConnectString) {
 			String scs = simConnectString.tojstring();
