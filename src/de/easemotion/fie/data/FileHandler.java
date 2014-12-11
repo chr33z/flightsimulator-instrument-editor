@@ -320,6 +320,20 @@ public class FileHandler {
 	 */
 	private static Layer parseLayer(LuaValue l, LuaTable parameter, File scriptDirectory){
 		String type = parameter.get("type").tojstring();
+		
+		String id = l.tojstring();
+		
+		/*
+		 * See LuaScriptParser 11th layer comment for information:
+		 * 
+		 * "Add another 11th layer that provides masks for glow lights and general dark shading.
+		 * 	This layer is not visible, or editable from the Designer itself.
+		 *  Make sure to ignore this layer when reading files."
+		 */
+		if(id != null && id.equals(LuaScriptParser.MASK_LAYER_NAME)){
+			// Skip
+			return null;
+		}
 
 		if(type.equals("image")){
 			ImageLayer layer = new ImageLayer();
@@ -432,7 +446,9 @@ public class FileHandler {
 		tmpDir.mkdirs();
 		tmpImageDir.mkdirs();
 
-		// Step 3
+		/*
+		 *  Step 3
+		 */
 		for (Layer layer : instrument.getLayers()) {
 			if(layer != null && layer instanceof ImageLayer){
 				// copy day image
@@ -456,8 +472,22 @@ public class FileHandler {
 				}
 			}
 		}
+		
+		/*
+		 * Copy layer mask images. These are always the same and not dependent from the user.
+		 * See comment about 11th layer in LuaScriptParser
+		 * 
+		 * "Add another 11th layer that provides masks for glow lights and general dark shading.
+		 *  This layer is not visibike, or editable from the Designer itself.
+		 *  Make sure to ignore this layer when reading files.
+		 * 
+		 *  Store mask files in images folder during saving of the instrument"
+		 */
+		copyImageMasks(tmpImageDir);
 
-		// Step 4
+		/*
+		 *  Step 4
+		 */
 		Instrument instrumentCopy = instrument.copy();
 		for (Layer l : instrumentCopy.getLayers()) {
 			if(l != null && l instanceof ImageLayer){
@@ -527,5 +557,22 @@ public class FileHandler {
 			e.printStackTrace();
 		}
 
+	}
+	
+	private static boolean copyImageMasks(File imageDirectory){
+		try {
+			Utils.file.copy( new File("assets/images/BrightnessLow.png"), 
+					new File(imageDirectory, "BrightnessLow.png"));
+			
+			Utils.file.copy( new File("assets/images/BrightnessMed.png"), 
+					new File(imageDirectory, "BrightnessMed.png"));
+			
+			Utils.file.copy( new File("assets/images/BrightnessHigh.png"), 
+					new File(imageDirectory, "BrightnessHigh.png"));
+			return true;
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 }

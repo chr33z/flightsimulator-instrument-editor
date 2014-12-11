@@ -10,7 +10,6 @@ import de.easemotion.fie.model.Instrument;
 import de.easemotion.fie.model.Layer;
 import de.easemotion.fie.model.TextLayer;
 import de.easemotion.fie.utils.Constants;
-import de.easemotion.fie.utils.Utils;
 
 /**
  * Parser class to convert either an instrument in eDesigner into a runnable lua script
@@ -23,6 +22,8 @@ import de.easemotion.fie.utils.Utils;
  *
  */
 public class LuaScriptParser {
+	
+	public static final String MASK_LAYER_NAME = "mask_layer";
 	
 	public static final String MAIN_FUNCTION_NAME = "API_MAIN";
 
@@ -165,6 +166,21 @@ public class LuaScriptParser {
 			}
 			order++;
 		}
+		
+		/*
+		 * Add another 11th layer that provides masks for glow lights and general dark shading.
+		 * This layer is not visibike, or editable from the Designer itself.
+		 * Make sure to ignore this layer when reading files.
+		 * 
+		 * Store mask files in images folder during saving of the instrument
+		 */
+		layout += "\t" + MASK_LAYER_NAME + " = {\n";
+		layout += "\t\torder = " + 11 + ",\n";
+		layout += "\t\tisMask = true,\n";
+		layout += "\t\tleft = " + 120 + ",\n";
+		layout += "\t\ttop = " + 120 + ",\n";
+		layout += "\t},\n";
+		
 		layout += "}\n";
 
 
